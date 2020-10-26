@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+{% load custom_tags %}
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8-sig" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Django PDF</title>
+    <style>
+   @page {
+            size: landscape;
+            margin: 1cm;
+        }
+        .table{
+            margin-top:30px;
+        }
+        .table, td, th {  
+        border-bottom:none;
+        border-top:none;
+        text-align: left;
+        vertical-align:middle;
+       
+        }
+       
+        .table th, td {
+        padding: 2px;
+        text-align: center;
+        vertical-align:middle;
+        margin-top:30px;
+        }
+        .table tr {
+            margin-top:30px;
+        }
+
+        .td{
+        word-break: inherit;
+        }
+
+        .list-group h3{
+            font-size: 3em;
+        }
+        .list-group p {
+            font-size: 1em;
+        }
+
+       
+
+        .table td {
+            border: none;
+        }
+        #table tr:nth-child(even)
+        {
+            background-color: #f2f2f2;
+        }
+
+        img
+        {
+            width:180px;
+            height:30px
+        }
+        h1
+        {
+            font-size:30px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            background-color: #2196F3;
+            padding: 10px;
+        }
+        .grid-item {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            font-size: 30px;
+            text-align: center;
+        }
+        @font-face {
+            font-family: "kanit-regular";
+            src: url("Kanit-Regular.ttf");
+        }
+
+        body {
+        font-family: "kanit-regular";
+        font-size:16px;
+
+        }
+
+        .left
+        {
+            vertical-align: left;
+        }
+        .middle
+        {
+            vertical-align:middle;
+        }
+        .right
+        {
+            text-align:right;
+        }
+
+        .padding-top-10
+        {
+            padding-top:10px
+        }
+
+        .table-header tr 
+        {
+            height:40px
+        }
+
+        .table-header .first-header
+        {
+            width:12.50%
+        }  
+
+        .table-header .first-data
+        {
+            border: 1px solid black;
+            padding-top:3px;
+            text-align:center;
+            width:12.50%;
+        } 
+
+        .table-header .second-header
+        {
+            width:12.50%
+        }  
+
+        .table-header .second-data
+        {
+            border: 1px solid black;
+            padding-top:3px;
+            width:12.50%;
+            text-align:center;
+
+        }   
+
+        .table-header .third-header
+        {
+            width:10%
+        }  
+
+        .table-header .third-data
+        {
+            border: 1px solid black;
+            padding-top:3px;
+            width:15%;
+            text-align:center;
+        } 
+
+        .table-header .fourth-header
+        {
+            width:12.50%;
+        }  
+
+        .table-header .fourth-data
+        {
+            border: 1px solid black;
+            padding-top:3px;
+            width:12.50%;
+            text-align:center;
+        }  
+
+        #table-data{
+            margin-top:30px;
+            border: 1px solid #ddd;
+            vertical-align:middle;
+
+        }
+
+        #table-data th{
+            background-color: #f2f2f2;
+            margin-top:30px;
+            text-align:center;
+        }
+
+        #table-sign
+        {
+            margin-top:30px;
+        }
+   
+
+       
+      
+    </style>
+</head>
+<body>
+
+    <table id ="table"  cellspacing="0" cellpadding="0" >
+        <tr>
+            <td>
+                <img class="left" src='{{STATIC_URL}}Isuzu_logo.png' alt="">
+            </td>
+            <td>
+                <h1 class="middle padding-top-10" >Pick up sheet (PUS)</h1>
+            </td>
+            <td>
+                <img class="right" src='{{STATIC_URL}}{{barcode_pic_name}}.png' alt="">       
+            </td>
+        </tr>
+    </table>
+    <table   class="table-header" cellspacing="0" cellpadding="0" style="margin-top:30px;" >
+        <tr >
+            <td class="first-header right">
+                <h3>Project Code: </h3>
+            </td>
+            <td  class="first-data" >
+                {{pickup_obj.0}} 
+            </td>
+            <td  class="second-header right" >
+                <h3>Due Date: </h3>
+            </td>
+            <td  class="second-data" >
+                {{pickup_obj.1 | covert_date}} 
+            </td>
+            <td  class="third-header right" >
+                <h3>PUS No: </h3>
+            </td>
+            <td  class="third-data" >
+                {{pickup_obj.2}} 
+            </td>
+            <td  class="fourth-header right" >
+                <h3>Route no: </h3>
+            </td>
+            <td  class="fourth-data" >
+                {{pickup_obj.3}} 
+            </td>
+            
+        </tr>
+        <tr> 
+            <td  class="first-header right" >
+                <h3>Truck no: </h3>
+            </td>
+            <td  class="first-data" >
+                {{pickup_obj.4}} 
+            </td>
+            <td  class="second-header right" >
+                <h3>Release Time: </h3>
+            </td>
+            <td  class="second-data" >
+                {{pickup_obj.5}}
+            </td>
+            <td class="third-header right" >
+                <h3>Supplier: </h3>
+            </td>
+            <td class="third-data">
+                {{pickup_obj.6}} 
+            </td>
+            <td class="fourth-header right" >
+                <h3>Trip No: </h3>
+            </td>
+            <td  class="fourth-data">
+                {{pickup_obj.7}}
+            </td>
+        </tr>
+        <tr >
+            <td  class="first-header right" >
+                <h3 >Pickup Time: </h3>
+            </td>
+            <td  class="first-data" >
+                {{pickup_obj.8}}
+            </td>
+            <td  class="second-header right" >
+                <h3 >Depart Time: </h3>
+            </td>
+            <td  class="second-data" >
+                {{pickup_obj.9}}
+            </td>
+             <td class="third-header right" >
+                <h3 >Plant Code: </h3>
+            </td>
+            <td class="third-data" >
+                {{pickup_obj.10}}
+            </td>
+            <td  class="fourth-header right"  >
+                <h3  >Driver Name: </h3>
+            </td>
+            <td  class="fourth-data" >
+                {{pickup_obj.11}}
+            </td>
+        </tr>
+        <tr>
+            <td  class="first-header right" >
+                <h3 >Driver tel: </h3>
+            </td>
+            <td  class="first-data" >
+                {{pickup_obj.12}}
+            </td>
+            <td  class="second-header right" >
+                <h3>Complete Time: </h3>
+            </td>
+            <td  class="second-data"  >
+                {{pickup_obj.13}}
+            </td>
+        </tr>    
+    </table>
+    <table id ="table-data" cellspacing="0" cellpadding="0">
+        <tr>
+            <th style="width:5%"><h3>Item No</h3></th>
+            <th style="width:15%" ><h3>Order No</h3></th>
+            <th style="width:10%" ><h3>Part Number</h3></th>
+            <th style="width:10%" ><h3>Part Name</h3></th>
+            <th style="width:10%" ><h3>Release Time</h3></th>
+            <th style="width:10%" ><h3>Qtr</h3></th>
+            <th style="width:10%" ><h3>SNP</h3></th>
+            <th style="width:10%"><h3>Number Of Package</h3></th>
+            <th style="width:10%" ><h3>CBM</h3></th>
+            <th style="width:10%" ><h3>Weight</h3></th>
+      
+        </tr>
+
+
+            {% for order in order_list %}
+                <tr>
+                    <td>{{order.0}}</td>
+                    <td>{{order.1}}</td>
+                    <td>{{order.2}}</td>
+                    <td>{{order.3}}</td>
+                    <td>{{order.4}}</td>
+                    <td>{{order.5 | format_2digital}}</td>
+                    <td>{{order.6 | format_2digital }}</td>
+                    <td>{{order.7 | format_2digital}}</td>
+                    <td>{{order.8 | math_ceil | format_2digital }}</td>    
+                    <td>{{order.9 | format_2digital }}</td>   
+                </tr>
+            {% endfor %}
+
+    </table>
+    <table id ="table-sign" cellspacing="0" cellpadding="0">
+        <tr>
+            <td>ลงลายมือชื่อ - ต้นทาง</td>
+            <td>ลงลายมื่อชื่อ - ขนส่ง</td>
+            <td>ลงลายมื่อชื่อ - ปลายทาง</td>
+        </tr>
+        <tr>
+            <td>_____________________</td>
+            <td>_____________________</td>
+            <td>_____________________</td>
+        </tr>
+        <tr>
+            <td>ผู้จัดส่งสินค้า (ซับพลายเออร์)</td>
+            <td>ผู้นำส่งสินค้า (พนังงานขับรถ)</td>
+            <td>ผู้รับสินค้า (ISUZU/TTV)</td>
+        </tr>
+    </table>            
+</body>
+</html>

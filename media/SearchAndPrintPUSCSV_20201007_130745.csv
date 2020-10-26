@@ -1,0 +1,25 @@
+PUS Ref,Status,Supplier,Plant,Order Count,Due Date,Release Time,Delivery Time,Route Code,Trip,Truck License,Driver Name
+AAPICO2020100601,AAPICO,Waiting,AT,2,2020-10-06,12.30,14.30,new,1,,
+AUN___2020060101,AUN,Waiting,Metal,2,2020-06-01,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060201,AUN,Complete,Metal,2,2020-06-02,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060301,AUN,Waiting,Metal,2,2020-06-03,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060401,AUN,Waiting,Metal,2,2020-06-04,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060501,AUN,Waiting,Metal,2,2020-06-05,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060601,AUN,Waiting,Metal,2,2020-06-06,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060801,AUN,Waiting,Metal,2,2020-06-08,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060901,AUN,Waiting,Metal,2,2020-06-09,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061101,AUN,Waiting,Metal,2,2020-06-11,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061201,AUN,Waiting,Metal,2,2020-06-12,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061301,AUN,Waiting,Metal,2,2020-06-13,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061501,AUN,Complete,Metal,2,2020-06-15,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061601,AUN,Waiting,Metal,2,2020-06-16,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061701,AUN,Complete,Metal,2,2020-06-17,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061801,AUN,Waiting,Metal,2,2020-06-18,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061901,AUN,Waiting,Metal,2,2020-06-19,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060101,SPV,Waiting,JIT-Rayong,2,2020-06-01,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060201,SPV,Waiting,JIT-Rayong,2,2020-06-02,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060401,SPV,Waiting,JIT-Rayong,2,2020-06-04,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060501,SPV,Waiting,JIT-Rayong,2,2020-06-05,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060801,SPV,Waiting,JIT-Rayong,2,2020-06-08,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060901,SPV,Waiting,JIT-Rayong,2,2020-06-09,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020061501,SPV,Waiting,JIT-Rayong,2,2020-06-15,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ

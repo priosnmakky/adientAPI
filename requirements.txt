@@ -1,0 +1,16 @@
+Django==2.2.8
+djangorestframework==3.10.3
+djangorestframework-simplejwt==4.3.0
+djoser==2.0.3
+Pillow==6.2.0
+psycopg2==2.8.2
+requests==2.22.0
+django-cors-headers==3.4.0
+openpyxl==3.0.4
+django-annoying==0.10.6
+unicodecsv==0.14.1
+pandas==1.1.1
+jproperties==2.1.0
+xhtml2pdf==0.2.5
+python-barcode==0.13.1
+code128==0.3

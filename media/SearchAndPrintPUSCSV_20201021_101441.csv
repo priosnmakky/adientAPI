@@ -1,0 +1,205 @@
+﻿PUS Ref,Status,Supplier,Plant,Order Count,Due Date,Release Time,Delivery Time,Route Code,Trip,Truck License,Driver Name
+SPV___2020060501,Waiting,SPV,JIT-Rayong,1,2020-06-05,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060904,Complete,AUN,Foam,2,2020-06-09,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060503,Complete,AUN,Foam,2,2020-06-05,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060402,Complete,AUN,Metal,2,2020-06-04,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060801,Complete,AUN,Foam,2,2020-06-08,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061804,Complete,AUN,Metal,2,2020-06-18,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061604,Complete,AUN,Foam,2,2020-06-16,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061103,Complete,AUN,Foam,2,2020-06-11,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061002,Complete,AUN,Foam,2,2020-06-10,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061801,Complete,AUN,Foam,2,2020-06-18,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060602,Waiting,AUN,Metal,1,2020-06-06,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060601,Complete,AUN,Metal,2,2020-06-06,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060902,Waiting,SPV,JIT-Rayong,1,2020-06-09,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060303,Complete,AUN,Foam,2,2020-06-03,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020060901,Complete,SPV,JIT-Rayong,2,2020-06-09,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060803,Waiting,AUN,Foam,1,2020-06-08,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020060202,Complete,SPV,JIT-Rayong,2,2020-06-02,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061704,Waiting,AUN,Metal,1,2020-06-17,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060902,Complete,AUN,Foam,2,2020-06-09,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020060502,Complete,SPV,JIT-Rayong,2,2020-06-05,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061501,Waiting,AUN,Metal,1,2020-06-15,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060401,Complete,SPV,JIT-Rayong,2,2020-06-04,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060501,Complete,AUN,Foam,2,2020-06-05,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060504,Complete,AUN,Metal,2,2020-06-05,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060802,Complete,SPV,JIT-Rayong,2,2020-06-08,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060202,Complete,AUN,Metal,2,2020-06-02,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060201,Complete,AUN,Metal,2,2020-06-02,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061101,Complete,AUN,Foam,2,2020-06-11,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061003,Complete,AUN,Metal,2,2020-06-10,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061901,Complete,AUN,Metal,2,2020-06-19,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061702,Waiting,AUN,Metal,1,2020-06-17,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060802,Complete,AUN,Metal,2,2020-06-08,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060502,Waiting,AUN,Metal,1,2020-06-05,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060101,Complete,AUN,Metal,2,2020-06-01,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061301,Complete,AUN,Metal,2,2020-06-13,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061703,Complete,AUN,Foam,2,2020-06-17,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020061501,Complete,SPV,JIT-Rayong,2,2020-06-15,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061601,Complete,AUN,Metal,2,2020-06-16,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060102,Complete,AUN,Metal,2,2020-06-01,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061502,Waiting,AUN,Metal,1,2020-06-15,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060404,Complete,AUN,Metal,2,2020-06-04,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061803,Complete,AUN,Foam,2,2020-06-18,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020060102,Complete,SPV,JIT-Rayong,2,2020-06-01,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060301,Complete,AUN,Foam,2,2020-06-03,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061201,Complete,AUN,Metal,2,2020-06-12,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060903,Waiting,AUN,Metal,1,2020-06-09,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060302,Complete,AUN,Metal,2,2020-06-03,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060801,Complete,SPV,JIT-Rayong,2,2020-06-08,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060804,Complete,AUN,Metal,2,2020-06-08,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061001,Waiting,AUN,Metal,1,2020-06-10,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061701,Waiting,AUN,Foam,1,2020-06-17,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060304,Complete,AUN,Metal,2,2020-06-03,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061302,Waiting,AUN,Metal,1,2020-06-13,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061603,Complete,AUN,Metal,2,2020-06-16,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060401,Waiting,AUN,Foam,1,2020-06-04,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061902,Complete,AUN,Metal,2,2020-06-19,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060901,Complete,AUN,Metal,2,2020-06-09,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061004,Complete,AUN,Foam,2,2020-06-10,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020061502,Waiting,SPV,JIT-Rayong,1,2020-06-15,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060402,Complete,SPV,JIT-Rayong,2,2020-06-04,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061802,Complete,AUN,Metal,2,2020-06-18,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061102,Complete,AUN,Metal,2,2020-06-11,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060101,Complete,SPV,JIT-Rayong,2,2020-06-01,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060201,Complete,SPV,JIT-Rayong,2,2020-06-02,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060403,Complete,AUN,Foam,2,2020-06-04,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061602,Complete,AUN,Foam,2,2020-06-16,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061104,Complete,AUN,Metal,2,2020-06-11,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061202,Complete,AUN,Metal,2,2020-06-12,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060501,Waiting,SPV,JIT-Rayong,1,2020-06-05,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060904,Complete,AUN,Foam,2,2020-06-09,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060503,Complete,AUN,Foam,2,2020-06-05,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060402,Complete,AUN,Metal,2,2020-06-04,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060801,Complete,AUN,Foam,2,2020-06-08,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061804,Complete,AUN,Metal,2,2020-06-18,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061604,Complete,AUN,Foam,2,2020-06-16,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061103,Complete,AUN,Foam,2,2020-06-11,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061002,Complete,AUN,Foam,2,2020-06-10,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061801,Complete,AUN,Foam,2,2020-06-18,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060602,Waiting,AUN,Metal,1,2020-06-06,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060601,Complete,AUN,Metal,2,2020-06-06,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060902,Waiting,SPV,JIT-Rayong,1,2020-06-09,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060303,Complete,AUN,Foam,2,2020-06-03,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020060901,Complete,SPV,JIT-Rayong,2,2020-06-09,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060803,Waiting,AUN,Foam,1,2020-06-08,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020060202,Complete,SPV,JIT-Rayong,2,2020-06-02,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061704,Waiting,AUN,Metal,1,2020-06-17,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060902,Complete,AUN,Foam,2,2020-06-09,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020060502,Complete,SPV,JIT-Rayong,2,2020-06-05,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061501,Waiting,AUN,Metal,1,2020-06-15,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060401,Complete,SPV,JIT-Rayong,2,2020-06-04,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060501,Complete,AUN,Foam,2,2020-06-05,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060504,Complete,AUN,Metal,2,2020-06-05,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060802,Complete,SPV,JIT-Rayong,2,2020-06-08,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060202,Complete,AUN,Metal,2,2020-06-02,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060201,Complete,AUN,Metal,2,2020-06-02,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061101,Complete,AUN,Foam,2,2020-06-11,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061003,Complete,AUN,Metal,2,2020-06-10,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061901,Complete,AUN,Metal,2,2020-06-19,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061702,Waiting,AUN,Metal,1,2020-06-17,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060802,Complete,AUN,Metal,2,2020-06-08,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060502,Waiting,AUN,Metal,1,2020-06-05,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060101,Complete,AUN,Metal,2,2020-06-01,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061301,Complete,AUN,Metal,2,2020-06-13,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061703,Complete,AUN,Foam,2,2020-06-17,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020061501,Complete,SPV,JIT-Rayong,2,2020-06-15,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061601,Complete,AUN,Metal,2,2020-06-16,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060102,Complete,AUN,Metal,2,2020-06-01,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061502,Waiting,AUN,Metal,1,2020-06-15,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060404,Complete,AUN,Metal,2,2020-06-04,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061803,Complete,AUN,Foam,2,2020-06-18,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020060102,Complete,SPV,JIT-Rayong,2,2020-06-01,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060301,Complete,AUN,Foam,2,2020-06-03,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061201,Complete,AUN,Metal,2,2020-06-12,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060903,Waiting,AUN,Metal,1,2020-06-09,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060302,Complete,AUN,Metal,2,2020-06-03,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060801,Complete,SPV,JIT-Rayong,2,2020-06-08,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060804,Complete,AUN,Metal,2,2020-06-08,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061001,Waiting,AUN,Metal,1,2020-06-10,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061701,Waiting,AUN,Foam,1,2020-06-17,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060304,Complete,AUN,Metal,2,2020-06-03,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061302,Waiting,AUN,Metal,1,2020-06-13,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061603,Complete,AUN,Metal,2,2020-06-16,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060401,Waiting,AUN,Foam,1,2020-06-04,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061902,Complete,AUN,Metal,2,2020-06-19,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060901,Complete,AUN,Metal,2,2020-06-09,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061004,Complete,AUN,Foam,2,2020-06-10,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020061502,Waiting,SPV,JIT-Rayong,1,2020-06-15,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060402,Complete,SPV,JIT-Rayong,2,2020-06-04,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061802,Complete,AUN,Metal,2,2020-06-18,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061102,Complete,AUN,Metal,2,2020-06-11,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060101,Complete,SPV,JIT-Rayong,2,2020-06-01,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060201,Complete,SPV,JIT-Rayong,2,2020-06-02,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060403,Complete,AUN,Foam,2,2020-06-04,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061602,Complete,AUN,Foam,2,2020-06-16,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061104,Complete,AUN,Metal,2,2020-06-11,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061202,Complete,AUN,Metal,2,2020-06-12,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060501,Waiting,SPV,JIT-Rayong,1,2020-06-05,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060904,Complete,AUN,Foam,2,2020-06-09,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060503,Complete,AUN,Foam,2,2020-06-05,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060402,Complete,AUN,Metal,2,2020-06-04,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060801,Complete,AUN,Foam,2,2020-06-08,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061804,Complete,AUN,Metal,2,2020-06-18,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061604,Complete,AUN,Foam,2,2020-06-16,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061103,Complete,AUN,Foam,2,2020-06-11,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061002,Complete,AUN,Foam,2,2020-06-10,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061801,Complete,AUN,Foam,2,2020-06-18,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060602,Waiting,AUN,Metal,1,2020-06-06,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060601,Complete,AUN,Metal,2,2020-06-06,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060902,Waiting,SPV,JIT-Rayong,1,2020-06-09,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060303,Complete,AUN,Foam,2,2020-06-03,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020060901,Complete,SPV,JIT-Rayong,2,2020-06-09,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060803,Waiting,AUN,Foam,1,2020-06-08,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020060202,Complete,SPV,JIT-Rayong,2,2020-06-02,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061704,Waiting,AUN,Metal,1,2020-06-17,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060902,Complete,AUN,Foam,2,2020-06-09,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020060502,Complete,SPV,JIT-Rayong,2,2020-06-05,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061501,Waiting,AUN,Metal,1,2020-06-15,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060401,Complete,SPV,JIT-Rayong,2,2020-06-04,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060501,Complete,AUN,Foam,2,2020-06-05,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060504,Complete,AUN,Metal,2,2020-06-05,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060802,Complete,SPV,JIT-Rayong,2,2020-06-08,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060202,Complete,AUN,Metal,2,2020-06-02,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060201,Complete,AUN,Metal,2,2020-06-02,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061101,Complete,AUN,Foam,2,2020-06-11,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061003,Complete,AUN,Metal,2,2020-06-10,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061901,Complete,AUN,Metal,2,2020-06-19,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061702,Waiting,AUN,Metal,1,2020-06-17,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060802,Complete,AUN,Metal,2,2020-06-08,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060502,Waiting,AUN,Metal,1,2020-06-05,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060101,Complete,AUN,Metal,2,2020-06-01,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061301,Complete,AUN,Metal,2,2020-06-13,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061703,Complete,AUN,Foam,2,2020-06-17,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020061501,Complete,SPV,JIT-Rayong,2,2020-06-15,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061601,Complete,AUN,Metal,2,2020-06-16,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060102,Complete,AUN,Metal,2,2020-06-01,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061502,Waiting,AUN,Metal,1,2020-06-15,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060404,Complete,AUN,Metal,2,2020-06-04,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061803,Complete,AUN,Foam,2,2020-06-18,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020060102,Complete,SPV,JIT-Rayong,2,2020-06-01,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060301,Complete,AUN,Foam,2,2020-06-03,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061201,Complete,AUN,Metal,2,2020-06-12,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060903,Waiting,AUN,Metal,1,2020-06-09,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060302,Complete,AUN,Metal,2,2020-06-03,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060801,Complete,SPV,JIT-Rayong,2,2020-06-08,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060804,Complete,AUN,Metal,2,2020-06-08,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061001,Waiting,AUN,Metal,1,2020-06-10,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061701,Waiting,AUN,Foam,1,2020-06-17,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020060304,Complete,AUN,Metal,2,2020-06-03,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061302,Waiting,AUN,Metal,1,2020-06-13,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061603,Complete,AUN,Metal,2,2020-06-16,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060401,Waiting,AUN,Foam,1,2020-06-04,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061902,Complete,AUN,Metal,2,2020-06-19,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060901,Complete,AUN,Metal,2,2020-06-09,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061004,Complete,AUN,Foam,2,2020-06-10,12.30,17.30,routeCode10/10/2020,2,,
+SPV___2020061502,Waiting,SPV,JIT-Rayong,1,2020-06-15,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060402,Complete,SPV,JIT-Rayong,2,2020-06-04,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061802,Complete,AUN,Metal,2,2020-06-18,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061102,Complete,AUN,Metal,2,2020-06-11,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060101,Complete,SPV,JIT-Rayong,2,2020-06-01,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+SPV___2020060201,Complete,SPV,JIT-Rayong,2,2020-06-02,11.30,14.30,SPV-JIT-Rayong,1,test 1234,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020060403,Complete,AUN,Foam,2,2020-06-04,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061602,Complete,AUN,Foam,2,2020-06-16,12.30,17.30,routeCode10/10/2020,2,,
+AUN___2020061104,Complete,AUN,Metal,2,2020-06-11,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
+AUN___2020061202,Complete,AUN,Metal,2,2020-06-12,12.30,15.30,Aun-metal,1,5กง 2549,ณรงค์ฤทธิ์ สายสุวรรณ
