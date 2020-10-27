@@ -7,33 +7,24 @@ from django.utils import timezone
 from decimal import Decimal
 
 
-class FileSerializer(serializers.ModelSerializer):
+class File(models.Model):
 
-    id = serializers.IntegerField(read_only=True)
-    file_no = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
-    file_name = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
-    file_size = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
-    order_count = serializers.IntegerField(allow_null=True,required=False)
-    status = serializers.IntegerField(allow_null=True,required=False)
-    customer_id = serializers.IntegerField(allow_null=True,required=False)
-    project_id = serializers.IntegerField(allow_null=True,required=False)
-    created_by = serializers.CharField(max_length=15,allow_blank=True,allow_null=True,required=False)
-    created_date = serializers.DateTimeField(format="%d-%m-%Y ", input_formats=['%d-%m-%Y',],default=datetime.now(tz=timezone.utc),allow_null=True,required=False)
-    updated_by = serializers.CharField(allow_blank=True,allow_null=True,required=False)
-    updated_date = serializers.DateTimeField(format="%d-%m-%Y", input_formats=['%d-%m-%Y',],default=datetime.now(tz=timezone.utc),allow_null=True,required=False)
-    file = serializers.FileField()
+    file_no = models.CharField(max_length=150,blank=True, null=True,default='')
+    file_name = models.CharField(max_length=150,blank=True, null=True)
+    file_size = models.CharField(max_length=150,blank=True, null=True)
+    order_count = models.IntegerField(blank=True,null=True)
+    status = models.IntegerField(blank=True, null=True)
+    customer_code = models.CharField(max_length=50,default='',blank=False, null=False)
+    project_code = models.CharField(max_length=50,default='',blank=False, null=False)
+    updated_by = models.CharField(max_length=150,blank=True, null=True)
+    updated_date = models.DateTimeField(default=datetime.now(), blank=True)
+    file = models.FileField(blank=False, null=False)
 
+    def save(self, *args, **kwargs):
 
-    class Meta:     #instead of meta write Meta (Capital M)
-        model = File
-        fields = '__all__'
- 
-
-    def create(self, validated_data):
-        """
-        Create and return a new `Snippet` instance, given the validated data.
-        """
-        return File.objects.create(**validated_data)
+        if not self.file_no:
+            self.updated_date = datetime.utcnow()
+        return super(File, self).save(*args, **kwargs)
 
 
 class Order(models.Model):

@@ -7,4 +7,5 @@ class base_DTO:
     pdf_name = ""
     validate_error_list = []
     validate_warning_list = []
+  
     

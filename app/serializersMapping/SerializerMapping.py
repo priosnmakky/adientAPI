@@ -58,6 +58,36 @@ class SerializerMapping:
 
         return serialiser_DTO
     
+    @staticmethod
+    def mapping_serializer_obj (self,serialiser_DTO,data,serviceStatus,massage,csv_name,pdf_name,validate_error_list):
+
+        self.base_obj.data = data
+        self.base_obj.serviceStatus = serviceStatus
+        self.base_obj.massage = massage
+        self.base_obj.csv_name = csv_name
+        self.base_obj.pdf_name = pdf_name
+        self.base_obj.validate_error_list = validate_error_list
+
+        serialiser_DTO = serialiser_DTO(self.base_obj)
+
+        return serialiser_DTO
+    
+ 
+    def mapping_serializer_list (self,serialiser_DTO,data_list,serviceStatus,massage,csv_name,pdf_name,validate_error_list):
+
+        self.base_obj.data_list = data_list
+        self.base_obj.serviceStatus = serviceStatus
+        self.base_obj.massage = massage
+        self.base_obj.csv_name = csv_name
+        self.base_obj.pdf_name = pdf_name
+        self.base_obj.validate_error_list = validate_error_list
+
+        print(validate_error_list)
+
+        serialiser_DTO = serialiser_DTO(self.base_obj)
+
+        return serialiser_DTO
+    
 
 
       

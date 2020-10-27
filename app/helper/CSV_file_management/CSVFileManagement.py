@@ -14,7 +14,7 @@ class CSVFileManagement:
         self.newline = newline
         self.csv_list = []
 
-    def insert_header(self,header_list) :
+    def generate_file_no(self,header_list) :
 
         return_header_list = []
         for header in header_list :

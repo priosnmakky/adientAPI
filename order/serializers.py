@@ -1,10 +1,11 @@
 from rest_framework import serializers 
-from order.models import Order
+from order.models import Order,File
 from djoser.serializers import UserCreateSerializer as BaseUserRegistrationSerializer
-import datetime
+from datetime import datetime, timedelta
 from rest_framework.settings import api_settings
-from uploads.models import File
+# from uploads.models import File
 from model_DTO.validateError import validateError
+from app.helper.order_helper.OrderUploadHelper import OrderUploadHelper
 
 
 class OrderSerializer(serializers.Serializer):
@@ -75,7 +76,7 @@ class Order_transaction_list__Serializer_DTO(serializers.Serializer):
     data_list = Order_transaction_Serializer(many=True)
     csv_name = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
 
-class FileSerializer(serializers.ModelSerializer):
+class FileSerializer(serializers.Serializer):
 
     id = serializers.IntegerField(read_only=True)
     file_no = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
@@ -83,24 +84,19 @@ class FileSerializer(serializers.ModelSerializer):
     file_size = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     order_count = serializers.IntegerField(allow_null=True,required=False)
     status = serializers.IntegerField(allow_null=True,required=False)
-    customer_id = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
-    project_id = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
-    created_by = serializers.CharField(max_length=15,allow_blank=True,allow_null=True,required=False)
-    created_date = serializers.DateTimeField(allow_null=True,required=False)
+    customer_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
+    project_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     updated_by = serializers.CharField(allow_blank=True,allow_null=True,required=False)
     updated_date = serializers.DateTimeField(allow_null=True,required=False)
     file = serializers.FileField()
 
 
-    class Meta:     #instead of meta write Meta (Capital M)
-        model = File
-        fields = '__all__'
- 
-
     def create(self, validated_data):
-        """
-        Create and return a new `Snippet` instance, given the validated data.
-        """
+
+        validated_data['file_no'] = OrderUploadHelper.generate_file_no(validated_data['customer_code'])
+        validated_data['status'] = 1
+        validated_data['updated_date'] = datetime.utcnow()
+    
         return File.objects.create(**validated_data)
 
 class File_Serializer_DTO(serializers.Serializer):
@@ -129,8 +125,7 @@ class validateErrorSerializerList(serializers.Serializer):
 
     serviceStatus = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
     massage = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
-    fileList  = FileSerializer(many=True)
-    validateErrorList = validateErrorSerializer(many=True)
+    validate_error_list = validateErrorSerializer(many=True)
 
 
 

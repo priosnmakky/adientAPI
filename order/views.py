@@ -39,10 +39,18 @@ from django.db.models.functions import Lower
 import math
 from openpyxl.utils import get_column_letter
 from app.helper.config.ConfigMessage import ConfigMessage
+from app.helper.order_helper.OrderUploadHelper import OrderUploadHelper
+from app.helper.workbook_helper.WorkbookHelper import WorkbookHelper
+from app.helper.order_helper.OrderValidatedHelper import OrderValidatedHelper
+from app.serializersMapping.SerializerMapping import SerializerMapping
+
 
 configMessage = ConfigMessage()
+serializerMapping = SerializerMapping()
+
 
 class FileUploadView(APIView):
+    
     parser_class = (FileUploadParser,)
     today_date_str = datetime.utcnow().strftime("%y%m%d")
     letter_list = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
@@ -621,151 +629,39 @@ class FileUploadView(APIView):
     def post(self, request, *args, **kwargs):
 
         try:
-            file_serializer = FileSerializer(data=request.data)
-            customer_id = request.POST.get("customer_id", "")
-            project_id = request.POST.get("project_id", "")
+           
+            customer_code = request.POST.get("customer_code", "")
+            project_code = request.POST.get("project_code", "")
 
             self.order_csv_list_database = []
             self.order_csv_list = []
+
+            file_serializer = FileSerializer(data=request.data)
             
             if file_serializer.is_valid():
 
-                file_no = self.generate_file_no(request.POST.get("customer_id", ""))
-
-                file_serializer.save(file_no = file_no , 
+                file_serializer.save(
                     file_name = request.FILES['file'].name ,
                     file_size = request.FILES['file'].size,
-                    customer_id = customer_id,
-                    project_id = project_id,
-                    status = 1,
-                    created_by = request.user.username,
-                    created_date = datetime.now(tz=timezone.utc)
-                    )
+                    updated_by = request.user.username,
+                )
                 
-                workbook_obj = openpyxl.load_workbook(file_serializer.data['file'][1:])
-                sheet_obj = workbook_obj.active
+            
+                sheet_obj = WorkbookHelper.read_workbook(file_serializer.data['file'][1:])
 
                 row_max_int = sheet_obj.max_row
                 column_max_int = sheet_obj.max_column
 
-                order_list = self.get_order_data(sheet_obj)
+                return_list = OrderUploadHelper.data_mapping_from_sheet(sheet_obj)
+                orderValidatedHelper = OrderValidatedHelper(return_list[0],return_list[3],return_list[4])
+                error_list = orderValidatedHelper.get_error_list()
 
-                supplier_db_list = set(Station.objects.filter(station_code__iregex=r'(' + '|'.join(self.supplierName_list) + ')',station_type__iexact="SUPPLIER",is_active=True).values_list("station_code",flat=True))
-                supplier_db_set = set([s.upper() for s in supplier_db_list])
-                supplier_excel_set = set([s.upper() for s in self.supplierName_list])
-                not_supplier_in_db = set(supplier_excel_set - supplier_db_set)
-                
-                plant_db_list = Station.objects.filter(station_code__iregex=r'(' + '|'.join(self.plantName_list) + ')',station_type__iexact="PLANT",is_active=True).values_list("station_code",flat=True)
-                plant_db_set = set([p.upper() for p in plant_db_list])
-                plant_excel_set = set([p.upper() for p in self.plantName_list])
-                not_plant_in_db = set(plant_excel_set - plant_db_set)
 
-                
-                # order_missing_plant_list = [ x for x in order_list if x[1] in list(order_plant_list) and x[2] > 5]
-                item_list = [ x for x in order_list if x[2] == 1 and (not x[0].isnumeric() or x[0] == "") ]
-                partNumber_list = [ x for x in order_list if x[2] == 2 and x[0] == "" ]
-                partDescription_list = [ x for x in order_list if x[2] == 3 and x[0] == "" ]
-                order_supplier_list = [ x for x in order_list if x[0].upper() in list(not_supplier_in_db) and x[2] == 4 ]
-                order_plant_list = [ x for x in order_list if x[0].upper()  in list(not_plant_in_db) and x[2] == 5 ]
-                order_qry_list = [ x for x in order_list if x[2] > 5 and not x[0].isnumeric() ]
-
-                validate_excel_error_list =  item_list+partNumber_list +partDescription_list + order_supplier_list + order_plant_list + order_qry_list
-                
-                if len(validate_excel_error_list) >0 :
-
-                    validate_error_list = []
-                    file_deleted_obj = File.objects.filter(created_by= request.user.username, status = 1)[0]
-                    file_deleted_obj.delete()
-
-                    for error in validate_excel_error_list:
-
-                        validate_error_obj = validateError() 
-                        if error[2] == 1:
-                            
-                            if error[0] is None or error[0] == "" :
-
-                                validate_error_obj.error = configMessage.configs.get("UPLOAD_ORDER_ITEM_REQUIRED").data
-                                validate_error_obj.row = error[1]
-                                validate_error_obj.column = get_column_letter(error[2])
-                            
-                            elif not error[0].isnumeric() :
-
-                                validate_error_obj.error = configMessage.configs.get("UPLOAD_ORDER_ITEM_INTEGER").data
-                                validate_error_obj.row = error[1]
-                                validate_error_obj.column = get_column_letter(error[2])
-                        
-                        if error[2] == 2:
-                            
-                            if error[0] is None or error[0] == "" :
-
-                                validate_error_obj.error = configMessage.configs.get("UPLOAD_ORDER_PARTNUMBER_REQUIRED").data
-                                validate_error_obj.row = error[1]
-                                validate_error_obj.column = get_column_letter(error[2])
-                        
-                        if error[2] == 3:
-                            
-                            if error[0] is None or error[0] == "" :
-
-                                validate_error_obj.error = configMessage.configs.get("UPLOAD_ORDER_PARTDESCRIPTION_REQUIRED").data
-                                validate_error_obj.row = error[1]
-                                validate_error_obj.column = get_column_letter(error[2])
-
-                        if error[2] == 4:
-
-                            station_len_int = len(Station.objects.filter(station_code__iexact= str(error[0]) ,station_type__iexact="PLANT",is_active=True))
-           
-                            if error[0] is None or error[0] == "" :
-
-                                validate_error_obj.error = configMessage.configs.get("UPLOAD_ORDER_SUPPLIERCODE_REQUIRED").data
-                                validate_error_obj.row = error[1]
-                                validate_error_obj.column = get_column_letter(error[2])
-
-                            elif station_len_int == 0 :
+                if len(error_list) > 0 :
+                    
     
-                                validate_error_obj.error = configMessage.configs.get("UPLOAD_ORDER_SUPPLIERCODE_DATABASE").data
-                                validate_error_obj.row = error[1]
-                                validate_error_obj.column = get_column_letter(error[2]) 
+                    serializer = serializerMapping.mapping_serializer_list(validateErrorSerializerList,None,"Error",configMessage.configs.get("UPLOAD_FILE_MASSAGE_ERROR").data,None,None,sorted(error_list, key=lambda error: (error.row,error.column) ) )
 
-                        # check plant code 
-                        elif error[2] == 5 :
-                            
-                            station_len_int = len(Station.objects.filter(station_code__iexact= str(error[0]),station_type__iexact="PLANT",is_active=True))
-                            
-                            if error[0] is None or error[0] == "" :
-
-                                validate_error_obj.error = configMessage.configs.get("UPLOAD_ORDER_PLANTCODE_REQUIRED").data
-                                validate_error_obj.row = error[1]
-                                validate_error_obj.column = get_column_letter(error[2])
-                            
-                            elif station_len_int == 0 :
-                                validate_error_obj.error = configMessage.configs.get("UPLOAD_ORDER_PLANTCODE_DATABASE").data
-                                validate_error_obj.row = error[1]
-                                validate_error_obj.column = get_column_letter(error[2]) 
-                        
-                        elif error[2] > 5 :
-
-                            if error[0] is None or error[0] == "" :
-
-                                validate_error_obj.error = configMessage.configs.get("UPLOAD_ORDER_QUANTITY_REQUIRED").data
-                                validate_error_obj.row = error[1]
-                                validate_error_obj.column = get_column_letter(error[2])
-
-                            elif not error[0].isnumeric() :
-
-                                validate_error_obj.error = configMessage.configs.get("UPLOAD_ORDER_QUANTITY_INTEGER").data
-                                validate_error_obj.row = error[1]
-                                validate_error_obj.column = get_column_letter(error[2])
-                        
-                        
-                        validate_error_list.append(validate_error_obj)
-
-                    #####################################################
-                    validateErrorListObj =  validateErrorList()
-                    validateErrorListObj.serviceStatus = "Error"
-                    validateErrorListObj.massage = configMessage.configs.get("UPLOAD_FILE_MASSAGE_ERROR").data
-                    validateErrorListObj.validateErrorList = sorted(validate_error_list, key=lambda error: (error.row,error.column) )
-
-                    serializer = validateErrorSerializerList(validateErrorListObj)
                     return Response(serializer.data, status=status.HTTP_200_OK)
 
                 else :
