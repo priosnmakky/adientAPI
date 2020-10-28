@@ -43,6 +43,8 @@ from app.helper.order_helper.OrderUploadHelper import OrderUploadHelper
 from app.helper.workbook_helper.WorkbookHelper import WorkbookHelper
 from app.helper.order_helper.OrderValidatedHelper import OrderValidatedHelper
 from app.serializersMapping.SerializerMapping import SerializerMapping
+from app.helper.order_helper.OrderManageHelper import OrderManageHelper
+
 
 
 configMessage = ConfigMessage()
@@ -640,12 +642,14 @@ class FileUploadView(APIView):
             
             if file_serializer.is_valid():
 
-                file_serializer.save(
+                file_obj = file_serializer.save(
                     file_name = request.FILES['file'].name ,
                     file_size = request.FILES['file'].size,
                     updated_by = request.user.username,
                 )
                 
+
+               
             
                 sheet_obj = WorkbookHelper.read_workbook(file_serializer.data['file'][1:])
 
@@ -665,167 +669,173 @@ class FileUploadView(APIView):
                     return Response(serializer.data, status=status.HTTP_200_OK)
 
                 else :
-                    
-                    order_database_list = set(Order.objects.filter(is_deleted=False).values_list("part_number","supplier_no","plant_no","due_date__year","due_date__month","due_date__day","order_id","order_qty","history_updated"))
-                    order_database_set = set([(p[0].upper(),p[1].upper(),p[2].upper(),p[3],p[4],p[5]) for p in order_database_list ])
-                    order_excel_set = set([p[3] for p in order_list if p[2] > 5 and  str(p[0]).isnumeric() and int(str(p[0])) >0 ] )
+                    # def __init__(self,file_no,order_list,due_date_list):
+                    # print(file_obj.file_no)
+                    orderManageHelper = OrderManageHelper(file_obj.file_no,return_list[0],return_list[5])
+                    orderManageHelper.order_management()
+                    # order_database_list = set(Order.objects.filter(is_deleted=False).values_list("part_number","supplier_no","plant_no","due_date__year","due_date__month","due_date__day","order_id","order_qty","history_updated"))
+                    # order_database_set = set([(p[0].upper(),p[1].upper(),p[2].upper(),p[3],p[4],p[5]) for p in order_database_list ])
+                    # order_excel_set = set([p[3] for p in order_list if p[2] > 5 and  str(p[0]).isnumeric() and int(str(p[0])) >0 ] )
                     
 
-                    order_csv_list = []
-                    order_csv_list_database = []
-                    order_loop_list = [o for o in order_list if   (o[2] > 5 and int(o[0]) > 0 )]
+                    # order_csv_list = []
+                    # order_csv_list_database = []
+                    # order_loop_list = [o for o in order_list if   (o[2] > 5 and int(o[0]) > 0 )]
                     
-                    for  order_obj in order_loop_list :
+                    # for  order_obj in order_loop_list :
 
-                        order_history_obj = order_history()
+                    #     order_history_obj = order_history()
                         
-                        if  not order_obj[3] in order_database_set: 
+                    #     if  not order_obj[3] in order_database_set: 
                             
-                            order_id = self.generate_order_no([d[1] for d in self.due_date_list if d[0] == order_obj[4][5]][0],order_obj[4][5].strftime("%Y%m%d"))
+                    #         order_id = self.generate_order_no([d[1] for d in self.due_date_list if d[0] == order_obj[4][5]][0],order_obj[4][5].strftime("%Y%m%d"))
                             
-                            order_history_obj.add = order_obj[0]
-                            order_history_obj.update = []
-                            order_history_obj.delete = []
+                    #         order_history_obj.add = order_obj[0]
+                    #         order_history_obj.update = []
+                    #         order_history_obj.delete = []
              
-                            history_str = json.dumps( order_history_obj.__dict__ )
+                    #         history_str = json.dumps( order_history_obj.__dict__ )
 
-                            order_row_database_obj = (
-                                order_obj[4][0], #Item_no
-                                order_obj[4][1], #part_number
-                                file_no, #file_no
-                                order_id, #order_id
-                                order_obj[4][5].strftime("%d/%m/%Y"), #due_date 
-                                order_obj[0], #order_qty
-                                history_str, #history_str
-                                order_obj[4][3], # supplier_no
-                                order_obj[4][4], # plant_no
-                                order_obj[4][2], # part_name,
-                                "add"
-                            )
+                    #         order_row_database_obj = (
+                    #             order_obj[4][0], #Item_no
+                    #             order_obj[4][1], #part_number
+                    #             file_no, #file_no
+                    #             order_id, #order_id
+                    #             order_obj[4][5].strftime("%d/%m/%Y"), #due_date 
+                    #             order_obj[0], #order_qty
+                    #             history_str, #history_str
+                    #             order_obj[4][3], # supplier_no
+                    #             order_obj[4][4], # plant_no
+                    #             order_obj[4][2], # part_name,
+                    #             "add"
+                    #         )
 
-                            order_row_list = (
-                                order_obj[4][0],
-                                order_id,
-                                order_obj[4][1],
-                                order_obj[0],
-                                order_obj[4][3],
-                                order_obj[4][4],
-                                order_obj[0],
-                                order_obj[4][5].strftime("%d/%m/%Y")
-                            )
-                            update =  [ idx for idx,  d in enumerate(self.due_date_list) if d[0] == order_obj[4][5]]
-                            self.due_date_list[update[0]]  = (self.due_date_list[update[0]][0],self.due_date_list[update[0]][1] +1  )
+                    #         order_row_list = (
+                    #             order_obj[4][0],
+                    #             order_id,
+                    #             order_obj[4][1],
+                    #             order_obj[0],
+                    #             order_obj[4][3],
+                    #             order_obj[4][4],
+                    #             order_obj[0],
+                    #             order_obj[4][5].strftime("%d/%m/%Y")
+                    #         )
+                    #         update =  [ idx for idx,  d in enumerate(self.due_date_list) if d[0] == order_obj[4][5]]
+                    #         self.due_date_list[update[0]]  = (self.due_date_list[update[0]][0],self.due_date_list[update[0]][1] +1  )
 
-                            order_csv_list_database.append(order_row_database_obj)
-                            order_csv_list.append(order_row_list)
+                    #         order_csv_list_database.append(order_row_database_obj)
+                    #         order_csv_list.append(order_row_list)
 
-                        else :
+                    #     else :
 
-                            order_in_db_list = [o for o in order_database_list if  {o[0].upper(),o[1].upper(),o[2].upper(),o[3],o[4],o[5]} == set(order_obj[3])  ]
+                    #         order_in_db_list = [o for o in order_database_list if  {o[0].upper(),o[1].upper(),o[2].upper(),o[3],o[4],o[5]} == set(order_obj[3])  ]
          
-                            if len(order_in_db_list) > 0 and int(order_in_db_list[0][7]) !=  int(order_obj[0]):
+                    #         if len(order_in_db_list) > 0 and int(order_in_db_list[0][7]) !=  int(order_obj[0]):
 
-                                history_updated_obj = json.loads(order_in_db_list[0][8])
-                                history_updated_obj['update'].append(order_in_db_list[0][7])
-                                history_updated_json_str = json.dumps(history_updated_obj)
+                    #             history_updated_obj = json.loads(order_in_db_list[0][8])
+                    #             history_updated_obj['update'].append(order_in_db_list[0][7])
+                    #             history_updated_json_str = json.dumps(history_updated_obj)
 
-                                order_row_database_obj = (
-                                    order_obj[4][0], #Item_no
-                                    order_obj[4][1], #part_number
-                                    file_no, #file_no
-                                    order_in_db_list[0][6], #order_id
-                                    order_obj[4][5].strftime("%d/%m/%Y"), #due_date 
-                                    order_obj[0], #order_qty
-                                    history_updated_json_str, #history_str
-                                    order_obj[4][3], # supplier_no
-                                    order_obj[4][4], # plant_no
-                                    order_obj[4][2], # part_name,
-                                    "update"
-                                )
-                                order_csv_list_database.append(order_row_database_obj)
+                    #             order_row_database_obj = (
+                    #                 order_obj[4][0], #Item_no
+                    #                 order_obj[4][1], #part_number
+                    #                 file_no, #file_no
+                    #                 order_in_db_list[0][6], #order_id
+                    #                 order_obj[4][5].strftime("%d/%m/%Y"), #due_date 
+                    #                 order_obj[0], #order_qty
+                    #                 history_updated_json_str, #history_str
+                    #                 order_obj[4][3], # supplier_no
+                    #                 order_obj[4][4], # plant_no
+                    #                 order_obj[4][2], # part_name,
+                    #                 "update"
+                    #             )
+                    #             order_csv_list_database.append(order_row_database_obj)
 
-                            order_row_list = (
-                                order_obj[4][0],
-                                order_in_db_list[0][6],
-                                order_obj[4][1],
-                                order_obj[0],
-                                order_obj[4][3],
-                                order_obj[4][4],
-                                order_obj[0],
-                                order_obj[4][5].strftime("%d/%m/%Y")
-                            )
+                    #         order_row_list = (
+                    #             order_obj[4][0],
+                    #             order_in_db_list[0][6],
+                    #             order_obj[4][1],
+                    #             order_obj[0],
+                    #             order_obj[4][3],
+                    #             order_obj[4][4],
+                    #             order_obj[0],
+                    #             order_obj[4][5].strftime("%d/%m/%Y")
+                    #         )
                         
                             
-                            order_csv_list.append(order_row_list)
+                    #         order_csv_list.append(order_row_list)
 
-                    delete_order_list = [o for o in order_database_list if (o[0].upper(),o[1].upper(),o[2].upper(),o[3],o[4],o[5]) not in order_excel_set   ]
+                    # delete_order_list = [o for o in order_database_list if (o[0].upper(),o[1].upper(),o[2].upper(),o[3],o[4],o[5]) not in order_excel_set   ]
                     
-                    for delete_order in delete_order_list :
-                        print("delete")
-                        history_updated_obj = json.loads(delete_order[8])
-                        history_updated_obj['delete'].append(delete_order[7])
-                        history_updated_json_str = json.dumps(history_updated_obj)
+                    # for delete_order in delete_order_list :
+                    #     print("delete")
+                    #     history_updated_obj = json.loads(delete_order[8])
+                    #     history_updated_obj['delete'].append(delete_order[7])
+                    #     history_updated_json_str = json.dumps(history_updated_obj)
 
-                        order_row_database_obj = (
-                            "", #Item_no,
-                            "", #part_number
-                            "", #file_no
-                            delete_order[6], #order_id
-                            "", #due_date 
-                            "", #order_qty
-                            history_updated_json_str, #history_str
-                            "", # supplier_no
-                            "", # plant_no
-                            "", # part_name,
-                            "delete"
-                            )
-                        order_csv_list_database.append(order_row_database_obj)
+                    #     order_row_database_obj = (
+                    #         "", #Item_no,
+                    #         "", #part_number
+                    #         "", #file_no
+                    #         delete_order[6], #order_id
+                    #         "", #due_date 
+                    #         "", #order_qty
+                    #         history_updated_json_str, #history_str
+                    #         "", # supplier_no
+                    #         "", # plant_no
+                    #         "", # part_name,
+                    #         "delete"
+                    #         )
+                    #     order_csv_list_database.append(order_row_database_obj)
                         
                         
-                    file_list = File.objects.filter(file_no=file_no)
-                    file_list.update(order_count= len(order_loop_list))
+                    # file_list = File.objects.filter(file_no=file_no)
+                    # file_list.update(order_count= len(order_loop_list))
                     
-                    order_csv_list = sorted(order_csv_list, key=lambda x: x[1])
+                    # order_csv_list = sorted(order_csv_list, key=lambda x: x[1])
                     
-                    order_csv_list.insert(0, [
-                            "Item No","Order ID",
-                            "Part Number",
-                            "Part Description",
-                            "Supplier Name",
-                            "Plant",
-                            "Order Amount",
-                            "Date"
-                        ]
-                    )
-                    with open("media/" + file_no + '.csv', 'w', newline='') as file:
-                        writer = csv.writer(file)
-                        writer.writerows(order_csv_list)
+                    # order_csv_list.insert(0, [
+                    #         "Item No","Order ID",
+                    #         "Part Number",
+                    #         "Part Description",
+                    #         "Supplier Name",
+                    #         "Plant",
+                    #         "Order Amount",
+                    #         "Date"
+                    #     ]
+                    # )
+                    # with open("media/" + file_no + '.csv', 'w', newline='') as file:
+                    #     writer = csv.writer(file)
+                    #     writer.writerows(order_csv_list)
                     
-                    with open("media/" + file_no + '_database.csv', 'w', newline='') as file:
-                        writer = csv.writer(file, delimiter=";", quotechar="'")
-                        writer.writerows(order_csv_list_database)
+                    # with open("media/" + file_no + '_database.csv', 'w', newline='') as file:
+                    #     writer = csv.writer(file, delimiter=";", quotechar="'")
+                    #     writer.writerows(order_csv_list_database)
 
-                    validateErrorListObj =  validateErrorList()
-                    validateErrorListObj.serviceStatus = "success"
-                    validateErrorListObj.massage = configMessage.configs.get("UPLOAD_FILE_MASSAGE_SUCCESSFUL").data
-                    validateErrorListObj.fileList = None
-
-                    serializer = validateErrorSerializerList(validateErrorListObj)
+                    # validateErrorListObj =  validateErrorList()
+                    # validateErrorListObj.serviceStatus = "success"
+                    # validateErrorListObj.massage = configMessage.configs.get("UPLOAD_FILE_MASSAGE_SUCCESSFUL").data
+                    # validateErrorListObj.fileList = None
+                    # mapping_serializer_list (self,serialiser_DTO,data_list,serviceStatus,massage,csv_name,pdf_name,validate_error_list)
+                    # serializer = validateErrorSerializerList(validateErrorListObj)
+                    serializer = serializerMapping.mapping_serializer_list(validateErrorSerializerList,None,"success",configMessage.configs.get("UPLOAD_FILE_MASSAGE_SUCCESSFUL").data,None,None,None )
                     return Response(serializer.data, status=status.HTTP_200_OK)
                
         except Exception as e:
 
-            validateErrorListObj =  validateErrorList()
-            validateErrorListObj.serviceStatus = "Error"
-            validateErrorListObj.massage = e
-            validateErrorListObj.fileList = None
+            print(e)
+            # validateErrorListObj =  validateErrorList()
+            # validateErrorListObj.serviceStatus = "Error"
+            # validateErrorListObj.massage = e
+            # validateErrorListObj.fileList = None
 
-            file_deleted_obj = File.objects.filter(created_by= request.user.username, status = 1)
-            file_deleted_obj.delete()
+            # file_deleted_obj = File.objects.filter(created_by= request.user.username, status = 1)
+            # file_deleted_obj.delete()
 
-            serializer = validateErrorSerializerList(validateErrorListObj)
+            # serializer = validateErrorSerializerList(validateErrorListObj)
+            serializer = serializerMapping.mapping_serializer_list(validateErrorSerializerList,None,"Error",e,None,None,None )
 
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

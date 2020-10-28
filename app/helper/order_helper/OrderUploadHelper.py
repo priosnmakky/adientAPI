@@ -10,6 +10,7 @@ class OrderUploadHelper:
     supplierName_list = []
     plantName_list = []
     due_date_list = []
+    letter_list = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
 
     def __init__(self):
         pass
@@ -25,6 +26,41 @@ class OrderUploadHelper:
         file_no = customer_code_2dg_first_start_str + today_date_str + "{0:0=2d}".format(file_count + 1)
 
         return file_no
+    
+    @staticmethod
+    def generate_order_no(amount,due_date_str):
+
+        letter_list = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+        amount = amount + 1
+        no_str = due_date_str 
+        amount_letter_int = int(amount/1000)
+        amount_minus_letter_int =  amount  % 1000 
+
+        
+        if amount_minus_letter_int == 0:
+
+            no_str = no_str + letter_list[amount_letter_int ] + "001"
+        
+        else :
+
+            order_number_str = str(amount)
+
+            if amount > 1000 :
+
+                amount_minus_letter_int = amount_minus_letter_int + 1
+
+            if amount_minus_letter_int < 10:
+
+                order_number_str = "00" + str(amount_minus_letter_int ) 
+
+            elif amount_minus_letter_int < 100:
+
+                order_number_str = "0" + str(amount_minus_letter_int )
+            
+            no_str = no_str + letter_list[amount_letter_int ] + order_number_str
+
+        return no_str
+    
     
     @staticmethod
     def data_mapping_from_sheet(sheet_obj) :
