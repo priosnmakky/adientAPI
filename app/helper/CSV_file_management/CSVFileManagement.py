@@ -14,7 +14,7 @@ class CSVFileManagement:
         self.newline = newline
         self.csv_list = []
 
-    def generate_file_no(self,header_list) :
+    def covert_to_header(self,header_list) :
 
         return_header_list = []
         for header in header_list :
@@ -43,12 +43,14 @@ class CSVFileManagement:
             writer.writerows(self.csv_list)
         
         return CSV_file_name_str
-
     
+    @staticmethod
+    def read_CSV_file(name_file_str) :
 
-        # with open("media/" +  self.name +'.csv', 'w', newline='',encoding='utf-8') as file:
-        #     writer = csv.writer(file)
-        #     writer.writerows(part_csv_list)
+        with open(name_file_str, newline='') as csvfile:
+            data_list = csv.reader(csvfile, delimiter=';', quotechar='|')
+
+        return data_list
 
 
     

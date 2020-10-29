@@ -54,7 +54,6 @@ class OrderValidatedHelper:
         
         return set(self.get_plant_in_workbook() - self.get_plant_in_db())
 
-
     def validate_item_list(self) :
         
         item_list = [ x for x in self.order_list if x[2] == 1 and (not x[0].isnumeric() or x[0] == "") ]
@@ -128,7 +127,7 @@ class OrderValidatedHelper:
 
             validate_error_obj = validateError() 
 
-            station_len_int = len(Station.objects.filter(station_code__iexact= str(error[0]) ,station_type__iexact="PLANT",is_active=True))
+            station_len_int = len(Station.objects.filter(station_code__iexact= str(supplier_error[0]) ,station_type__iexact="PLANT",is_active=True))
            
             if supplier_error[0] is None or supplier_error[0] == "" :
 
@@ -155,7 +154,7 @@ class OrderValidatedHelper:
 
             validate_error_obj = validateError() 
 
-            station_len_int = len(Station.objects.filter(station_code__iexact= str(error[0]),station_type__iexact="PLANT",is_active=True))
+            station_len_int = len(Station.objects.filter(station_code__iexact= str(plant_error[0]),station_type__iexact="PLANT",is_active=True))
                             
             if plant_error[0] is None or plant_error[0] == "" :
 

@@ -4,7 +4,7 @@ from django.urls import path
  
 urlpatterns = [ 
     path('api/upload', FileUploadView.as_view()),
-    path('api/files', get),
+    path('api/files', get_files),
     path('api/get_files', file_list),
     path('api/get_order', order_list),
     path('api/comfirm', confirm),

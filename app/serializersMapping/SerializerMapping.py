@@ -82,8 +82,6 @@ class SerializerMapping:
         self.base_obj.pdf_name = pdf_name
         self.base_obj.validate_error_list = validate_error_list
 
-        print(validate_error_list)
-
         serialiser_DTO = serialiser_DTO(self.base_obj)
 
         return serialiser_DTO

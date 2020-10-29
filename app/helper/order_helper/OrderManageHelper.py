@@ -184,16 +184,22 @@ class OrderManageHelper:
 
         return self.order_csv_list_database
     
+    def get_order_csv_list(self) : 
+        
+        return self.order_csv_list
+    
+    def get_order_csv_list_database(self) :
+
+        return self.order_csv_list_database
+    
     def order_management(self) : 
 
         order_management_list = [o for o in self.order_list if   (o[2] > 5 and int(o[0]) > 0 )]
+        order_db = self.get_order_db()
 
         for  order_obj in order_management_list :
 
-            if  not order_obj[3] in self.get_order_db(): 
-
-                # order_no = self.generate_order_no([d[1] for d in self.due_date_list if d[0] == order_obj[4][5]][0],order_obj[4][5].strftime("%Y%m%d"))
-                # history_str = self.get_order_history(order_obj[0],None,"ADD")
+            if  not order_obj[3] in order_db: 
 
                 self.add_order(order_obj)
             
@@ -205,6 +211,7 @@ class OrderManageHelper:
             
         for delete_order in delete_order_list :   
 
+            print("delete")
             self.delete_order(delete_order)
             
                     
