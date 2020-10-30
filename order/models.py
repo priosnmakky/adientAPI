@@ -30,23 +30,20 @@ class File(models.Model):
 class Order(models.Model):
     part_number = models.CharField(max_length=150,blank=False, default='')
     item_no = models.CharField(max_length=50,blank=False, default='')
-    file_id = models.CharField(max_length=150,blank=False, default='')
-    order_id = models.CharField(max_length=150,blank=False, default='')
+    file_no = models.CharField(max_length=150,blank=False, default='')
+    order_no = models.CharField(max_length=150,blank=False, default='')
     due_date = models.DateTimeField(default=datetime.now(), blank=True)
     order_qty = models.IntegerField(blank=True,null=True)
     package_no = models.CharField(max_length=150,blank=False, default='')
     package_qty = models.DecimalField(max_digits=20, decimal_places=2,blank=True, null=True)
     route_code = models.CharField(max_length=150,blank=False, default='')
     route_trip = models.CharField(max_length=150,blank=False, default='')
-    trip_no = models.CharField(max_length=150,blank=False, default='')
     history_updated = models.CharField(max_length=2000,blank=False, default='')
     is_part_completed = models.BooleanField(default=False)
     is_route_completed = models.BooleanField(default=False)
-    status = models.IntegerField(blank=True,null=True)
     is_deleted = models.BooleanField(default=False)
-    is_updated = models.BooleanField(default=False)
-    supplier_no = models.CharField(max_length=150,blank=False, default='')
-    plant_no = models.CharField(max_length=150,blank=False, default='')
+    supplier_code = models.CharField(max_length=150,blank=False, default='')
+    plant_code = models.CharField(max_length=150,blank=False, default='')
     project_code = models.CharField(max_length=150,blank=False, default='')
     pickup_no = models.CharField(max_length=150,blank=False, default='')
     created_by = models.CharField(max_length=15,blank=True, null=True)
@@ -62,7 +59,7 @@ class Order(models.Model):
     #     #     # Get the maximum display_id value from the database
     #     order_no = self.objects.id
     #     if order_no is not None:
-    #             self.order_id = order_id + 1
+    #             self.order_no = order_no + 1
 
     #         # # aggregate can return None! Check it first.
     #         # # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it

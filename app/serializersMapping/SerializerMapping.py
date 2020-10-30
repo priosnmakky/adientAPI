@@ -58,7 +58,7 @@ class SerializerMapping:
 
         return serialiser_DTO
     
-    @staticmethod
+
     def mapping_serializer_obj (self,serialiser_DTO,data,serviceStatus,massage,csv_name,pdf_name,validate_error_list):
 
         self.base_obj.data = data

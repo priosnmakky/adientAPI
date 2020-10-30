@@ -1,7 +1,7 @@
 class Order_transaction:
   action = ""
   file_id = ""
-  order_id = ""
+  order_no = ""
   supplier = ""
   plant = ""
   part_no = ""

@@ -18,11 +18,14 @@ class OrderManageHelper:
         self.file_no = file_no
         self.order_list = order_list
         self.due_date_list = due_date_list
+        self.order_csv_list_database = []
+        self.order_csv_list = []
+        self.order_db_list = []
         
     
     def get_order_db(self) :
         
-        self.order_db_list = set(Order.objects.filter(is_deleted=False).values_list("part_number","supplier_no","plant_no","due_date__year","due_date__month","due_date__day","order_id","order_qty","history_updated"))
+        self.order_db_list = set(Order.objects.filter(is_deleted=False).values_list("part_number","supplier_code","plant_code","due_date__year","due_date__month","due_date__day","order_no","order_qty","history_updated"))
         order_database_set = set([(db[0].upper(),db[1].upper(),db[2].upper(),db[3],db[4],db[5]) for db in self.order_db_list ])
         
         return order_database_set
@@ -85,12 +88,12 @@ class OrderManageHelper:
             item_no, #Item_no
             part_number, #part_number
             file_no, #file_no
-            order_no, #order_id
+            order_no, #order_no
             "" if due_date == "" else due_date.strftime("%d/%m/%Y"), #due_date 
             order_qry, #order_qty
             history_str, #history_str
-            supplier_code, # supplier_no
-            plant_code, # plant_no
+            supplier_code, # supplier_code
+            plant_code, # plant_code
             part_name, # part_name,
             action
             )
@@ -119,13 +122,15 @@ class OrderManageHelper:
 
         self.add_order_cvs(
             order_obj[4][0],#Item_no
-            order_no,#order_id
+            order_no,#order_no
             order_obj[4][1], #part_number
             order_obj[4][3], # supplier_code
             order_obj[4][4],# plant_code
             order_obj[0],#order_qty
             order_obj[4][5] #due_date 
         )
+        update =  [ idx for idx,  d in enumerate(self.due_date_list) if d[0] == order_obj[4][5]]
+        self.due_date_list[update[0]]  = (self.due_date_list[update[0]][0],self.due_date_list[update[0]][1] +1  )
 
         return self.order_csv_list_database
     
@@ -154,7 +159,7 @@ class OrderManageHelper:
         self.add_order_cvs(
             
             order_obj[4][0],#Item_no
-            order_in_db_list[0][6],#order_id
+            order_in_db_list[0][6],#order_no
             order_obj[4][1], #part_number
             order_obj[4][3], # supplier_code
             order_obj[4][4],# plant_code
@@ -198,7 +203,7 @@ class OrderManageHelper:
         order_db = self.get_order_db()
 
         for  order_obj in order_management_list :
-
+         
             if  not order_obj[3] in order_db: 
 
                 self.add_order(order_obj)
@@ -211,7 +216,6 @@ class OrderManageHelper:
             
         for delete_order in delete_order_list :   
 
-            print("delete")
             self.delete_order(delete_order)
             
                     

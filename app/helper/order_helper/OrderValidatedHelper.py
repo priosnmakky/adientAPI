@@ -33,7 +33,7 @@ class OrderValidatedHelper:
 
         return supplier_workbook_set
     
-    def get_supplier_not_in_workbook(self) : 
+    def get_supplier_codet_in_workbook(self) : 
         
         return set(self.get_supplier_in_workbook() - self.get_supplier_in_db())
     
@@ -50,7 +50,7 @@ class OrderValidatedHelper:
 
         return plant_workbook_set
     
-    def get_plant_not_in_workbook(self) : 
+    def get_plant_codet_in_workbook(self) : 
         
         return set(self.get_plant_in_workbook() - self.get_plant_in_db())
 
@@ -121,7 +121,7 @@ class OrderValidatedHelper:
 
     def validate_supplier_list(self) :
         
-        supplier_list = [ x for x in self.order_list if x[0].upper() in list(self.get_supplier_not_in_workbook()) and x[2] == 4 ]
+        supplier_list = [ x for x in self.order_list if x[0].upper() in list(self.get_supplier_codet_in_workbook()) and x[2] == 4 ]
 
         for supplier_error in supplier_list:
 
@@ -148,7 +148,7 @@ class OrderValidatedHelper:
     
     def validate_plant_list(self) :
         
-        plant_list = [ x for x in self.order_list if x[0].upper()  in list(self.get_plant_not_in_workbook()) and x[2] == 5 ]
+        plant_list = [ x for x in self.order_list if x[0].upper()  in list(self.get_plant_codet_in_workbook()) and x[2] == 5 ]
 
         for plant_error in plant_list:
 

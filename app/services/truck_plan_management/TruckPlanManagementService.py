@@ -16,12 +16,12 @@ class TruckPlanManagementService:
     def search_order_for_generate_pickup(self,customer_code_selected_str,project_code_selected_str,due_date_selected_str):
 
 
-        query_first = "SELECT truck_plan_management_pickup.pickup_no,truck_plan_management_pickup.supplier_code,truck_plan_management_pickup.plant_code,truck_plan_management_pickup.route_code,truck_plan_management_pickup.route_trip,truck_plan_management_pickup.due_date,COUNT(order_order.order_id)  FROM truck_plan_management_pickup  "
+        query_first = "SELECT truck_plan_management_pickup.pickup_no,truck_plan_management_pickup.supplier_code,truck_plan_management_pickup.plant_code,truck_plan_management_pickup.route_code,truck_plan_management_pickup.route_trip,truck_plan_management_pickup.due_date,COUNT(order_order.order_no)  FROM truck_plan_management_pickup  "
 
         joint_str_first = " LEFT JOIN order_order ON order_order.pickup_no = truck_plan_management_pickup.pickup_no and order_order.is_deleted = false and order_order.is_part_completed = true and order_order.is_route_completed = true   "
         where_str_first = " where 1 = 1  "
 
-        query_second = "SELECT order_order.pickup_no,order_order.supplier_no,order_order.plant_no,order_order.route_code,order_order.route_trip,order_order.due_date,COUNT(order_order.order_id) FROM order_order "
+        query_second = "SELECT order_order.pickup_no,order_order.supplier_code,order_order.plant_code,order_order.route_code,order_order.route_trip,order_order.due_date,COUNT(order_order.order_no) FROM order_order "
 
         joint_str_second  = ""
         where_str_second  = " where order_order.is_deleted = false and order_order.is_part_completed = true and order_order.is_route_completed = true "
@@ -63,7 +63,7 @@ class TruckPlanManagementService:
 
         query_first = query_first + joint_str_first + where_str_first + " GROUP BY truck_plan_management_pickup.pickup_no,truck_plan_management_pickup.supplier_code,truck_plan_management_pickup.plant_code, truck_plan_management_pickup.route_code,truck_plan_management_pickup.route_trip,truck_plan_management_pickup.due_date  "
 
-        query_second = query_second + joint_str_second + where_str_second + " GROUP BY order_order.pickup_no,order_order.supplier_no,order_order.plant_no, order_order.route_code,order_order.route_trip,order_order.due_date   "
+        query_second = query_second + joint_str_second + where_str_second + " GROUP BY order_order.pickup_no,order_order.supplier_code,order_order.plant_code, order_order.route_code,order_order.route_trip,order_order.due_date   "
       
         cursor.execute(query_first + " UNION " + query_second + " Order by pickup_no")
         result_order_list = cursor.fetchall()
@@ -75,8 +75,8 @@ class TruckPlanManagementService:
 
             orderSerializer_obj = OrderSerializer()
             orderSerializer_obj.pickup_no = order_obj[0]
-            orderSerializer_obj.supplier_no = order_obj[1]
-            orderSerializer_obj.plant_no = order_obj[2]
+            orderSerializer_obj.supplier_code = order_obj[1]
+            orderSerializer_obj.plant_code = order_obj[2]
             orderSerializer_obj.route_code = order_obj[3]
             orderSerializer_obj.route_trip = order_obj[4]
             orderSerializer_obj.due_date = datetime.strptime(order_obj[5].strftime("%Y-%m-%d"), "%Y-%m-%d")

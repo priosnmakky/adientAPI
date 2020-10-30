@@ -10,8 +10,7 @@ class OrderUploadHelper:
     supplierName_list = []
     plantName_list = []
     due_date_list = []
-    letter_list = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
-
+    
     def __init__(self):
         pass
 

@@ -56,8 +56,8 @@ class PickUp_Serializer(serializers.Serializer):
     def create(self, validated_data):
 
         order_obj = Order.objects.filter(
-            supplier_no=validated_data.get('supplier_code'),
-            plant_no=validated_data.get('plant_code'),
+            supplier_code=validated_data.get('supplier_code'),
+            plant_code=validated_data.get('plant_code'),
             route_code=validated_data.get('route_code'),
             route_trip=validated_data.get('route_trip'),
             due_date__year=validated_data.get('due_date').year,

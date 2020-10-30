@@ -124,8 +124,8 @@ def generate_PUS(request):
                 pickUp_obj['due_date'] = datetime.strptime(pickUp_obj['due_date'], "%d/%m/%Y").date()
                 due_date_str = pickUp_obj['due_date'].strftime("%Y%m%d") 
 
-                pickUp_obj['supplier_code'] = pickUp_obj['supplier_no']
-                pickUp_obj['plant_code'] = pickUp_obj['plant_no']
+                pickUp_obj['supplier_code'] = pickUp_obj['supplier_code']
+                pickUp_obj['plant_code'] = pickUp_obj['plant_code']
 
             pickUp_serializer = PickUp_Serializer(data=pickUp_list,many = True)
 
@@ -218,8 +218,8 @@ def get_order_by_pickup_no(request):
             pickup_obj = PickUp.objects.filter(pickup_no= pickup_data['pickup_no'])[0]
 
             order_list = Order.objects.filter(
-                            supplier_no=pickup_obj.supplier_code,
-                            plant_no=pickup_obj.plant_code,
+                            supplier_code=pickup_obj.supplier_code,
+                            plant_code=pickup_obj.plant_code,
                             due_date__year=pickup_obj.due_date.year,
                             due_date__month=pickup_obj.due_date.month,
                             due_date__day=pickup_obj.due_date.day,
@@ -256,7 +256,7 @@ def deleted_order_in_pickup(request):
             
             order_data = JSONParser().parse(request)
             print(order_data)
-            order_obj = Order.objects.filter(order_id= order_data['order_id'])
+            order_obj = Order.objects.filter(order_no= order_data['order_no'])
 
             order_obj.update(pickup_no="")
 
@@ -285,7 +285,7 @@ def add_order_in_pickup(request):
         try:
             
             order_data = JSONParser().parse(request)
-            order_obj = Order.objects.filter(order_id= order_data['order_id'])
+            order_obj = Order.objects.filter(order_no= order_data['order_no'])
 
             order_obj.update(pickup_no=order_data['pickup_no'])
 

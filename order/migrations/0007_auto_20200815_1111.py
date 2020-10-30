@@ -75,7 +75,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='order',
-            name='order_id',
+            name='order_no',
             field=models.CharField(default='', max_length=150),
         ),
         migrations.AddField(

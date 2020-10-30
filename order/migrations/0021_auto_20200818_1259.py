@@ -14,12 +14,12 @@ class Migration(migrations.Migration):
         migrations.RenameField(
             model_name='order',
             old_name='plant',
-            new_name='plant_no',
+            new_name='plant_code',
         ),
         migrations.RenameField(
             model_name='order',
             old_name='supplier',
-            new_name='supplier_no',
+            new_name='supplier_code',
         ),
         migrations.AlterField(
             model_name='order',

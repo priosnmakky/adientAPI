@@ -35,7 +35,7 @@ class RouterMaster(models.Model):
 
     route_no = models.CharField(max_length=250,blank=True, null=True)
     route_code = models.CharField(max_length=150,blank=True, null=True)
-    trip_no = models.CharField(max_length=5,blank=True, null=True)
+    route_trip = models.CharField(max_length=5,blank=True, null=True)
     supplier_code  = models.CharField(max_length=50,blank=True, null=True)
     plant_code = models.CharField(max_length=50,blank=True, null=True)
     pickup_before = models.IntegerField(blank=True, null=True)
