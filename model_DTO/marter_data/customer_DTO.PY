@@ -12,5 +12,7 @@ class Customer_DTO:
     updated_date = ""
     project_code = ""
 
+
+
     
     

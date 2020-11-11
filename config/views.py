@@ -19,7 +19,7 @@ from master_data.serializers import CalendarMaster_Serializer,CalendarMaster_Ser
 from master_data.serializers import RouterMaster_Serializer,RouterMaster_Serializer_DTO,RouterMaster_list_Serializer_DTO
 from master_data.serializers import File_Serializer,validate_error_serializer,validate_warning_serializer
 from model_DTO.base_DTO import base_DTO
-from model_DTO.marter_data.customer_DTO import Customer_DTO
+from model_DTO.marter_data.Customer_DTO import Customer_DTO
 from master_data.model_dto.RouteMasterDTO import RouteMasterDTO
 from master_data.model_dto.RouteInfoDTO import RouteInfoDTO
 from rest_framework.permissions import IsAuthenticated

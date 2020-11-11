@@ -51,13 +51,17 @@ class OrderManageHelper:
             
             history_updated_obj = json.loads(history_obj)
             history_updated_obj['update'].append(order_qry)
-            order_history_obj.update = history_updated_obj['update'].append(order_qry)
+            order_history_obj.add = history_updated_obj['add']
+            order_history_obj.update = history_updated_obj['update']
+            order_history_obj.delete = history_updated_obj['delete']
 
         if action == "DELETE" :
             
             history_updated_obj = json.loads(history_obj)
+            order_history_obj.add = history_updated_obj['add']
+            order_history_obj.update = history_updated_obj['update']
             history_updated_obj['delete'].append(order_qry)
-            order_history_obj.update = history_updated_obj['update'].append(order_qry)
+            order_history_obj.delete = history_updated_obj['delete']
             
         history_str = json.dumps( order_history_obj.__dict__ )
 
