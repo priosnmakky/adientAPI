@@ -31,8 +31,26 @@ import re
 import pandas as pd
 from decimal import Decimal
 from app.helper.config.ConfigMessage import ConfigMessage
+from app.helper.error_helper.ErrorHelper import ErrorHelper
+from app.serializersMapping.SerializerMapping import SerializerMapping
+from rest_framework.response import Response
+from app.services.project_service.ProjectService import ProjectService
+from app.helper.project_helper.ProjectHelper import ProjectHepler
+from app.services.customer_service.CustomerService import CustomerService
+from app.helper.customer_helper.CustomerHelper import CustomerHelper
+from app.helper.CSV_file_management.CSVFileManagement import CSVFileManagement
+from app.services.calendarMaster_service.CalendarMasterService import CalendarMasterService
+from app.helper.calendarMaster_helper.CalendarMasterHelper import CalendarMasterHelper
+from app.helper.file_management.FileManagement import FileManagement
+from app.helper.package_helper.PackageHelper import PackageHelper
+from app.services.package_service.PackageService import PackageService
+from app.helper.part_helper.PartHelper import PartHelper
+from app.services.part_service.PartService import PartService
+import json
+
 
 configMessage = ConfigMessage()
+serializerMapping = SerializerMapping()
 
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -41,197 +59,79 @@ def part_list(request):
     if request.method == 'GET':
         try:
             part_list = Part.objects.filter(is_active = True)
-            order_serializer = Part_Serializer(part_list, many=True)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get part"
-            base_DTO_obj.data_list = order_serializer.data
+            serializer = serializerMapping.mapping_serializer_list(
+                Part_list_Serializer_DTO,
+                part_list,
+                "success", 
+                "",
+                "",
+                None,
+                None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            part_list_Serializer_DTO_obj = Part_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(part_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "error"
-            base_DTO_obj.massage = "error"
-            # base_DTO_obj.data_list = order_serializer.data
+            serializer = serializerMapping.mapping_serializer_list(
+                    Part_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
 
-            part_list_Serializer_DTO_obj = Part_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(part_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
-
-        
-
-            # return JsonResponse(order_serializer.data, safe=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
 
 
         try:
+
             part_data = JSONParser().parse(request)
+            part_serializer_obj = Part_Serializer(data=part_data)
+    
+            if part_serializer_obj.is_valid():
 
-            base_DTO_obj =  base_DTO()
+                part_serializer_obj.save()
+                part_obj =  part_serializer_obj.save(updated_by=request.user.username)
 
-            if part_data['project_code'] is None or part_data['project_code'].strip() == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_PROJECTCODE_REQUIRED").data
-                base_DTO_obj.data_list = None
-
-                part_Serializer_DTO = Part_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(part_Serializer_DTO.data, safe=False) 
-
-                    
-            elif part_data['status'] is None or part_data['status'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_STATUS_REQUIRED").data
-                base_DTO_obj.data_list = None
-
-                part_Serializer_DTO = Part_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(part_Serializer_DTO.data, safe=False) 
-
+                serializer = serializerMapping.mapping_serializer_obj(
+                Part_Serializer_DTO,
+                part_obj,
+                "success", 
+                configMessage.configs.get("PART_MASTER_ADD_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
             
-            elif part_data['supplier_code'] is None or part_data['supplier_code'].strip() == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_SUPPLIERCODE_REQUIRED").data
-                base_DTO_obj.data_list = None
-
-                part_Serializer_DTO = Part_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(part_Serializer_DTO.data, safe=False) 
-
-            elif part_data['part_number'] is None or part_data['part_number'].strip() == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_PARTNUMBER_REQUIRED").data
-                base_DTO_obj.data_list = None
-
-                part_Serializer_DTO = Part_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(part_Serializer_DTO.data, safe=False) 
-
-            elif part_data['part_name'] is None or part_data['part_name'].strip() == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_PARTNAME_REQUIRED").data
-                base_DTO_obj.data_list = None
-
-                part_Serializer_DTO = Part_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(part_Serializer_DTO.data, safe=False) 
-
-            elif part_data['package_no'] is None or part_data['package_no'].strip() == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_PACKAGENO_REQUIRED").data
-                base_DTO_obj.data_list = None
-
-                part_Serializer_DTO = Part_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(part_Serializer_DTO.data, safe=False) 
-
-            
-            elif part_data['package_volume'] is None or part_data['package_volume'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_PACKAGEVOLUME_REQUIRED").data
-                base_DTO_obj.data_list = None
-
-                part_Serializer_DTO = Part_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(part_Serializer_DTO.data, safe=False) 
-            
-            elif part_data['package_weight'] is None or part_data['package_weight'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_PACKAGEWEIGHT_REQUIRED").data
-                base_DTO_obj.data_list = None
-
-                part_Serializer_DTO = Part_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(part_Serializer_DTO.data, safe=False) 
-
             else : 
-
-                part_list = Part.objects.filter(part_number = part_data['part_number'])
                 
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Part_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(part_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
             
-                if len(part_list):
-
-                    if part_list[0].is_active == True :
-
-                        base_DTO_obj =  base_DTO()
-                        base_DTO_obj.serviceStatus = "Error"
-                        base_DTO_obj.massage = "Part Number duplicate"
-                        base_DTO_obj.data = None
-
-                        part_Serializer_DTO_reponse = Part_Serializer_DTO(base_DTO_obj)
-
-                        return JsonResponse(part_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-                    
-                    else : 
-
-                        part_list.update(
-                            part_name=part_data['part_name'],
-                            package_no=part_data['package_no'],
-                            package_volume=part_data['package_volume'],
-                            package_weight=part_data['package_weight'],
-                            is_active= True
-                        )
-
-                        base_DTO_obj =  base_DTO()
-                        base_DTO_obj.serviceStatus = "success"
-                        base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_ADD_MASSAGE_SUCCESSFUL").data
-                        base_DTO_obj.data = None
-
-                        part_Serializer_DTO_reponse = Part_Serializer_DTO(base_DTO_obj)
-
-                        return JsonResponse(part_Serializer_DTO_reponse.data, status=status.HTTP_201_CREATED) 
-                        
-                        
-                else :
-
-                    part_serializer_obj = Part_Serializer(data=part_data)
-
-                    if part_serializer_obj.is_valid():
-
-                        part_serializer_obj.save()
-
-                        base_DTO_obj =  base_DTO()
-                        base_DTO_obj.serviceStatus = "success"
-                        base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_ADD_MASSAGE_SUCCESSFUL").data
-                        base_DTO_obj.data = part_serializer_obj.data
-
-                        part_Serializer_DTO = Part_Serializer_DTO(base_DTO_obj)
-
-                        return JsonResponse(part_Serializer_DTO.data, status=status.HTTP_201_CREATED) 
-
-                    else :
-
-                        base_DTO_obj =  base_DTO()
-                        base_DTO_obj.serviceStatus = "Error"
-                        base_DTO_obj.massage = part_serializer_obj.errors
-                        base_DTO_obj.data = part_serializer_obj.data
-
-                        part_list_Serializer_DTO = Part_list_Serializer_DTO(base_DTO_obj)
-
-                        return JsonResponse(part_list_Serializer_DTO.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-
-            part_Serializer_DTO_reponse = Part_Serializer_DTO(base_DTO_obj)
-
-        return JsonResponse(part_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
+            serializer = serializerMapping.mapping_serializer_obj(
+                Part_Serializer_DTO,
+                None,
+                "Error",
+                e,
+                None,
+                None,
+                None )
+                
+            return Response(serializer.data, status=status.HTTP_200_OK)
+         
 
 @api_view(['GET', 'POST', 'DELETE'])
 def comfirm_part(request):   
@@ -248,26 +148,32 @@ def comfirm_part(request):
                 if part_serializer_obj.is_valid():
 
                     part_serializer_obj.save()
-                    
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_COMFIRM_MASSAGE_SUCCESSFUL").data
-            base_DTO_obj.data_list = Part.objects.all()
+            
+            serializer = serializerMapping.mapping_serializer_list(
+                Part_list_Serializer_DTO,
+                None,
+                "success", 
+                "",
+                "",
+                None,
+                None )
 
-            part_list_serializer_DTO_reponse = Part_list_Serializer_DTO(base_DTO_obj)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            return JsonResponse(part_list_serializer_DTO_reponse.data, safe=False)
+                
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data_list = None
+            serializer = serializerMapping.mapping_serializer_list(
+                    Part_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
 
-            part_list_serializer_DTO_reponse = Part_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(part_Serializer_DTO_reponse.data, safe=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
    
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -278,90 +184,53 @@ def edited_part(request):
         try:
 
             part_data = JSONParser().parse(request)
+            part_obj = Part.objects.filter( part_number = part_data["part_number"] )[0]
+            part_serializer_obj = Part_Serializer(part_obj,data=part_data)
 
-            base_DTO_obj =  base_DTO()
+            if part_serializer_obj.is_valid():
 
-            if part_data['package_no'] is None or part_data['package_no'].strip() == "" :
+                part_serializer_obj.save()
 
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_PACKAGENO_REQUIRED").data
-                base_DTO_obj.data_list = None
-
-                part_Serializer_DTO = Part_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(part_Serializer_DTO.data, safe=False) 
-
-            
-            elif part_data['package_volume'] is None or part_data['package_volume'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_PACKAGEVOLUME_REQUIRED").data
-                base_DTO_obj.data_list = None
-
-                part_Serializer_DTO = Part_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(part_Serializer_DTO.data, safe=False) 
-            
-            elif part_data['package_weight'] is None or part_data['package_weight'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_PACKAGEWEIGHT_REQUIRED").data
-                base_DTO_obj.data_list = None
-
-                part_Serializer_DTO = Part_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(part_Serializer_DTO.data, safe=False) 
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Part_Serializer_DTO,
+                    part_obj,
+                    "success", 
+                    configMessage.configs.get("PART_MASTER_EDIT_MASSAGE_SUCCESSFUL").data,
+                    "",
+                    None,
+                    None 
+                    )
             
             else :
 
-                part_obj = Part.objects.filter( part_number = part_data["part_number"] )
-                part_serializer_obj = Part_Serializer(part_obj[0],data=part_data)
-
-                if part_serializer_obj.is_valid():
-
-                    part_serializer_obj.save()
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Part_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(part_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
                     
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "success"
-                    base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_EDIT_MASSAGE_SUCCESSFUL").data
-                    base_DTO_obj.data_list = Part.objects.all()
-
-                    part_list_serializer_DTO_reponse = Part_list_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(part_list_serializer_DTO_reponse.data, safe=False)
-
-                else :  
-                    
-                    part_serializer_obj.save()
-                    
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "Error"
-                    base_DTO_obj.massage = part_serializer_obj.errors
-                    base_DTO_obj.data_list = Part.objects.all()
-
-                    part_list_serializer_DTO_reponse = Part_list_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(part_list_serializer_DTO_reponse.data, safe=False)
-        
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
+            serializer = serializerMapping.mapping_serializer_obj(
+                    Part_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            print(e)
-
-            part_Serializer_DTO_reponse = Part_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(part_Serializer_DTO_reponse.data, safe=False)
 
 @api_view(['POST'])
-
-
-
-def seach_part(request):
+def search_part(request):
 
     if request.method == 'POST':
 
@@ -369,116 +238,64 @@ def seach_part(request):
 
             part_data_obj = JSONParser().parse(request)
 
-            customer_selected = part_data_obj['customer_selected']
-            project_selected = part_data_obj['project_selected']
-            supplier_selected = part_data_obj['supplier_selected']
-            status_selected = part_data_obj['status_selected']
-            partNumber_selected = part_data_obj['partNumber_selected']
+            customer_code = part_data_obj['customer_selected']
+            project_code = part_data_obj['project_selected']
+            supplier_code = part_data_obj['supplier_selected']
+            status = part_data_obj['status_selected']
+            part_number = part_data_obj['partNumber_selected']
 
-            query = "select * from master_data_part "
-
-            joint_str = "" 
-            where_str = " where 1 = 1 and master_data_part.is_active = true "
-
-            if customer_selected is not None and customer_selected != "":
-                
-                joint_str = joint_str + " INNER JOIN master_data_project "
-                joint_str = joint_str + " ON UPPER(master_data_project.project_code) = UPPER(master_data_part.project_code) "
-
-                joint_str = joint_str + " INNER JOIN master_data_customer "
-                joint_str = joint_str + " ON UPPER(master_data_customer.customer_code) = UPPER(master_data_project.customer_code) "
-                where_str = where_str + " and  UPPER(master_data_project.customer_code) = '%s' " % customer_selected.upper()
-            
-            if project_selected is not None and project_selected != "":
-
-                where_str = where_str + " and  UPPER(master_data_part.project_code) = '%s' " % project_selected.upper()
-
-            if supplier_selected is not None and supplier_selected !="" :
-
-                where_str = where_str + " and  UPPER(master_data_part.supplier_code) = '%s' " % supplier_selected.upper()
-
-            if status_selected is not None:
-
-                where_str = where_str + " and  master_data_part.status = '%s' " % status_selected
-            
-            if partNumber_selected and partNumber_selected != "":
-
-                partNumber_selected = "%"+partNumber_selected+"%"
-                where_str = where_str + " and  master_data_part.part_number LIKE '%%%s%%'  " %  partNumber_selected
-            
-            query = query + joint_str + where_str + " order by master_data_part.updated_date desc"
-
-            print(query)
-
-            part_list = Part.objects.raw(query)
-
-            part_csv_list = []
-
-            part_csv_list.insert(0, [
-                        "Project Code",
-                        "status",
-                        "Supplier Code",
-                        "Part Number",
-                        "Part Name",
-                        "Package No",
-                        "Package Volume",
-                        "Part Weight",
-                        "Remark",
-                        "Update By",
-                        "Update Date",
-                    ]
-                )
-            
-            for part_obj in part_list:
-
-                part_row_list = (
-                    part_obj.project_code,
-                    "Draft" if part_obj.status == 1 else "Confirm" ,
-                    part_obj.supplier_code,
-                    part_obj.part_number,
-                    part_obj.part_name,
-                    part_obj.package_no,
-                    part_obj.package_volume,
-                    part_obj.package_weight,
-                    part_obj.remark,
-                    part_obj.updated_by,
-                    part_obj.updated_date.strftime("%d/%m/%Y"),
-
-                    )
-                
-                part_csv_list.append(part_row_list)
+            partService  = PartService()
+            part_list =  partService.search_part(customer_code,project_code,supplier_code,status,part_number)
 
             name_csv_str = "PartMasterCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj.covert_to_header([
+                "Project Code",
+                "status",
+                "Supplier Code",
+                "Part Number",
+                "Part Name",
+                "Package No",
+                "Package Volume",
+                "Part Weight",
+                "Remark",
+                "Update By",
+                "Update Date",])
 
-            with open("media/" +  name_csv_str +'.csv', 'w', newline='',encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerows(part_csv_list)
+            part_CSV_list = PartHelper.covert_data_list_to_CSV_list(part_list)
+            CSV_file_management_obj.covert_to_CSV_data_list(part_CSV_list)
+            return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
 
-            
-            part_serializer = Part_Serializer(part_list, many=True)
+            serializer_list =  PartHelper.covert_data_list_to_serializer_list(part_list)
+
+            serializer = serializerMapping.mapping_serializer_list(
+                    Part_list_Serializer_DTO,
+                    serializer_list,
+                    "success", 
+                    "",
+                    name_csv_str + '.csv',
+                    None,
+                    None
+                )
 
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get part"
-            base_DTO_obj.data_list = part_serializer.data
-            base_DTO_obj.csv_name =  name_csv_str + '.csv'
-
-            part_list_Serializer_DTO = Part_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(part_list_Serializer_DTO.data,safe=False)
-
+            return JsonResponse(serializer.data, safe=False)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            part_Serializer_DTO_reponse = Part_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(part_Serializer_DTO_reponse.data, safe=False)
-
+            serializer = serializerMapping.mapping_serializer_list(
+                    Part_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None 
+                )
+            
+            return JsonResponse(serializer.data, safe=False)
+            
+            
 
 @api_view(['GET', 'POST', 'DELETE'])
 def deleted_part(request):
@@ -488,41 +305,32 @@ def deleted_part(request):
         try:
 
             part_data = JSONParser().parse(request)
-
-            print(part_data)
             part_list = Part.objects.filter(part_number__in=part_data)
-            print(len(part_list))
             part_list.update(is_active = False)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = configMessage.configs.get("PART_MASTER_DELETE_MASSAGE_SUCCESSFUL").data
-            base_DTO_obj.data_list = Part.objects.filter(is_active=True)
-
-            part_list_serializer_DTO_reponse = Part_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(part_list_serializer_DTO_reponse.data, safe=False) 
+            serializer = serializerMapping.mapping_serializer_list(
+                Part_list_Serializer_DTO,
+                part_list,
+                "success", 
+                configMessage.configs.get("STATION_MASTER_DELETE_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
             
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = part_serializer_obj.errors
-            base_DTO_obj.data = None
-
-            part_Serializer_DTO_reponse = Part_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(part_Serializer_DTO_reponse.data,safe=False)
-
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            project_Serializer_DTO_reponse = Project_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(project_Serializer_DTO_reponse.data, safe=False)
-
+            serializer = serializerMapping.mapping_serializer_list(
+                    Part_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST', 'DELETE'])
 def router_list(request):
@@ -625,8 +433,6 @@ def supplier_list(request):
 
 
 @api_view(['GET', 'POST', 'DELETE'])
-# @permission_classes([IsAuthenticated])
-
 def plant_list(request):
     
 
@@ -634,6 +440,8 @@ def plant_list(request):
         try:
             station_list = Station.objects.filter(station_type = 'PLANT',is_active=True)
             station_serializer = Station_Serializer(station_list, many=True)
+
+            print(station_list)
 
             base_DTO_obj =  base_DTO()
             base_DTO_obj.serviceStatus = "success"
@@ -663,130 +471,80 @@ def project_list(request):
         try : 
 
             project_list = Project.objects.filter(is_active=True)
-            project_serializer = Project_Serializer(project_list, many=True, context={'request': 'test'})
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get router"
-            base_DTO_obj.data_list = project_serializer.data
 
-            project_list_Serializer_DTO_obj = Project_list_Serializer_DTO(base_DTO_obj)
+            serializer = serializerMapping.mapping_serializer_list(
+                Project_list_Serializer_DTO,
+                project_list,
+                "success", 
+                "",
+                "",
+                None,
+                None )
 
 
-            return JsonResponse(project_list_Serializer_DTO_obj.data, safe=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            print(e)
-            return JsonResponse("sdfsdfsdfsdf", safe=False)
+            serializer = serializerMapping.mapping_serializer_list(
+                    Project_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
 
         try:
 
-            project_data_list = JSONParser().parse(request)
-            
+            project_data = JSONParser().parse(request)
 
-            for project_obj in project_data_list :
-
-                project_list =  Project.objects.filter(project_code__iexact = project_obj['project_code'])
-
-                if project_obj['project_code'] is None or project_obj['project_code'].strip() == "" :
-
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "Error"
-                    base_DTO_obj.massage = configMessage.configs.get("PROJECT_MASTER_PROJECT_REQUIRED").data
-                    base_DTO_obj.data_list = None
-
-                    project_list_serializer_DTO_reponse = Project_list_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(project_list_serializer_DTO_reponse.data, safe=False) 
-
-                    break;
-                
-                if project_obj['customer_code'] is None or project_obj['customer_code'].strip() == "":
-
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "Error"
-                    base_DTO_obj.massage = configMessage.configs.get("PROJECT_MASTER_CUSTOMER_REQUIRED").data
-                    base_DTO_obj.data_list = None
-
-                    project_list_serializer_DTO_reponse = Project_list_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(project_list_serializer_DTO_reponse.data, safe=False) 
-
-                    break;
-
-
-                if len (project_list) :
-
-                    
-                    if project_list[0].is_active:
-
-                        base_DTO_obj =  base_DTO()
-                        base_DTO_obj.serviceStatus = "Error"
-                        base_DTO_obj.massage = configMessage.configs.get("PROJECT_MASTER_DUPLICATE").data
-                        base_DTO_obj.data_list = None
-
-                        project_list_serializer_DTO_reponse = Project_list_Serializer_DTO(base_DTO_obj)
-
-                        return JsonResponse(project_list_serializer_DTO_reponse.data, safe=False) 
-
-                        break;
-                    
-                    else : 
-                        
-                        project_list.update(
-                            project_code=project_obj['project_code'],
-                            customer_code= project_obj['customer_code'],
-                            remark= project_obj['remark'],
-                            is_active=True
-                            )
-                        base_DTO_obj =  base_DTO()
-                        base_DTO_obj.serviceStatus = "success"
-                        base_DTO_obj.massage = configMessage.configs.get("PROJECT_MASTER_ADD_MASSAGE_SUCCESSFUL").data
-                        base_DTO_obj.data_list = Project.objects.all()
-
-                        project_list_serializer_DTO_reponse = Project_list_Serializer_DTO(base_DTO_obj)
-
-                        return JsonResponse(project_list_serializer_DTO_reponse.data, safe=False)
-
-            project_serializer_obj = Project_Serializer(data=project_data_list,many=True)
-
-        
+            project_serializer_obj = Project_Serializer(data=project_data)
 
             if project_serializer_obj.is_valid():
 
                 project_serializer_obj.save()
-                # project_serializer_obj.save(updated_by=request.user.username,)
+                project_list =  project_serializer_obj.save(updated_by=request.user.username)
 
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "success"
-                base_DTO_obj.massage = configMessage.configs.get("PROJECT_MASTER_ADD_MASSAGE_SUCCESSFUL").data
-                base_DTO_obj.data_list = Project.objects.all()
-
-                project_list_serializer_DTO_reponse = Project_list_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(project_list_serializer_DTO_reponse.data, safe=False) 
+         
+                serializer = serializerMapping.mapping_serializer_obj(
+                Project_list_Serializer_DTO,
+                project_list,
+                "success", 
+                configMessage.configs.get("PROJECT_MASTER_ADD_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
             
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = project_serializer_obj.errors
-            base_DTO_obj.data = None
-
-            project_Serializer_DTO_reponse = Project_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(project_Serializer_DTO_reponse.data,safe=False)
+            else : 
+                
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Project_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(project_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
+                    
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            project_Serializer_DTO_reponse = Project_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(project_Serializer_DTO_reponse.data, safe=False)
+            serializer = serializerMapping.mapping_serializer_obj(
+                    Project_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST', 'DELETE'])
 def deleted_project(request):
@@ -796,39 +554,33 @@ def deleted_project(request):
         try:
 
             project_data = JSONParser().parse(request)
-            print(project_data)
-    
+
             project_list = Project.objects.filter(project_code__in=project_data)
             project_list.update(is_active = False)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = configMessage.configs.get("PROJECT_MASTER_DELETE_MASSAGE_SUCCESSFUL").data
-            base_DTO_obj.data_list = Project.objects.all()
+            serializer = serializerMapping.mapping_serializer_list(
+                Project_list_Serializer_DTO,
+                project_list,
+                "success", 
+                configMessage.configs.get("PROJECT_MASTER_DELETE_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
 
-            project_list_serializer_DTO_reponse = Project_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(project_list_serializer_DTO_reponse.data, safe=False) 
-            
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = project_serializer_obj.errors
-            base_DTO_obj.data = None
-
-            project_Serializer_DTO_reponse = Project_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(project_Serializer_DTO_reponse.data,safe=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            project_Serializer_DTO_reponse = Project_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(project_Serializer_DTO_reponse.data, safe=False)
+            serializer = serializerMapping.mapping_serializer_list(
+                    Project_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST', 'DELETE'])
 def edited_project(request):
@@ -841,219 +593,98 @@ def edited_project(request):
             project_obj = Project.objects.filter( project_code = project_data["project_code"] )
             project_serializer_obj = Project_Serializer(project_obj[0],data=project_data)
 
+
             if project_serializer_obj.is_valid():
-
+                
                 project_serializer_obj.save()
+
+
+                serializer = serializerMapping.mapping_serializer_obj(
+                Project_Serializer_DTO,
+                project_obj,
+                "success", 
+                "",
+                "",
+                None,
+                None )
+            
+            else : 
+
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Project_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(project_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
                     
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "success"
-                base_DTO_obj.massage = configMessage.configs.get("PROJECT_MASTER_EDIT_MASSAGE_SUCCESSFUL").data
-                base_DTO_obj.data_list = Project.objects.all()
-
-                project_list_serializer_DTO_reponse = Project_list_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(project_list_serializer_DTO_reponse.data, safe=False) 
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            project_Serializer_DTO_reponse = Project_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(project_Serializer_DTO_reponse.data, safe=False)
+            serializer = serializerMapping.mapping_serializer_list(
+                    Project_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
-def seach_project(request):
+def search_project(request):
 
     if request.method == 'POST':
 
         try:
 
+           
             project_data_obj = JSONParser().parse(request)
-            customer_selected = project_data_obj['customer_code']
-            # project_selected = project_data_obj['project_code']
+            customer_code = project_data_obj['customer_code']
 
-            query = "select * from master_data_project "
-
-            joint_str = "" 
-            where_str = " where 1 = 1 and master_data_project.is_active = True"
-
-            if customer_selected is not None:
-
-                # joint_str = joint_str + " INNER JOIN master_data_customer "
-                # joint_str = joint_str + " ON master_data_customer.customer_code = master_data_project.project_code"
-                where_str = where_str + " and  master_data_project.customer_code = '%s' " % customer_selected
+            projectService = ProjectService()
+            project_list =  projectService.search_project(customer_code)
             
-            # if project_selected is not None :
+            name_csv_str = "ProjectMasterCSV" +datetime.now().strftime("%Y%m%d_%H%M%S")
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj.covert_to_header([
+               "Project Code",
+                "Customer Code",
+                "Remark",
+                "Updated By",
+                "Updated Date",])
+            project_CSV_list = ProjectHepler.covert_data_list_to_CSV_list(project_list)
+            CSV_file_management_obj.covert_to_CSV_data_list(project_CSV_list)
+            return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
 
-            #     where_str = where_str + "and  master_data_project.project_code = '%s' " % project_selected
+            serializer_list =  ProjectHepler.covert_data_list_to_serializer_list(project_list)
+
+            serializer = serializerMapping.mapping_serializer_list(
+                Project_list_Serializer_DTO,
+                serializer_list,
+                "success", 
+                "",
+                name_csv_str + '.csv',
+                None,
+                None )
             
-            query = query + joint_str + where_str + " ORDER BY master_data_project.updated_date desc"
-
-            print(query)
-
-            project_list = Project.objects.raw(query)
-
-            project_csv_list = []
-
-            project_csv_list.insert(0, [
-                        "Project Code",
-                        "Customer Code",
-                        "Remark",
-                        "Updated By",
-                        "Updated Date",
-                    ]
-                )
-            
-            for project_obj in project_list:
-
-                print(project_obj)
-                project_row_list = (
-                    project_obj.project_code,
-                    project_obj.customer_code,
-                    project_obj.remark,
-                    project_obj.updated_by,
-                    project_obj.updated_date.strftime("%d/%m/%Y"),
-
-                    )
-                
-                project_csv_list.append(project_row_list)
-
-            name_csv_str = datetime.now().strftime("ProjectMasterCSV_%Y%d%m_-%H%M%S")
-            with open("media/" +  name_csv_str +'.csv', 'w', newline='',encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerows(project_csv_list)
-
-            
-            project_serializer = Project_Serializer(project_list, many=True)
-
-
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get part"
-            base_DTO_obj.data_list = project_serializer.data
-            base_DTO_obj.csv_name =  name_csv_str + '.csv'
-
-            project_list_Serializer_DTO = Project_list_Serializer_DTO(base_DTO_obj)
-
-
-
-
-            # project_serializer_obj = Project_Serializer(data=project_data)
-            
-
-            # if project_serializer_obj.is_valid():
-
-            #     project_serializer_obj.save()
-            #     project_serializer_obj.save(updated_by=request.user.username)
-
-            #     base_DTO_obj =  base_DTO()
-            #     base_DTO_obj.serviceStatus = "success"
-            #     base_DTO_obj.massage = "save part is successful"
-            #     base_DTO_obj.data_list = Project.objects.all()
-
-            #     project_list_serializer_DTO_reponse = Project_list_Serializer_DTO(base_DTO_obj)
-
-            #     return JsonResponse(project_list_serializer_DTO_reponse.data, safe=False) 
-            
-            # base_DTO_obj =  base_DTO()
-            # base_DTO_obj.serviceStatus = "Error"
-            # base_DTO_obj.massage = project_serializer_obj.errors
-            # base_DTO_obj.data = None
-
-            # project_Serializer_DTO_reponse = Project_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(project_list_Serializer_DTO.data,safe=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            project_Serializer_DTO_reponse = Project_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(project_Serializer_DTO_reponse.data, safe=False)
-
-
-
-
-    
-    # if request.method == 'GET':
-    #     try:
-    #         project_list = Project.objects.all()
-    #         project_serializer = Project_Serializer(project_list, many=True)
-
-    #         base_DTO_obj =  base_DTO()
-    #         base_DTO_obj.serviceStatus = "success"
-    #         base_DTO_obj.massage = "get router"
-    #         base_DTO_obj.data_list = project_serializer.data
-
-    #         project_list_Serializer_DTO_obj = Project_list_Serializer_DTO(base_DTO_obj)
-
-    #         return JsonResponse(project_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
-    #     except Exception as e:
-
-    #         base_DTO_obj =  base_DTO()
-    #         base_DTO_obj.serviceStatus = "error"
-    #         base_DTO_obj.massage = e 
-    #         # base_DTO_obj.data_list = order_serializer.data
-
-    #         project_list_Serializer_DTO_obj = Project_list_Serializer_DTO(base_DTO_obj)
-
-    #         return JsonResponse(project_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
-
-        
-
-    #         # return JsonResponse(order_serializer.data, safe=False)
-
-    # elif request.method == 'POST':
-
-
-    #     try:
-    #         project_data = JSONParser().parse(request)
-    #         project_serializer_obj = Project_Serializer(data=project_data)
+            serializer = serializerMapping.mapping_serializer_list(
+                    Project_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
             
-
-    #         if project_serializer_obj.is_valid():
-
-    #             project_serializer_obj.save()
-
-    #             base_DTO_obj =  base_DTO()
-    #             base_DTO_obj.serviceStatus = "success"
-    #             base_DTO_obj.massage = "save part is successful"
-    #             base_DTO_obj.data = project_serializer_obj.data
-
-    #             project_Serializer_DTO_reponse = Project_Serializer_DTO(base_DTO_obj)
-
-    #             return JsonResponse(project_Serializer_DTO_reponse.data, status=status.HTTP_201_CREATED) 
-            
-    #         base_DTO_obj =  base_DTO()
-    #         base_DTO_obj.serviceStatus = "Error"
-    #         base_DTO_obj.massage = project_serializer_obj.errors
-    #         base_DTO_obj.data = None
-
-    #         project_Serializer_DTO_reponse = Project_Serializer_DTO(base_DTO_obj)
-
-    #         return JsonResponse(project_Serializer_DTO_reponse.data, status=status.HTTP_400_BAD_REQUEST)
-
-    #     except Exception as e:
-
-    #         base_DTO_obj =  base_DTO()
-    #         base_DTO_obj.serviceStatus = "Error"
-    #         base_DTO_obj.massage = e
-    #         base_DTO_obj.data = None
-
-    #         project_Serializer_DTO_reponse = Project_Serializer_DTO(base_DTO_obj)
-
-    #         return JsonResponse(project_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-
-
-
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -1062,248 +693,79 @@ def customer_list(request):
     if request.method == 'GET':
         try:
             customer_list = Customer.objects.all()
-            print(customer_list)
-            customer_serializer_obj = Customer_Serializer(customer_list, many=True)
+        
+            serializer = serializerMapping.mapping_serializer_list(
+                Customer_list_Serializer_DTO,
+                customer_list,
+                "success", 
+                "",
+                "",
+                None,
+                None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get router"
-            base_DTO_obj.data_list = customer_serializer_obj.data
-
-            customer_list_Serializer_DTO_obj = Customer_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(customer_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "error"
-            base_DTO_obj.massage = e 
-            # base_DTO_obj.data_list = order_serializer.data
+            serializer = serializerMapping.mapping_serializer_list(
+                    Customer_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
 
-            customer_list_Serializer_DTO_obj = Customer_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(customer_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
 
         try:
+
             customer_data = JSONParser().parse(request)
-         
-
-            if customer_data['project_code'] is None or customer_data['project_code'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_PROJECT_REQUIRED").data
-                base_DTO_obj.data = None
-
-                customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-            
-            if customer_data['station_code'] is None or customer_data['station_code'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_STATIONCODE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-
-            if customer_data['description'] is None or customer_data['description'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_DESCRIPTION_REQUIRED").data
-                base_DTO_obj.data = None
-
-                customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-            
-            if customer_data['station_type'] is None or customer_data['station_type'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_TYPE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-            
-            if customer_data['zone'] is None or customer_data['zone'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_ZONE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            if customer_data['province'] is None or customer_data['province'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_PROVINCE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            if customer_data['address'] is None or customer_data['address'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_ADDRESS_REQUIRED").data
-                base_DTO_obj.data = None
-
-                customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-
-
-            station_list = Station.objects.filter(station_code = customer_data['station_code'])
-            
-            if len(station_list) >0:
-
-
-                if station_list[0].is_active is True : 
-
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "Error"
-                    base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_DUPLICATE").data
-                    base_DTO_obj.data = None
-
-                    customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-                
-                else :
-                    
-                    station_list.update(
-                        project_code=customer_data['project_code'],
-                        description= customer_data['description'],
-                        station_type= customer_data['station_type'],
-                        zone= customer_data['zone'],
-                        province= customer_data['province'],
-                        address= customer_data['address'],
-                        remark= customer_data['remark'],
-                        is_active = True
-                    
-                    )
-
-                    if customer_data['station_type'] == "PLANT":
-
-                        calendarMaster_list = CalendarMaster.objects.filter(plant_code__iexact=customer_data['station_code'])
-                        if len(calendarMaster_list) > 0 :
-
-                            calendarMaster_list.update(is_active = True)
-                    
-                        else:
-
-                            start_date = datetime(datetime.now().year+1, 1, 1)
-                            end_date = datetime(2021, 12, 31)
-                            daterange = pd.date_range(start_date, end_date)
-                            for single_date in daterange:
-
-                                calendarMaster_obj =  CalendarMaster()
-                                calendarMaster_obj.plant_code = customer_data['station_code']
-                                day_int = int(single_date.strftime("%w")) + 1
-                                calendarMaster_obj.day = day_int
-                                calendarMaster_obj.date = single_date
-                                
-                                if day_int == 1 :
-
-                                    calendarMaster_obj.is_working =  False 
-                                
-                                else : 
-
-                                    calendarMaster_obj.is_working = True
-                                
-                                calendarMaster_obj.updated_by = request.user.username
-                                calendarMaster_obj.updated_date = datetime.utcnow()
-                                calendarMaster_obj.is_active = True
-
-                                calendarMaster_obj.save()
-                    
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "success"
-                    base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_ADD_MASSAGE_SUCCESSFUL").data
-                    base_DTO_obj.data = None
-
-                    customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-
             customer_serializer_obj = Customer_Serializer(data=customer_data)
 
-            
             if customer_serializer_obj.is_valid():
 
                 customer_serializer_obj.save()
-                print(customer_data['station_type'])
+                customer_obj =  customer_serializer_obj.save(updated_by=request.user.username)
 
-                if customer_data['station_type'] == "PLANT":
-
-                    start_date = datetime(datetime.now().year+1, 1, 1)
-                    end_date = datetime(datetime.now().year+1, 12, 31)
-                    daterange = pd.date_range(start_date, end_date)
-                    for single_date in daterange:
-
-                        calendarMaster_obj =  CalendarMaster()
-                        calendarMaster_obj.plant_code = customer_data['station_code']
-                        day_int = int(single_date.strftime("%w")) + 1
-                        calendarMaster_obj.day = day_int
-                        calendarMaster_obj.date = single_date
-                        
-                        if day_int == 1 :
-
-                            calendarMaster_obj.is_working =  False 
-                        
-                        else : 
-
-                            calendarMaster_obj.is_working = True
-                        
-                        calendarMaster_obj.updated_by = request.user.username
-                        calendarMaster_obj.updated_date = datetime.now()
-                        calendarMaster_obj.is_active = True
-
-                        calendarMaster_obj.save()
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "success"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_ADD_MASSAGE_SUCCESSFUL").data
-                base_DTO_obj.data = customer_serializer_obj.data
-
-                customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_201_CREATED) 
+                serializer = serializerMapping.mapping_serializer_obj(
+                Customer_Serializer_DTO,
+                customer_obj,
+                "success", 
+                configMessage.configs.get("STATION_MASTER_ADD_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
             
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = customer_serializer_obj.errors
-            base_DTO_obj.data = None
+            else : 
+                
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Customer_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(customer_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
+                    
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-        return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
+            serializer = serializerMapping.mapping_serializer_obj(
+                Customer_Serializer_DTO,
+                None,
+                "Error",
+                e,
+                None,
+                None,
+                None )
+                
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
@@ -1321,26 +783,29 @@ def deleted_customer(request):
             calendarMaster_list = CalendarMaster.objects.filter(plant_code__in=station_data)
             calendarMaster_list.update(is_active = False)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_DELETE_MASSAGE_SUCCESSFUL").data
-            base_DTO_obj.data_list = None
+            serializer = serializerMapping.mapping_serializer_list(
+                Customer_list_Serializer_DTO,
+                station_list,
+                "success", 
+                configMessage.configs.get("STATION_MASTER_DELETE_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
 
-            customer_list_serializer_DTO_reponse = Customer_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(customer_list_serializer_DTO_reponse.data, safe=False) 
-            
-
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            customer_list_Serializer_DTO = Customer_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(customer_list_Serializer_DTO.data, safe=False)
+            serializer = serializerMapping.mapping_serializer_list(
+                    Customer_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -1352,433 +817,205 @@ def edited_customer(request):
 
             customer_data = JSONParser().parse(request)
 
-            # print(customer_data)
-
-            if customer_data['description'] is None or customer_data['description'].strip() == "" :
-                
-                print("description is error")
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_DESCRIPTION_REQUIRED").data
-                base_DTO_obj.data = None
-
-                customer_Serializer_DTO = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO.data, status=status.HTTP_200_OK) 
-            
-            if customer_data['station_type'] is None or customer_data['station_type'].strip() == "" :
-                
-                print("station_type")
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_TYPE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-            
-            if customer_data['zone'] is None or customer_data['zone'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_ZONE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            if customer_data['province'] is None or customer_data['province'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_PROVINCE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            if customer_data['address'] is None or customer_data['address'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_ADDRESS_REQUIRED").data
-                base_DTO_obj.data = None
-
-                customer_Serializer_DTO_reponse = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-
-      
-            station_obj = Station.objects.filter( station_code = customer_data["station_code"] )
-            customer_serializer_obj = Customer_Serializer(station_obj[0],data=customer_data)
-            
+            station_list = Station.objects.filter( station_code = customer_data["station_code"] )
+            customer_serializer_obj = Customer_Serializer(station_list[0],data=customer_data)
 
             if customer_serializer_obj.is_valid():
-
+                
                 customer_serializer_obj.save()
 
-                if customer_data['station_type'] is "PLANT":
-
-                    calendarMaster_list = CalendarMaster.objects.filter(plant_code = customer_data['station_type'])
-                    if len(calendarMaster_list) > 0 :
-
-                        calendarMaster_list.update(is_active = True)
-                    
-                    else:
-
-                        start_date = datetime(datetime.now().year+1, 1, 1)
-                        end_date = datetime(2021, 12, 31)
-                        daterange = pd.date_range(start_date, end_date)
-                        for single_date in daterange:
-
-                            calendarMaster_obj =  CalendarMaster()
-                            calendarMaster_obj.plant_code = customer_data['station_code']
-                            day_int = int(single_date.strftime("%w")) + 1
-                            calendarMaster_obj.day = day_int
-                            calendarMaster_obj.date = single_date
-                            
-                            if day_int == 1 :
-
-                                calendarMaster_obj.is_working =  False 
-                            
-                            else : 
-
-                                calendarMaster_obj.is_working = True
-                            
-                            calendarMaster_obj.updated_by = request.user.username
-                            calendarMaster_obj.updated_date = datetime.now()
-                            calendarMaster_obj.is_active = True
-
-                            calendarMaster_obj.save()
-                            
-
-                    
-
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "success"
-                base_DTO_obj.massage = configMessage.configs.get("STATION_MASTER_EDIT_MASSAGE_SUCCESSFUL").data
-                base_DTO_obj.data = None
-
-                customer_Serializer_DTO = Customer_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(customer_Serializer_DTO.data, safe=False) 
+                serializer = serializerMapping.mapping_serializer_list(
+                Customer_list_Serializer_DTO,
+                station_list,
+                "success", 
+                configMessage.configs.get("STATION_MASTER_EDIT_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
             
-        
+            else : 
 
+                serializer = serializerMapping.mapping_serializer_list(
+                    Customer_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(customer_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
+                    
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
+            serializer = serializerMapping.mapping_serializer_list(
+                    Customer_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            print(e)
-
-            project_Serializer_DTO_reponse = Project_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(project_Serializer_DTO_reponse.data, safe=False)
 
 
 @api_view(['POST'])
-def seach_customer(request):
+def search_customer(request):
 
     if request.method == 'POST':
 
         try:
 
             customer_data_obj = JSONParser().parse(request)
-            project_selected = customer_data_obj['project_code']
-            customer_selected = customer_data_obj['customer_code']
-            stationCode_selected = customer_data_obj['stationCode_selected']
+            project_code = customer_data_obj['project_code']
+            customer_code = customer_data_obj['customer_code']
+            stationCode_code = customer_data_obj['stationCode_selected']
 
-            print(customer_data_obj)
+            customerService = CustomerService()
+            customer_list =  customerService.search_customer(customer_code,project_code,stationCode_code)
 
-            query = "select * from master_data_station "
+            name_csv_str = "StationMasterCSV" +datetime.now().strftime("%Y%m%d_%H%M%S")
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj.covert_to_header([
+               "Customer",
+                "Project",
+                "Station Code",
+                "Descrition",
+                "type",
+                "Zone",
+                "Province",
+                "Address",
+                "Remark",
+                "Update By",
+                "Update Date"])
+            customer_CSV_list = CustomerHelper.covert_data_list_to_CSV_list(customer_list)
+            CSV_file_management_obj.covert_to_CSV_data_list(customer_CSV_list)
+            return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
 
-            joint_str = "" 
-            where_str = " where 1 = 1 and master_data_station.is_active = true "
+            serializer_list =  CustomerHelper.covert_data_list_to_serializer_list(customer_list)
 
-            if customer_selected is not None and  customer_selected is not "":
-
-                joint_str = joint_str + " INNER JOIN master_data_project "
-                joint_str = joint_str + " ON UPPER(master_data_project.project_code) = UPPER(master_data_station.project_code) "
-                joint_str = joint_str + " INNER JOIN master_data_customer "
-                joint_str = joint_str + " ON UPPER(master_data_customer.customer_code) = UPPER(master_data_project.customer_code) "
-                where_str = where_str + " and  UPPER(master_data_customer.customer_code) = '%s' " % customer_selected.upper()
-                    
-
-            if project_selected is not None and  project_selected is not "":
-
-                where_str = where_str + " and  UPPER(master_data_station.project_code) = '%s' " % project_selected.upper()
-
-            if stationCode_selected is not None and  stationCode_selected is not "":
-
-                stationCode_selected = "%"+stationCode_selected+"%"
-                where_str = where_str + " and  master_data_station.station_code LIKE '%%%s%%'  " %  stationCode_selected
+        
+            serializer = serializerMapping.mapping_serializer_list(
+                Customer_list_Serializer_DTO,
+                serializer_list,
+                "success", 
+                "",
+                name_csv_str + '.csv',
+                None,
+                None )
             
-            
-            query = query + joint_str + where_str + "order by master_data_station.updated_date desc"
-
-            print(query)
-            station_list = Station.objects.raw(query)
-
-            station_csv_list = []
-
-            station_csv_list.insert(0, [
-                        "Customer",
-                        "Project",
-                        "Station Code",
-                        "Descrition",
-                        "type",
-                        "Zone",
-                        "Province",
-                        "Address",
-                        "Remark",
-                        "Update By",
-                        "Update Date"
-                    ]
-                )
-            
-            customer_list = []
-            
-            for station_obj in station_list:
-
-                project_list = Project.objects.filter(project_code = station_obj.project_code )
-                customer_code = ""
-
-                if len(project_list) > 0 :
-                    customer_code = project_list[0].customer_code
-
-
-                customer_DTO =  Customer_DTO()
-                customer_DTO.station_code = station_obj.station_code
-                customer_DTO.project_code = station_obj.project_code
-                customer_DTO.description = station_obj.description
-                customer_DTO.station_type = station_obj.station_type
-                customer_DTO.zone = station_obj.zone
-                customer_DTO.province = station_obj.province
-                customer_DTO.address = station_obj.address
-                customer_DTO.remark = station_obj.remark
-                customer_DTO.updated_by = station_obj.updated_by
-                customer_DTO.updated_date = station_obj.updated_date
-
-                customer_list.append(customer_DTO)
-
-    
-                station_row_list = (
-                    customer_code,
-                    station_obj.project_code,
-                    station_obj.station_code,
-                    station_obj.description,
-                    station_obj.station_type,
-                    station_obj.zone,
-                    station_obj.province,
-                    station_obj.address,
-                    station_obj.remark,
-                    station_obj.updated_by,
-                    station_obj.updated_date.strftime("%d/%m/%Y")
-                    )
-                
-                station_csv_list.append(station_row_list)
-
-            name_csv_str = "CustomerMasterCSV" +datetime.now().strftime("%Y%m%d_%H%M%S")
-
-            with open("media/" +  name_csv_str +'.csv', 'w', newline='',encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerows(station_csv_list)
-
-            print(customer_list)
-            
-            customer_serializer = Customer_Serializer(customer_list, many=True)
-
-
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "Get Customer"
-            base_DTO_obj.data_list = customer_serializer.data
-            base_DTO_obj.csv_name =  name_csv_str + '.csv'
-
-            customer_list_Serializer_DTO = Customer_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(customer_list_Serializer_DTO.data,safe=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
+            serializer = serializerMapping.mapping_serializer_list(
+                    Customer_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            project_Serializer_DTO_reponse = Project_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(project_Serializer_DTO_reponse.data, safe=False)
 
 @api_view(['GET', 'POST', 'DELETE'])
 def package_list(request):
     
     if request.method == 'GET':
         try:
+
             package_list = Package.objects.filter(is_active=True)
-            package_serializer_obj = Package_Serializer(package_list, many=True)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get package"
-            base_DTO_obj.data_list = package_serializer_obj.data
-
-            package_list_Serializer_DTO_obj = Package_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(package_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
+            serializer = serializerMapping.mapping_serializer_list(
+                Package_list_Serializer_DTO,
+                package_list,
+                "success", 
+                "",
+                "",
+                None,
+                None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "error"
-            base_DTO_obj.massage = e 
-            # base_DTO_obj.data_list = order_serializer.data
+            serializer = serializerMapping.mapping_serializer_list(
+                    Package_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
 
-            package_list_Serializer_DTO_obj = Package_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(package_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
 
         try:
-
-            # package_data = JSONParser().parse(request.POST['packages'])
-            # upload_route_master_file = request.FILES['file']
-
-            base_DTO_obj =  base_DTO()
-
-            if request.POST['station_code'] == "null" or request.POST['station_code'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_STATIONCODE_REQUIRED").data
-
-            elif request.POST['package_code'] == "null" or request.POST['package_code'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_PACKAGECODE_REQUIRED").data
             
-            elif request.POST['package_no'] == "null" or request.POST['package_no'] == "" :
 
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_PACKAGENO_REQUIRED").data
+            packageHelper = PackageHelper()
+
+            packages_data = json.loads(request.POST['packages'])
+
+            package_create_obj = packageHelper.create(packages_data)
+
+            if package_create_obj == None :
+
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Package_Serializer_DTO,
+                    None,
+                    "Error",
+                    packageHelper.massage_error,
+                    None,
+                    None,
+                    None )
             
-            elif request.POST['snp'] == "null" or request.POST['snp'] == "" :
+            else : 
 
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_SNP_REQUIRED").data
-            
-            elif int(request.POST['snp']) <= 0 :
+                image_url = ''
+                try: 
 
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_SNP_MORE_THAN_ZERO").data
+                    fileManagement = FileManagement('media/')
+                    image_url = fileManagement.save_file(package_create_obj.package_no+".png",request.FILES['file'])
+                    packages_data['image_url'] = image_url
+                    packageHelper.update(packages_data)
 
-            elif request.POST['width'] == "null" or request.POST['width'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_WIDTH_REQUIRED").data
-            
-            elif request.POST['length'] == "null" or request.POST['length'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_LENGTH_REQUIRED").data
-            
-            elif request.POST['height'] == "null"  or request.POST['height'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_HEIGHT_REQUIRED").data
-            
-            elif request.POST['weight'] == "null" or request.POST['weight'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_WEIGHT_REQUIRED").data
-
-            else :
-
-                try:
-
-                    image_obj = request.FILES['file']
-                    image_name_str = request.POST['package_no']
-                    fs = FileSystemStorage(location="media/") #defaults to   MEDIA_ROOT  
-                    file_name_str = fs.save(image_name_str, image_obj)
-                    image_url = image_name_str
-                    
                 except:
 
-                    image_url = ""
-                
-                package_list = Package.objects.filter(package_no=request.POST['package_no'])
-                if len(package_list) > 0 :
+                    print('err')
 
-                    if package_list[0].is_active == True :
+                package_serializer = Package_Serializer(data={'packages' : request.POST['packages']})
 
-                        base_DTO_obj.serviceStatus = "Error"
-                        base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_DUPLICATE").data
-                        base_DTO_obj.data = base_DTO_obj
+            
+                serializer = serializerMapping.mapping_serializer_obj(
+                Package_Serializer_DTO,
+                package_serializer,
+                "success", 
+                configMessage.configs.get("PACKAGES_MASTER_ADD_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
 
-                        package_Serializer_DTO_reponse = Package_Serializer_DTO(base_DTO_obj)
-
-                        return JsonResponse(package_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-
-
-                    else :
-                        package_list.update(
-                            package_code = request.POST['package_code'],
-                            package_no = request.POST['package_no'],
-                            snp= int(request.POST['snp']),
-                            width = Decimal(request.POST['width']),
-                            length = Decimal(request.POST['length']),
-                            height = Decimal(request.POST['height']),
-                            weight = Decimal(request.POST['weight']),
-                            image_url = image_url,
-                            is_active=True
-                        )
-                    
-
-                
-                else:
-                    package = Package()
-                    package.package_code = request.POST['package_code']
-                    package.package_no = request.POST['package_no']
-                    package.snp = request.POST['snp']
-                    package.width = Decimal(request.POST['width'])
-                    package.length = Decimal(request.POST['length'])
-                    package.height = Decimal(request.POST['height'])
-                    package.weight = Decimal(request.POST['weight'])
-                    package.image_url = image_url
-                    package.station_code = request.POST['station_code']
-                    package.is_active = True
-                    package.updated_by = request.user.username
-
-                    package.save()
-
-                base_DTO_obj.serviceStatus = "success"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_ADD_MASSAGE_SUCCESSFUL").data
-                base_DTO_obj.data = base_DTO_obj
-
-
-
-            package_Serializer_DTO_reponse = Package_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(package_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-               
-
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            package_Serializer_DTO_reponse = Package_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(package_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-        
+            serializer = serializerMapping.mapping_serializer_obj(
+                Package_Serializer_DTO,
+                None,
+                "Error",
+                e,
+                None,
+                None,
+                None )
+                
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
      
 
@@ -1786,7 +1023,7 @@ def package_list(request):
 def deleted_package(request):
 
      if request.method == 'POST':
-
+        
         try:
 
             package_data = JSONParser().parse(request)
@@ -1794,30 +1031,31 @@ def deleted_package(request):
             package_list.update(is_active = False)
 
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_DELETE_MASSAGE_SUCCESSFUL").data
-            base_DTO_obj.data_list = None
+            serializer = serializerMapping.mapping_serializer_list(
+                Package_list_Serializer_DTO,
+                package_list,
+                "success", 
+                configMessage.configs.get("PACKAGES_MASTER_DELETE_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
 
-            package_list_serializer_DTO_reponse = Package_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(package_list_serializer_DTO_reponse.data, safe=False) 
-            
-
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            package_list_Serializer_DTO = Package_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(package_list_Serializer_DTO.data, safe=False)
+            serializer = serializerMapping.mapping_serializer_list(
+                    Package_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
       
-        
-
 @api_view(['GET', 'POST', 'DELETE'])
 def edited_package(request):
 
@@ -1825,98 +1063,66 @@ def edited_package(request):
 
         try:
 
-            base_DTO_obj =  base_DTO()
+            packageHelper = PackageHelper()
+            package_data = json.loads(request.POST['packages'])
+
+            package_update_obj = packageHelper.update(package_data)
+
+            if package_update_obj == None :
+
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Package_Serializer_DTO,
+                    None,
+                    "Error",
+                    packageHelper.massage_error,
+                    None,
+                    None,
+                    None )
             
-            if request.POST['snp'] == "null" or request.POST['snp'] == "" :
+            else : 
 
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_SNP_REQUIRED").data
-            
-            elif int(request.POST['snp']) <= 0 :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_SNP_MORE_THAN_ZERO").data
-
-            elif request.POST['width'] == "null" or request.POST['width'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_WIDTH_REQUIRED").data
-            
-            elif request.POST['length'] == "null" or request.POST['length'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_LENGTH_REQUIRED").data
-            
-            elif request.POST['height'] == "null"  or request.POST['height'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_HEIGHT_REQUIRED").data
-            
-            elif request.POST['weight'] == "null" or request.POST['weight'] == "" :
-
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_WEIGHT_REQUIRED").data
-
-            else :
-
-                image_url = request.POST['image_url']
-
-                try:
-
-                    image_obj = request.FILES['file']
+                image_url = ''
+                try: 
                     image_name_str = "image_" +datetime.now().strftime("%Y%m%d_%H%M%S")+".png"
-                    fs = FileSystemStorage(location="media/") #defaults to   MEDIA_ROOT  
-                    file_name_str = fs.save(image_name_str, image_obj)
-                    image_url = image_name_str
-                    
+                    fileManagement = FileManagement('media/')
+                    image_url = fileManagement.save_file(image_name_str,request.FILES['file'])
+                    package_data['image_url'] = image_url
+                    packageHelper.update(package_data)
+
                 except:
 
-                    image_url = request.POST['image_url']
-                
-                package_updated_obj = Package.objects.filter(package_no=request.POST['package_no'])
-                package_updated_obj.update(
-                    snp=int(request.POST['snp']),
-                    width=Decimal(request.POST['width']),
-                    length=Decimal(request.POST['length']),
-                    height=Decimal(request.POST['height']),
-                    weight=Decimal(request.POST['weight']),
-                    image_url=image_url
-                )
-                package_updated_obj.snp = int(request.POST['snp'])
-                package_updated_obj.width = Decimal(request.POST['width'])
-                package_updated_obj.length = Decimal(request.POST['length'])
-                package_updated_obj.height = Decimal(request.POST['height'])
-                package_updated_obj.weight = Decimal(request.POST['weight'])
-                package_updated_obj.image_url = image_url
+                    print('err')
 
-                
+                package_serializer = Package_Serializer(data={'packages' : request.POST['packages']})
 
-                base_DTO_obj.serviceStatus = "success"
-                base_DTO_obj.massage = configMessage.configs.get("PACKAGES_MASTER_EDIT_MASSAGE_SUCCESSFUL").data
-                base_DTO_obj.data = base_DTO_obj
+                serializer = serializerMapping.mapping_serializer_obj(
+                Package_Serializer_DTO,
+                package_serializer,
+                "success", 
+                configMessage.configs.get("PACKAGES_MASTER_EDIT_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
 
-
-
-            package_Serializer_DTO_reponse = Package_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(package_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
                
 
         except Exception as e:
 
-
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            package_Serializer_DTO_reponse = Package_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(package_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
+            serializer = serializerMapping.mapping_serializer_obj(
+                Package_Serializer_DTO,
+                None,
+                "Error",
+                e,
+                None,
+                None,
+                None )
+                
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
-def seach_package(request):
+def search_package(request):
 
     if request.method == 'POST':
 
@@ -1924,122 +1130,60 @@ def seach_package(request):
 
             package_data_obj = JSONParser().parse(request)
 
-            customer_selected = package_data_obj['customer_selected']
-            project_selected = package_data_obj['project_selected']
-            supplier_selected = package_data_obj['supplier_selected']
-            packageCode_selected = package_data_obj['packageCode_selected']
-            packageNo_selected = package_data_obj['packageNo_selected']
+            customer_code = package_data_obj['customer_selected']
+            project_code = package_data_obj['project_selected']
+            supplier_code = package_data_obj['supplier_selected']
+            package_code = package_data_obj['packageCode_selected']
+            package_no = package_data_obj['packageNo_selected']
 
-            query = "select * from master_data_package "
-
-            joint_str = "" 
-            where_str = " where 1 = 1 and master_data_package.is_active = true "
-
-            if customer_selected is not None and customer_selected != "":
-                
-                joint_str = joint_str + " INNER JOIN master_data_station "
-                joint_str = joint_str + " ON UPPER(master_data_station.station_code) = UPPER(master_data_package.station_code) "
-
-                joint_str = joint_str + " INNER JOIN master_data_project "
-                joint_str = joint_str + " ON UPPER(master_data_project.project_code) = UPPER(master_data_station.project_code) "
-
-                joint_str = joint_str + " INNER JOIN master_data_customer "
-                joint_str = joint_str + " ON UPPER(master_data_customer.customer_code) = UPPER(master_data_project.customer_code) "
-                
-                where_str = where_str + " and   UPPER(master_data_customer.customer_code) = '%s' " % customer_selected.upper()
-
-            if project_selected is not None and project_selected != "":
-
-                where_str = where_str + " and   UPPER(master_data_project.project_code) = '%s' " % project_selected.upper()
-            
-            if supplier_selected is not None and supplier_selected != "" :
-
-                where_str = where_str + "and  UPPER(master_data_package.station_code) = '%s' " % supplier_selected.upper()
-            
-            if packageCode_selected is not None and packageCode_selected != "" :
-
-                packageCode_selected = "%"+packageCode_selected+"%"
-                where_str = where_str + " and  master_data_package.package_code LIKE '%%%s%%'  " %  packageCode_selected
-            
-            if packageNo_selected is not None and packageNo_selected != "" :
-
-                packageNo_selected = "%"+packageNo_selected+"%"
-                where_str = where_str + " and  master_data_package.package_no LIKE '%%%s%%'  " %  packageNo_selected
-
-            
-            query = query + joint_str + where_str + " order by master_data_package.updated_date desc"
-
-
-            package_list = Package.objects.raw(query)
-            
-
-            package_csv_list = []
-
-            package_csv_list.insert(0, [
-                        "Supplier Code",
-                        "Package Code",
-                        "Package No",
-                        "W (mm.)",
-                        "L (mm.)",
-                        "H (mm.)",
-                        "Weight (Kg)",
-                        "Is There Image",
-                        "Update By",
-                        "Update Date",
-                    ]
-                )
-            
-            print(query)
-            for package_obj in package_list:
-
-                package_row_list = (
-                    package_obj.station_code,
-                    package_obj.package_code,
-                    package_obj.package_no,
-                    package_obj.width,
-                    package_obj.length,
-                    package_obj.height,
-                    package_obj.weight,
-                    "Yes" if package_obj.image_url is not None and not package_obj.image_url == "" else "No",
-                    package_obj.updated_by,
-                    package_obj.updated_date.strftime("%d/%m/%Y"),
-
-                    )
-                
-                package_csv_list.append(package_row_list)
-            
+            packageService = PackageService()
+            package_list = packageService.search_package(customer_code,project_code,supplier_code,package_code,package_no)
+     
             name_csv_str = "PackageMasterCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj.covert_to_header([
+               "Supplier Code",
+                "Package Code",
+                "Package No",
+                "SNP",
+                "W (mm.)",
+                "L (mm.)",
+                "H (mm.)",
+                "Weight (Kg)",
+                "Is There Image",
+                "Update By",
+                "Update Date",])
+            package_CSV_list = PackageHelper.covert_data_list_to_CSV_list(package_list)
+            CSV_file_management_obj.covert_to_CSV_data_list(package_CSV_list)
+            return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
 
-            with open("media/" +  name_csv_str +'.csv', 'w', newline='',encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerows(package_csv_list)
+            serializer_list =  PackageHelper.covert_data_list_to_serializer_list(package_list)
 
+            serializer = serializerMapping.mapping_serializer_list(
+                Package_list_Serializer_DTO,
+                serializer_list,
+                "success", 
+                "",
+                name_csv_str + '.csv',
+                None,
+                None )
             
-            package_serializer = Package_Serializer(package_list, many=True)
-
-
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "seach package"
-            base_DTO_obj.data_list = package_serializer.data
-            base_DTO_obj.csv_name =  name_csv_str + '.csv'
-
-            package_list_Serializer_DTO = Package_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(package_list_Serializer_DTO.data,safe=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
+            serializer = serializerMapping.mapping_serializer_list(
+                    Package_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            package_Serializer_DTO_reponse = Package_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(package_Serializer_DTO_reponse.data, safe=False)
-
-
+  
 
 @api_view(['GET', 'POST', 'DELETE'])
 def truck_list(request):
@@ -3952,68 +3096,33 @@ def calendarMaster_list(request):
     if request.method == 'GET':
         try:
             calendarMaster_list = CalendarMaster.objects.filter(is_active=True)
-            calendarMaster_serializer_obj = CalendarMaster_Serializer(calendarMaster_list, many=True)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get calendar master"
-            base_DTO_obj.data_list = calendarMaster_serializer_obj.data
-
-            calendarMaster_list_Serializer_DTO_obj = CalendarMaster_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(calendarMaster_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
-        except Exception as e:
-
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "error"
-            base_DTO_obj.massage = e 
-            # base_DTO_obj.data_list = order_serializer.data
-
-            calendarMaster_list_Serializer_DTO_obj = CalendarMaster_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(calendarMaster_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
-
-    elif request.method == 'POST':
-
-
-        try:
-            calendarMaster_data = JSONParser().parse(request)
-            calendarMaster_data['updated_by'] = request.user.username
-
-            calendarMaster_serializer_obj = CalendarMaster_Serializer(data=calendarMaster_data)
-
-            if calendarMaster_serializer_obj.is_valid():
-                
-                calendarMaster_serializer_obj.save()
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "success"
-                base_DTO_obj.massage = configMessage.configs.get("CALENDAR_MASTER_ADD_MASSAGE_SUCCESSFUL").data
-                base_DTO_obj.data = calendarMaster_serializer_obj.data
-
-                calendarMaster_Serializer_DTO_reponse = CalendarMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(calendarMaster_Serializer_DTO_reponse.data, status=status.HTTP_201_CREATED) 
+            serializer = serializerMapping.mapping_serializer_list(
+                CalendarMaster_list_Serializer_DTO,
+                calendarMaster_list,
+                "success", 
+                "",
+                "",
+                None,
+                None )
             
-
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = calendarMaster_serializer_obj.errors
-            base_DTO_obj.data = None
-
-            calendarMaster_Serializer_DTO_reponse = CalendarMaster_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(calendarMaster_Serializer_DTO_reponse.data, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
+            serializer = serializerMapping.mapping_serializer_list(
+                    Customer_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
 
-            calendarMaster_Serializer_DTO = CalendarMaster_Serializer_DTO(base_DTO_obj)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return JsonResponse(calendarMaster_Serializer_DTO.data, status=status.HTTP_200_OK)
+       
+ 
 
 @api_view(['POST'])
 def search_calendarMaster(request):
@@ -4021,201 +3130,56 @@ def search_calendarMaster(request):
     if request.method == 'POST':
 
         try:
-            customer_code_selected = request.data['customer_code_selected']
-            project_code_selected = request.data['project_code_selected']
-            plant_code_selected = request.data['plant_code_selected']
-            working_day_selected = request.data['working_day_selected']
+            customer_code = request.data['customer_code_selected']
+            project_code = request.data['project_code_selected']
+            plant_code = request.data['plant_code_selected']
+            working_day = request.data['working_day_selected']
 
-            query = "select * from master_data_calendarmaster "
+            calendarMasterService = CalendarMasterService()
+            calendarMaster_list =  calendarMasterService.search_calendarMaster(customer_code,project_code,plant_code,working_day)
 
-            joint_str = "" 
-            where_str = " where 1 = 1  and master_data_calendarmaster.is_active = true  "
-
-
-            if customer_code_selected is not None:
-
-                joint_str = joint_str + " INNER JOIN master_data_station "
-                joint_str = joint_str + " ON UPPER(master_data_station.station_code) = UPPER(master_data_calendarmaster.plant_code) "
-                joint_str = joint_str + " INNER JOIN master_data_project "
-                joint_str = joint_str + " ON UPPER(master_data_project.project_code) = UPPER(master_data_station.project_code) "
-                joint_str = joint_str + " INNER JOIN master_data_customer "
-                joint_str = joint_str + " ON UPPER(master_data_customer.customer_code) = UPPER(master_data_project.customer_code) "
-                where_str = where_str + " and  UPPER(master_data_customer.customer_code) = '%s' " % customer_code_selected.upper()
-                    
-            if project_code_selected is not None and customer_code_selected is None :
-                
-                joint_str = joint_str + " INNER JOIN master_data_station "
-                joint_str = joint_str + " ON UPPER(master_data_station.station_code) = UPPER(master_data_calendarmaster.plant_code) "
-                joint_str = joint_str + " INNER JOIN master_data_project "
-                joint_str = joint_str + " ON UPPER(master_data_project.project_code) = UPPER(master_data_station.project_code) "
-                where_str = where_str + " and  UPPER(master_data_project.project_code) = '%s' " % project_code_selected.upper()
-            
-            if project_code_selected is not None and customer_code_selected is not None :
-               
-                where_str = where_str + " and  UPPER(master_data_project.project_code) = '%s' " % project_code_selected.upper()
-
-            if plant_code_selected is not None:
-
-                where_str = where_str + " and  UPPER(master_data_calendarmaster.plant_code) = '%s' " % plant_code_selected.upper()
-            
-            if working_day_selected is not None:
-
-                where_str = where_str + " and  master_data_calendarmaster.is_working = '%s' " % working_day_selected
-            
-            query = query + joint_str + where_str + "order by master_data_calendarmaster.date"
-
-            calendarMaster_list = CalendarMaster.objects.raw(query)
-
-            calendarMaster_csv_list = []
-
-            calendarMaster_csv_list.insert(0, [
+            name_csv_str = "CalendarMasterCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj.covert_to_header([
                 "Plant",
                 "Day",
                 "Date",
                 "Working Day",
                 "Remark",
                 "Update by",
-                "Update Date"
-                ]
-            )
+                "Update Date"])
+            calendarMaster_CSV_list  = CalendarMasterHelper.covert_data_list_to_CSV_list(calendarMaster_list)
+            CSV_file_management_obj.covert_to_CSV_data_list(calendarMaster_CSV_list)
+            return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
 
-            calendarMaster_dto_list = []
-            for calendarMaster_obj in calendarMaster_list:
+            serializer_list =  CalendarMasterHelper.covert_data_list_to_serializer_list(calendarMaster_list)
 
-                calendarMaster_row_list = (
-                                calendarMaster_obj.plant_code,
-                                covert_to_date_str(calendarMaster_obj.day),
-                                calendarMaster_obj.date,
-                                "Yes" if calendarMaster_obj.is_working  else "No",
-                                calendarMaster_obj.remark,
-                                calendarMaster_obj.updated_by,
-                                calendarMaster_obj.updated_date.strftime("%d/%m/%Y")
-                                )
-
-                calendarMaster_csv_list.append(calendarMaster_row_list)
-
-            name_csv_str = "CalendarMasterCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
-
-            with open("media/" +  name_csv_str +'.csv', 'w', newline='',encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerows(calendarMaster_csv_list)
-
-            calendarMaster_serializer = CalendarMaster_Serializer(calendarMaster_list, many=True)
-
+            serializer = serializerMapping.mapping_serializer_list(
+                CalendarMaster_list_Serializer_DTO,
+                serializer_list,
+                "success", 
+                "",
+                name_csv_str + '.csv',
+                None,
+                None )
             
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get calendarMaster"
-            base_DTO_obj.data_list = calendarMaster_serializer.data
-            base_DTO_obj.csv_name =  name_csv_str + '.csv'
-
-            calendarMaster_list_Serializer_DTO = CalendarMaster_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(calendarMaster_list_Serializer_DTO.data, safe=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            calendarMaster_list_Serializer_DTO = CalendarMaster_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(calendarMaster_list_Serializer_DTO.data, safe=False)
-
-def covert_to_date_str(date_int):
-
-    if date_int == 1 :
-
-        return "Sunday"
-    
-    if date_int == 2 :
-
-        return "Monday"
-    
-    if date_int == 3 :
-
-        return "Tuesday"
-    
-    if date_int == 4 :
-
-        return "Wednesday"
-    
-    if date_int == 5 :
-
-        return "Thursday"
-    
-    if date_int == 6 :
-
-        return "Friday"
-
-    if date_int == 7 :
-
-        return "Saturday"
-    
-
-
-@api_view(['GET', 'POST', 'DELETE'])
-def edited_calendarMaster(request):
-
-    if request.method == 'POST':
-
-        try:
-
-            calendarMaster_data = JSONParser().parse(request)
-            calendarMaster_obj = CalendarMaster.objects.get( id = calendarMaster_data['id'] )
+            serializer = serializerMapping.mapping_serializer_list(
+                    CalendarMaster_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
             
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            if calendarMaster_data['is_working'] is None or calendarMaster_data['is_working'] == "":
 
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("CALENDAR_MASTER_WORKING_REQUIRED").data
-                base_DTO_obj.data_list = CalendarMaster.objects.all()
 
-                calendarMaster_list_serializer_DTO_reponse = CalendarMaster_list_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(calendarMaster_list_serializer_DTO_reponse.data, safe=False) 
-            
-            calendarMaster_data["date"] = datetime.strptime(calendarMaster_data["date"] , "%Y-%m-%d").strftime("%d-%m-%Y")
-
-            calendarMaster_serializer_obj =  CalendarMaster_Serializer(calendarMaster_obj,data=calendarMaster_data)
-
-            if calendarMaster_serializer_obj.is_valid():
-
-                calendarMaster_serializer_obj.save()
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "success"
-                base_DTO_obj.massage = configMessage.configs.get("CALENDAR_MASTER_EDIT_MASSAGE_SUCCESSFUL").data
-                base_DTO_obj.data_list = CalendarMaster.objects.all()
-
-                calendarMaster_list_serializer_DTO_reponse = CalendarMaster_list_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(calendarMaster_list_serializer_DTO_reponse.data, safe=False) 
-            
-            else : 
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = calendarMaster_serializer_obj.errors
-                base_DTO_obj.data_list = CalendarMaster.objects.all()
-
-                calendarMaster_list_serializer_DTO_reponse = CalendarMaster_list_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(calendarMaster_list_serializer_DTO_reponse.data, safe=False) 
-            
-        except Exception as e:
-
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            calendarMaster_Serializer_DTO_reponse = CalendarMaster_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(calendarMaster_Serializer_DTO_reponse.data, safe=False)
 
 @api_view(['GET', 'POST', 'DELETE'])
 def deleted_calendarMaster(request):

@@ -1,0 +1,11 @@
+Customer,Project,Station Code,Descrition,type,Zone,Province,Address,Remark,Update By,Update Date
+,AD-MR-IB,AAPICO,test,SUPPLIER,test,test,test,test,Batman,24/09/2020
+,AD-MR-IB,SPV,test,SUPPLIER,test,test,test,,Batman,24/09/2020
+,AD-MR-IB,Trim LCB,test,PLANT,test,test,test,,Batman,24/09/2020
+,AD-MR-IB,NSG,test,SUPPLIER,test,test,test,test,Batman,24/09/2020
+,AD-MR-IB,Foam,test,PLANT,test,test,test,,Batman,24/09/2020
+,AD-MR-IB,AT,test,PLANT,test,test,test,test,Batman,24/09/2020
+,AD-MR-IB,JIT-Rayong,test,PLANT,cmu,cmu,cmu,cmu,Batman,24/09/2020
+,AD-MR-IB,XCL,test,SUPPLIER,cmu,cmu,cmu,cmu,Batman,24/09/2020
+,AD-MR-IB,Metal,test,PLANT,test,test,test,test,Batman,24/09/2020
+,AD-MR-IB,AUN,test by developer,SUPPLIER,cmu,เชียงใหม่,173/1,test,Batman,24/09/2020

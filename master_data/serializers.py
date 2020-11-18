@@ -2,21 +2,23 @@ from rest_framework import serializers
 from uploads.models import File
 from master_data.models import Part,RouterMaster,Project,Customer,Package,Station,Truck,Driver,RouterInfo,CalendarMaster
 from datetime import datetime, timedelta
+import pandas as pd
 from datetime import timezone
 from master_data import views 
 import re
 from app.helper.config.ConfigMessage import ConfigMessage
+from app.helper.file_management.FileManagement import FileManagement
 configMessage = ConfigMessage()
 
 class Part_Serializer(serializers.Serializer):
 
+    project_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
+    supplier_code  = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
     part_number = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     part_name = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     service_type = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
     snp = serializers.IntegerField(allow_null=True,required=False)
     remark = serializers.CharField(max_length=250,allow_blank=True,allow_null=True,required=False)
-    project_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
-    supplier_code  = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
     package_no = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
     status = serializers.IntegerField(allow_null=True,required=False)
     created_by = serializers.CharField(max_length=15,allow_blank=True,allow_null=True,required=False)
@@ -26,10 +28,80 @@ class Part_Serializer(serializers.Serializer):
     package_volume = serializers.DecimalField(allow_null=True,required=False,max_digits=20, decimal_places=2)
     package_weight = serializers.DecimalField(allow_null=True,required=False,max_digits=20, decimal_places=2)
 
+    def validate_project_code(self, project_code):
+
+        if project_code is None or project_code.strip() == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PART_MASTER_PROJECTCODE_REQUIRED").data)
+        
+        return project_code
+
+    def validate_status(self, status):
+
+        if status is None :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PART_MASTER_STATUS_REQUIRED").data)
+        
+        return status
+    
+    def validate_supplier_code(self, supplier_code):
+
+        if supplier_code is None or supplier_code.strip()  == "":
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PART_MASTER_SUPPLIERCODE_REQUIRED").data)
+        
+        return supplier_code
+    
+    def validate_part_number(self, part_number):
+
+        part_list = Part.objects.filter(part_number = part_number,is_active = True)
+
+        if part_number is None or part_number.strip()  == "":
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PART_MASTER_PARTNUMBER_REQUIRED").data)
+        
+        elif not self.instance and len(part_list) > 0 :
+            
+            raise serializers.ValidationError(detail=configMessage.configs.get("PART_MASTER_DUPLICATE").data)
+
+        return part_number
+    
+    def validate_part_name(self, part_name):
+
+        if part_name is None or part_name.strip()  == "":
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PART_MASTER_PARTNAME_REQUIRED").data)
+        
+        return part_name
+    
+    def validate_package_no(self, package_no):
+
+        if package_no is None or package_no.strip()  == "":
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PART_MASTER_PACKAGENO_REQUIRED").data)
+        
+        return package_no
+    
+    def validate_package_volume(self, package_volume):
+
+        if package_volume is None or package_volume =='':
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PART_MASTER_PACKAGEVOLUME_REQUIRED").data)
+
+        return package_volume
+    
+    
+    def validate_package_weight(self, package_weight):
+
+        if package_weight is None or package_weight  == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PART_MASTER_PACKAGEWEIGHT_REQUIRED").data)
+        
+        return package_weight
+
+
     def update(self, instance, validated_data):
 
-        # instance.part_name = validated_data.get('part_name', instance.part_name)
-        print("update")
         instance.service_type = validated_data.get('service_type', instance.service_type)
         instance.remark = validated_data.get('remark', instance.remark)
         instance.project_code = validated_data.get('project_code', instance.project_code)
@@ -45,9 +117,41 @@ class Part_Serializer(serializers.Serializer):
     
 
     def create(self, validated_data):
-        # print(validated_data)
-       
-        return Part.objects.create(**validated_data)
+
+        part_list = Part.objects.filter(part_number__iexact = validated_data.get('part_number'))
+
+        if len(part_list) > 0:
+
+            part_obj = part_list[0]
+
+            part_list.update(
+                package_no=validated_data['package_no'],
+                package_volume=validated_data['package_volume'],
+                package_weight=validated_data['package_weight'],
+                remark=validated_data['remark']
+            )
+
+            return part_obj
+        
+        else : 
+
+            part = Part()
+            part.project_code = validated_data['project_code']
+            part.status = validated_data['status']
+            part.supplier_code = validated_data['supplier_code']
+            part.part_number = validated_data['part_number']
+            part.part_name = validated_data['part_name']
+            part.package_no = validated_data['package_no']
+            part.package_volume = validated_data['package_volume']
+            part.package_weight = validated_data['package_weight']
+            part.remark = validated_data['remark']
+            part.updated_by = validated_data['updated_by']
+            part.updated_date = datetime.utcnow()
+
+            part.save()
+
+            return part
+                
 
 class Part_Serializer_DTO(serializers.Serializer):
 
@@ -352,31 +456,74 @@ class File_Serializer(serializers.Serializer):
 
 class Project_Serializer(serializers.Serializer):
 
-    project_code = serializers.CharField(allow_blank=False,allow_null=False,required=True)
+    project_code = serializers.CharField(allow_blank=True,allow_null=True,required=True)
     remark = serializers.CharField(allow_blank=True,allow_null=True,required=False)
     updated_by = serializers.CharField(allow_blank=False,allow_null=False,required=False)
     updated_date = serializers.DateTimeField(allow_null=True,required=False)
-    customer_code = serializers.CharField(allow_blank=False,allow_null=False,required=False)
+    customer_code = serializers.CharField(allow_blank=True,allow_null=True,required=True)
     is_active = serializers.BooleanField(required=False)
+
+    def validate_project_code(self, project_code):
+
+        project_list =  Project.objects.filter(project_code__iexact = project_code,is_active=True)
+
+        if project_code is None or project_code.strip() == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PROJECT_MASTER_PROJECT_REQUIRED").data)
+        
+        if not self.instance and len(project_list) > 0:
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PROJECT_MASTER_DUPLICATE").data)
+         
+        return project_code
+    
+    def validate_customer_code(self,customer_code):
+
+        if customer_code is None or customer_code.strip() == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PROJECT_MASTER_CUSTOMER_REQUIRED").data)
+        
+        return customer_code
+    
+    def validate(self,project_validate):
+
+        return project_validate
 
     def update(self, instance, validated_data):
 
-        # print(validated_data)
         instance.remark = validated_data.get('remark', instance.remark)
-        instance.updated_by = validated_data.get('updated_by', instance.updated_by)
-        instance.customer_code = validated_data.get('customer_code', instance.customer_code)
-        instance.is_active = validated_data.get('is_active', instance.customer_code)
-        
+        instance.customer_code= validated_data.get('customer_code', instance.customer_code)
+        instance.is_active=True 
         instance.updated_date =  datetime.utcnow()
         instance.save()
-
         return instance
 
     def create(self, validated_data):
 
-        validated_data['updated_date'] = datetime.utcnow()
+        project_list =  Project.objects.filter(project_code__iexact = validated_data['project_code'],is_active=False)
 
-        return Project.objects.create(**validated_data)
+        if len(project_list) > 0 :
+
+            project_obj = project_list[0]
+
+            project_list.update(
+                customer_code= validated_data['customer_code'],
+                remark= validated_data['remark'],
+                is_active=True
+            )
+            
+            return project_obj
+        else : 
+
+            project_obj =  Project()
+            project_obj.project_code = validated_data['project_code']
+            project_obj.customer_code = validated_data['customer_code']
+            project_obj.remark = validated_data['remark']
+            project_obj.updated_date = datetime.utcnow()
+            project_obj.updated_by = validated_data['updated_by']
+            project_obj.is_active = True
+
+            return project_obj
 
 class Project_Serializer_DTO(serializers.Serializer):
 
@@ -395,6 +542,8 @@ class Project_list_Serializer_DTO(serializers.Serializer):
 
 class Customer_Serializer(serializers.Serializer):
 
+
+    project_code = serializers.CharField(allow_blank=True,allow_null=True,required=False)
     customer_code = serializers.CharField(allow_blank=True,allow_null=True,required=False)
     station_code = serializers.CharField(allow_blank=True,allow_null=True,required=False)
     description = serializers.CharField(allow_blank=True,allow_null=True,required=False)
@@ -405,52 +554,171 @@ class Customer_Serializer(serializers.Serializer):
     remark = serializers.CharField(allow_blank=True,allow_null=True,required=False)
     updated_by = serializers.CharField(allow_blank=False,allow_null=False,required=False)
     updated_date = serializers.DateTimeField(allow_null=True,required=False)
-    project_code = serializers.CharField(allow_blank=True,allow_null=True,required=False)
+
+    def validate_project_code(self,project_code):
+
+        if project_code is None or project_code.strip() == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("STATION_MASTER_PROJECT_REQUIRED").data)
+        
+        return project_code
+    
+    def validate_station_code(self,station_code):
+
+        station_list = Station.objects.filter(station_code__iexact = station_code,is_active=True)
+
+        if station_code is None or station_code.strip() == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("STATION_MASTER_STATIONCODE_REQUIRED").data)
+        
+        if not self.instance and len(station_list) > 0:
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("STATION_MASTER_DUPLICATE").data)
+         
+        return station_code
+    
+    def validate_description(self,description):
+
+        if description is None or description.strip() == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("STATION_MASTER_DESCRIPTION_REQUIRED").data)
+        
+        return description
+    
+    def validate_station_type(self,station_type):
+
+        if station_type is None or station_type.strip() == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("STATION_MASTER_TYPE_REQUIRED").data)
+        
+        return station_type
+    
+    def validate_zone(self,zone):
+
+        if zone is None or zone.strip() == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("STATION_MASTER_ZONE_REQUIRED").data)
+        
+        return zone
+    
+    def validate_province(self,province):
+
+        if province is None or province.strip() == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("STATION_MASTER_PROVINCE_REQUIRED").data)
+        
+        return province
+    
+    def validate_address(self,address):
+
+        if address is None or address.strip() == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("STATION_MASTER_ADDRESS_REQUIRED").data)
+        
+        return address
+
+    def create_calendarMaster(self,station_code,updated_by) :
+
+        start_date = datetime(datetime.now().year+1, 1, 1)
+        end_date = datetime(datetime.now().year+1, 12, 31)
+        daterange = pd.date_range(start_date, end_date)
+        for single_date in daterange:
+
+            calendarMaster_obj =  CalendarMaster()
+            calendarMaster_obj.plant_code = station_code
+            day_int = int(single_date.strftime("%w")) + 1
+            calendarMaster_obj.day = day_int
+            calendarMaster_obj.date = single_date
+                            
+            if day_int == 1 :
+
+                calendarMaster_obj.is_working =  False 
+                            
+            else : 
+
+                calendarMaster_obj.is_working = True
+                            
+            calendarMaster_obj.updated_by = updated_by
+            calendarMaster_obj.updated_date = datetime.utcnow()
+            calendarMaster_obj.is_active = True
+
+            calendarMaster_obj.save()
+
+        return calendarMaster_obj
 
 
-    def update(self, instance, validated_data):
 
-        # instance.customer_code = validated_data.get('customer_code', instance.customer_code)
+    def update(self, station, validated_data):
 
-        station = Station()
-        station.station_code = validated_data.get('station_code', instance.station_code)
-        station.description = validated_data.get('description', instance.description)
-        station.station_type = validated_data.get('station_type', instance.station_type)
-        station.zone = validated_data.get('zone', instance.zone)
-        station.province = validated_data.get('province', instance.province)
-        station.address = validated_data.get('address', instance.address)
-        station.remark = validated_data.get('remark', instance.remark)
-        station.updated_by = validated_data.get('updated_by', instance.updated_by)
-        station.updated_date = validated_data.get('updated_date', instance.updated_date)
-        station.project_code = validated_data.get('project_code', instance.project_code)
-        station.is_active = validated_data.get('is_active', instance.is_active)
+        calendarMaster_list = CalendarMaster.objects.filter(plant_code__iexact=validated_data.get('station_code', station.station_code))
+        if len(calendarMaster_list) > 0 and validated_data.get('station_type', station.station_type) == 'SUPPLIER' :
+
+            calendarMaster_list.update(is_active = False)
+            
+        if len(calendarMaster_list) == 0 and validated_data.get('station_type', station.station_type) == 'PLANT':
+
+            self.create_calendarMaster(validated_data.get('station_code', station.station_code),validated_data.get('updated_by', station.updated_by))
+      
+        station.project_code = validated_data.get('project_code', station.project_code)
+        station.station_code = validated_data.get('station_code', station.station_code)
+        station.description = validated_data.get('description', station.description)
+        station.station_type = validated_data.get('station_type', station.station_type)
+        station.zone = validated_data.get('zone', station.zone)
+        station.province = validated_data.get('province', station.province)
+        station.address = validated_data.get('address', station.address)
+        station.remark = validated_data.get('remark', station.remark)
+        station.updated_by = validated_data.get('updated_by', station.updated_by)
+        station.updated_date = validated_data.get('updated_date', station.updated_date)
+        station.is_active = True
         station.updated_date =  datetime.utcnow()
         station.save()
-        # instance.save()
-
-        return station
         
+        return station
+
     def create(self, validated_data):
 
-        station = Station()
-        station.station_code = validated_data.get('station_code')
-        station.description = validated_data.get('description')
-        station.station_type = validated_data.get('station_type')
-        station.zone = validated_data.get('zone')
-        station.province = validated_data.get('province')
-        station.address = validated_data.get('address')
-        station.remark = validated_data.get('remark')
-        station.updated_by = validated_data.get('updated_by')
-        station.updated_date =  datetime.utcnow()
-        station.project_code = validated_data.get('project_code')
-        station.is_active = True
+        station_list =  Station.objects.filter(station_code__iexact = validated_data['station_code'],is_active=False)
 
-        station.save()
+        if len(station_list) > 0 :
+
+            station_obj = station_list[0]
+
+            station_list.update(
+                description= validated_data['description'],
+                station_type= validated_data['station_type'],
+                zone= validated_data['zone'],
+                province= validated_data['province'],
+                address= validated_data['address'],
+                remark= validated_data['remark'],
+                project_code= validated_data['project_code'],
+                updated_by = validated_data['updated_by'],
+                updated_date = datetime.utcnow(),
+                is_active=True
+            )
+            
+            return station_obj
+        else : 
+
+            station = Station()
+            station.project_code = validated_data.get('project_code')
+            station.station_code = validated_data.get('station_code')
+            station.description = validated_data.get('description')
+            station.station_type = validated_data.get('station_type')
+            station.zone = validated_data.get('zone')
+            station.province = validated_data.get('province')
+            station.address = validated_data.get('address')
+            station.remark = validated_data.get('remark')
+            station.updated_by = validated_data.get('updated_by')
+            station.updated_date =  datetime.utcnow()
+            station.is_active = True
+
+            station.save()
         
-        return station
+            if validated_data.get('station_type') == "PLANT":
 
-        
+                self.create_calendarMaster(validated_data.get('station_code'),validated_data.get('updated_by'))
 
+            return station
 
 class Customer_Serializer_DTO(serializers.Serializer):
 
@@ -480,6 +748,84 @@ class Package_Serializer(serializers.Serializer):
     image_url = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     updated_by = serializers.CharField(allow_blank=True,allow_null=True,required=False)
     updated_date = serializers.DateTimeField(allow_null=True,required=False)
+ 
+
+    def validate_station_code(self,station_code):
+
+        if station_code == "null" or station_code == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PACKAGES_MASTER_STATIONCODE_REQUIRED").data)
+        
+        return station_code
+
+    def validate_package_code(self,package_code):
+
+        if package_code == "null" or package_code == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PACKAGES_MASTER_PACKAGECODE_REQUIRED").data)
+        
+        return package_code
+
+    def validate_package_no(self,package_no):
+
+        package_list = Package.objects.filter(detail=request.POST['package_no'],is_active=True)
+
+        if package_no == "null" or package_no == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PACKAGES_MASTER_PACKAGENO_REQUIRED").data)
+        
+        elif  len(package_list) > 0 :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PACKAGES_MASTER_DUPLICATE").data)
+
+        return package_no
+    
+    def validate_snp(self,snp):
+
+        if snp == "null" or snp == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PACKAGES_MASTER_SNP_REQUIRED").data)
+        
+        elif snp <= 0 :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PACKAGES_MASTER_SNP_MORE_THAN_ZERO").data)
+
+        return snp
+    
+    def validate_width(self,width):
+
+        if width == "null" or width == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PACKAGES_MASTER_WIDTH_REQUIRED").data)
+        
+        return width
+    
+    def validate_length(self,length):
+
+        if length == "null" or length == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PACKAGES_MASTER_LENGTH_REQUIRED").data)
+        
+        return length
+
+    def validate_height(self,height):
+
+        if height == "null" or height == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PACKAGES_MASTER_HEIGHT_REQUIRED").data)
+        
+        return height
+    
+    def validate_weight(self,weight):
+
+        if weight == "null" or weight == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("PACKAGES_MASTER_WEIGHT_REQUIRED").data)
+        
+        return weight
+    
+
+    
 
     def update(self, instance, validated_data):
 
@@ -494,9 +840,48 @@ class Package_Serializer(serializers.Serializer):
         instance.updated_date = datetime.utcnow()
         instance.save()
 
+        return instance
+
     def create(self, validated_data):
 
-        return Package.objects.create(**validated_data)
+        
+        package_list =  Package.objects.filter(package_no__iexact = validated_data.get('package_no'),is_active=False)
+
+        if len(package_list) > 0 :
+
+            package_obj = package_list[0]
+
+            package_list.update(
+                snp= validated_data['snp'],
+                width= validated_data['width'],
+                length= validated_data['length'],
+                height= validated_data['height'],
+                weight= validated_data['weight'],
+                image_url= validated_data['image_url'],
+                updated_by = validated_data['updated_by'],
+                updated_date = datetime.utcnow(),
+                is_active=True
+            )
+
+            return package_obj
+        
+        else : 
+            
+            package = Package()
+            package.package_code = validated_data.get('package_code')
+            package.package_no = validated_data.get('package_no')
+            package.snp = validated_data.get('snp')
+            package.width = validated_data.get('width')
+            package.length = validated_data.get('length')
+            package.height = validated_data.get('height')
+            package.weight = validated_data.get('weight')
+            package.station_code = validated_data.get('station_code')
+            package.image_url = validated_data.get('image_url')
+            package.updated_by = validated_data.get('updated_by')
+            package.updated_date = datetime.utcnow()
+            package.is_active = True
+
+            return package
 
 class Package_Serializer_DTO(serializers.Serializer):
 

@@ -16,8 +16,8 @@ class Part(models.Model):
     project_code = models.CharField(max_length=150,blank=True, null=True)
     supplier_code  = models.CharField(max_length=50,blank=True, null=True)
     package_no = models.CharField(max_length=50,blank=True, null=True)
-    package_volume = models.DecimalField(max_digits=20, decimal_places=2,blank=True, null=True)
-    package_weight = models.DecimalField(max_digits=20, decimal_places=2,blank=True, null=True)
+    package_volume = models.DecimalField(max_digits=20, decimal_places=2, null=True)
+    package_weight = models.DecimalField(max_digits=20, decimal_places=2, null=True)
     is_active = models.BooleanField(default=True)
     updated_by = models.CharField(max_length=150,blank=True, null=True)
     updated_date = models.DateTimeField(blank=True, null=True,default=timezone.now)
@@ -132,9 +132,9 @@ class Project(models.Model):
 
     def save(self, *args, **kwargs):
 
-        # if not self.project_code:
+        if not self.project_code:
 
-        #     # self.updated_date = datetime.now()
+            self.updated_date = datetime.utcnow()
 
         return super(Project, self).save(*args, **kwargs)
 
