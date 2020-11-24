@@ -62,7 +62,7 @@ class RouterInfo(models.Model):
 
     project_code = models.CharField(max_length=150,blank=True, null=True)
     route_code = models.CharField(max_length=150,blank=True, null=True)
-    trip_no = models.CharField(max_length=50,blank=True, null=True)
+    route_trip = models.CharField(max_length=50,blank=True, null=True)
     truck_license = models.CharField(max_length=150,blank=True, null=True)
     province = models.CharField(max_length=150,blank=True, null=True)
     driver_code = models.CharField(max_length=150,blank=True, null=True)

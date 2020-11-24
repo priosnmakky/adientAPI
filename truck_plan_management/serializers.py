@@ -47,7 +47,7 @@ class PickUp_Serializer(serializers.Serializer):
         instance.save()
 
     def validate_due_date(self, due_date):
-        print(due_date)
+   
         if due_date is None :
 
             raise serializers.ValidationError(detail=configMessage.configs.get("UPLOAD_PICKUP_DUEDATE_REQUIRED").data)
@@ -77,7 +77,7 @@ class PickUp_Serializer(serializers.Serializer):
         
  
         order_obj.update(pickup_no=validated_data.get('pickup_no'),updated_date=datetime.utcnow(),updated_by=validated_data.get('updated_by'))
-        print(validated_data)
+  
         return PickUp.objects.create(**validated_data)
 
 class PickUp_Serializer_DTO(serializers.Serializer):

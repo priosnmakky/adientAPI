@@ -1,3 +1,4 @@
+  
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http.response import JsonResponse
@@ -233,4 +234,3 @@ def render_truckplan_pdf(request):
                 PDF_serializer_DTO = serializerMapping.mapping_pdf(PDF_Serializer_DTO,'Error',e,'sadasdasd')
 
                 return JsonResponse(PDF_serializer_DTO.data, status=status.HTTP_200_OK)
-

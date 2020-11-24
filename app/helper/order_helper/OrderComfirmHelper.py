@@ -29,7 +29,7 @@ class OrderComfirmHelper:
     
     def read_order_from_CSV(self) :
        
-        order_csv_list = CSVFileManagement.read_CSV_file(self.CSV_name_str)
+        order_csv_list = CSVFileManagement.read_CSV_file(self.CSV_name_str,';','|')
 
         return order_csv_list
     

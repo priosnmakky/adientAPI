@@ -47,13 +47,15 @@ class CSVFileManagement:
         return CSV_file_name_str
     
     @staticmethod
-    def read_CSV_file(name_file_str) :
+    def read_CSV_file(name_file_str,delimiter,quotechar) :
 
         with open(name_file_str, newline='') as csvfile:
 
-            data_list = csv.reader(csvfile, delimiter=';', quotechar='|')
+            data_list = csv.reader(csvfile, delimiter=delimiter, quotechar=quotechar)
 
-            return data_list
+        
+        return data_list
+    
 
             
 

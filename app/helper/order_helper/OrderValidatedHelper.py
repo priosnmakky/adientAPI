@@ -18,8 +18,7 @@ class OrderValidatedHelper:
         self.order_list = order_list
         self.supplier_workbook_list = supplier_workbook_list
         self.plant_workbook_list = plant_workbook_list
-
-
+     
     def get_supplier_in_db(self) :
 
         supplier_db_list = set(Station.objects.filter(station_code__iregex=r'(' + '|'.join(self.supplier_workbook_list) + ')',station_type__iexact="SUPPLIER",is_active=True).values_list("station_code",flat=True))
@@ -40,7 +39,7 @@ class OrderValidatedHelper:
     def get_plant_in_db(self) : 
         
         plant_db_list = Station.objects.filter(station_code__iregex=r'(' + '|'.join(self.plant_workbook_list) + ')',station_type__iexact="PLANT",is_active=True).values_list("station_code",flat=True)
-        plant_upper_db_set = set([p.upper() for p in self.plant_workbook_list])
+        plant_upper_db_set = set([p.upper() for p in plant_db_list])
 
         return plant_upper_db_set
     
@@ -149,11 +148,11 @@ class OrderValidatedHelper:
     def validate_plant_list(self) :
         
         plant_list = [ x for x in self.order_list if x[0].upper()  in list(self.get_plant_codet_in_workbook()) and x[2] == 5 ]
-
+        # print(list(self.get_plant_codet_in_workbook()))
         for plant_error in plant_list:
 
             validate_error_obj = validateError() 
-
+        
             station_len_int = len(Station.objects.filter(station_code__iexact= str(plant_error[0]),station_type__iexact="PLANT",is_active=True))
                             
             if plant_error[0] is None or plant_error[0] == "" :

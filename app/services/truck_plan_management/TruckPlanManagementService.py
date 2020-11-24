@@ -13,180 +13,144 @@ class TruckPlanManagementService:
 
     csv_list = []
 
-    def search_order_for_generate_pickup(self,customer_code_selected_str,project_code_selected_str,due_date_selected_str):
+    def search_generate_pickup(self,customer_code,project_code,due_date):
 
+        cursor = connection.cursor()
 
-        query_first = "SELECT truck_plan_management_pickup.pickup_no,truck_plan_management_pickup.supplier_code,truck_plan_management_pickup.plant_code,truck_plan_management_pickup.route_code,truck_plan_management_pickup.route_trip,truck_plan_management_pickup.due_date,COUNT(order_order.order_no)  FROM truck_plan_management_pickup  "
+        if due_date is not None :
 
-        joint_str_first = " LEFT JOIN order_order ON order_order.pickup_no = truck_plan_management_pickup.pickup_no and order_order.is_deleted = false and order_order.is_part_completed = true and order_order.is_route_completed = true   "
-        where_str_first = " where 1 = 1  "
+            due_date = datetime.strptime(due_date, "%d/%m/%Y")
 
-        query_second = "SELECT order_order.pickup_no,order_order.supplier_code,order_order.plant_code,order_order.route_code,order_order.route_trip,order_order.due_date,COUNT(order_order.order_no) FROM order_order "
+        cursor.execute(" Begin;  SELECT * FROM search_generate_pickup(%s,%s,%s);",[customer_code,project_code,due_date]  )
 
-        joint_str_second  = ""
-        where_str_second  = " where order_order.is_deleted = false and order_order.is_part_completed = true and order_order.is_route_completed = true "
+        pickup_list = cursor.fetchall()
+        cursor.close();
 
-        if customer_code_selected_str is not None and customer_code_selected_str != "":
-            
-            joint_str_first = joint_str_first + " INNER JOIN master_data_routermaster " 
-            joint_str_first = joint_str_first + " ON UPPER(master_data_routermaster.route_code) = UPPER(truck_plan_management_pickup.route_code) "
-            joint_str_first = joint_str_first + " and UPPER(master_data_routermaster.trip_no) = UPPER(truck_plan_management_pickup.route_trip) "
-            
-            joint_str_first = joint_str_first + " INNER JOIN master_data_project  "
-            joint_str_first = joint_str_first + " ON UPPER(master_data_project.project_code) = UPPER(master_data_routermaster.project_code) "
-            
-            joint_str_first = joint_str_first + " INNER JOIN master_data_customer "
-            joint_str_first = joint_str_first + " ON UPPER(master_data_customer.customer_code) = UPPER(master_data_project.customer_code) "
+        return pickup_list
 
-            where_str_first = where_str_first + " and   UPPER(master_data_customer.customer_code) = '%s' " % customer_code_selected_str.upper()
-
-            joint_str_second = joint_str_second + " INNER JOIN master_data_project "
-            joint_str_second = joint_str_second + " ON UPPER(master_data_project.project_code) = UPPER(order_order.project_code) "
-
-            joint_str_second = joint_str_second + " INNER JOIN master_data_customer "
-            joint_str_second = joint_str_second + " ON UPPER(master_data_customer.customer_code) = UPPER(master_data_project.customer_code) "
-                    
-            where_str_second = where_str_second + " and   UPPER(master_data_customer.customer_code) = '%s' " % customer_code_selected_str.upper()
-
-        if project_code_selected_str is not None and project_code_selected_str != "":
-
-            where_str_first = where_str_first + " and   UPPER(order_order.project_code) = '%s' " % project_code_selected_str.upper()
-
-            where_str_second = where_str_second + " and   UPPER(order_order.project_code) = '%s' " % project_code_selected_str.upper()
-
-        if due_date_selected_str is not None :
-
-            due_date_selected_str = datetime.strptime(due_date_selected_str, "%d/%m/%Y").strftime("%Y/%m/%d")
-            where_str_first = where_str_first + "and truck_plan_management_pickup.due_date = '%s' " % due_date_selected_str
-
-            where_str_second = where_str_second + "and order_order.due_date = '%s' " % due_date_selected_str
-
-        query_first = query_first + joint_str_first + where_str_first + " GROUP BY truck_plan_management_pickup.pickup_no,truck_plan_management_pickup.supplier_code,truck_plan_management_pickup.plant_code, truck_plan_management_pickup.route_code,truck_plan_management_pickup.route_trip,truck_plan_management_pickup.due_date  "
-
-        query_second = query_second + joint_str_second + where_str_second + " GROUP BY order_order.pickup_no,order_order.supplier_code,order_order.plant_code, order_order.route_code,order_order.route_trip,order_order.due_date   "
       
-        cursor.execute(query_first + " UNION " + query_second + " Order by pickup_no")
-        result_order_list = cursor.fetchall()
-        
 
-        return_order_list = []
 
-        for order_obj in result_order_list :
+    def search_pickUp_PUS(self,customer_code,project_code,supplier_code,due_date_from,due_date_to,PUS_ref):
 
-            orderSerializer_obj = OrderSerializer()
-            orderSerializer_obj.pickup_no = order_obj[0]
-            orderSerializer_obj.supplier_code = order_obj[1]
-            orderSerializer_obj.plant_code = order_obj[2]
-            orderSerializer_obj.route_code = order_obj[3]
-            orderSerializer_obj.route_trip = order_obj[4]
-            orderSerializer_obj.due_date = datetime.strptime(order_obj[5].strftime("%Y-%m-%d"), "%Y-%m-%d")
-            orderSerializer_obj.order_count = order_obj[6]
+        cursor = connection.cursor()
+
+        if due_date_from is not None :
+
+            due_date_from = datetime.strptime(due_date_from, "%d/%m/%Y")
+
+        if due_date_to is not None :
             
-            return_order_list.append(orderSerializer_obj)
+            due_date_to = datetime.strptime(due_date_to, "%d/%m/%Y")
         
-        return return_order_list
-
-
-    def search_pickUp_PUS(self,customer_code_selected_str,project_code_selected_str,supplier_code_selected_str,due_date_from_selected_str,due_date_to_selected_str,PUS_ref_selected_str):
-
-
-        query = "SELECT truck_plan_management_pickup.pickup_no,truck_plan_management_pickup.supplier_code,truck_plan_management_pickup.plant_code,truck_plan_management_pickup.due_date,master_data_routermaster.release_time,master_data_routermaster.delivery_time,master_data_routermaster.route_code,master_data_routermaster.trip_no,master_data_routerinfo.truck_license,master_data_driver.name,COUNT(order_order.*),truck_plan_management_pickup.status"
-        query = query + " FROM truck_plan_management_pickup "
-        joint_str = " left join order_order ON order_order.pickup_no = truck_plan_management_pickup.pickup_no left join master_data_routermaster "
-        joint_str = joint_str + " ON master_data_routermaster.route_code = truck_plan_management_pickup.route_code and master_data_routermaster.trip_no = truck_plan_management_pickup.route_trip "
-        joint_str = joint_str + " left join master_data_routerinfo ON master_data_routerinfo.route_code = master_data_routermaster.route_code "
-        joint_str = joint_str + " and master_data_routerinfo.trip_no = master_data_routermaster.trip_no "
-        joint_str = joint_str + " left join master_data_driver ON master_data_driver.driver_code = master_data_routerinfo.driver_code "
-
-        group_by = "GROUP BY truck_plan_management_pickup.pickup_no,"
-        group_by = group_by + "truck_plan_management_pickup.supplier_code,"
-        group_by = group_by + "truck_plan_management_pickup.plant_code,"
-        group_by = group_by + "truck_plan_management_pickup.due_date,"
-        group_by = group_by + "master_data_routermaster.release_time,"
-        group_by = group_by + "master_data_routermaster.delivery_time,"
-        group_by = group_by + "master_data_routermaster.route_code,"
-        group_by = group_by + "master_data_routermaster.trip_no,"
-        group_by = group_by + "master_data_routerinfo.truck_license,"
-        group_by = group_by + "master_data_driver.name,"
-        group_by = group_by + "truck_plan_management_pickup.status"
-        where_str = " where 1 = 1  "
-
-        if customer_code_selected_str is not None and customer_code_selected_str != "":
-
-            joint_str = joint_str + " left join master_data_project "
-            joint_str = joint_str + " ON  UPPER(master_data_project.project_code) = UPPER(master_data_routermaster.project_code) "
-            joint_str = joint_str + " left join master_data_customer "
-            joint_str = joint_str + " ON UPPER(master_data_customer.customer_code) =  UPPER(master_data_project.customer_code) "
-
-            where_str = where_str + " and UPPER(master_data_customer.customer_code) = '%s' " % customer_code_selected_str.upper()
-        
-        if project_code_selected_str is not None and project_code_selected_str != "":
-
-            where_str = where_str + " and   UPPER(master_data_project.project_code) = '%s' " % project_code_selected_str.upper()
-
-        if due_date_from_selected_str is not None and due_date_to_selected_str is None:
-
-            due_date_from_selected_str = datetime.strptime(due_date_from_selected_str, "%d/%m/%Y").strftime("%Y/%m/%d")
-            where_str = where_str + "and truck_plan_management_pickup.due_date  >= '%s' " % due_date_from_selected_str
-        
-        if due_date_from_selected_str is  None and due_date_to_selected_str is not None:
-
-            due_date_to_selected_str = datetime.strptime(due_date_to_selected_str, "%d/%m/%Y").strftime("%Y/%m/%d")
-            where_str = where_str + "and truck_plan_management_pickup.due_date <= '%s' " % due_date_to_selected_str
-
-        if due_date_from_selected_str is not None and due_date_to_selected_str is not None:
-
-            due_date_from_selected_str = datetime.strptime(due_date_from_selected_str, "%d/%m/%Y").strftime("%Y/%m/%d")
-            due_date_to_selected_str = datetime.strptime(due_date_to_selected_str, "%d/%m/%Y").strftime("%Y/%m/%d")
-
-            where_str = where_str + "and truck_plan_management_pickup.due_date between '%s' and '%s'" % (due_date_from_selected_str,due_date_to_selected_str)
-        
-        if supplier_code_selected_str is not None and supplier_code_selected_str != "":
+        if PUS_ref is not None :
             
-            where_str = where_str + " and UPPER(truck_plan_management_pickup.supplier_code) = '%s' " % supplier_code_selected_str.upper()
+            PUS_ref = "%"+PUS_ref+"%"
+    
+        cursor.execute(" Begin;  SELECT * FROM search_pickUp_PUS(%s,%s,%s,%s,%s,%s);",[customer_code,project_code,supplier_code,due_date_from,due_date_to,PUS_ref]  )
+
+        pickup_list = cursor.fetchall()
+        cursor.close();
+
+        return pickup_list
+
+        # query = "SELECT truck_plan_management_pickup.pickup_no,truck_plan_management_pickup.supplier_code,truck_plan_management_pickup.plant_code,truck_plan_management_pickup.due_date,master_data_routermaster.release_time,master_data_routermaster.delivery_time,master_data_routermaster.route_code,master_data_routermaster.trip_no,master_data_routerinfo.truck_license,master_data_driver.name,COUNT(order_order.*),truck_plan_management_pickup.status"
+        # query = query + " FROM truck_plan_management_pickup "
+        # joint_str = " left join order_order ON order_order.pickup_no = truck_plan_management_pickup.pickup_no left join master_data_routermaster "
+        # joint_str = joint_str + " ON master_data_routermaster.route_code = truck_plan_management_pickup.route_code and master_data_routermaster.trip_no = truck_plan_management_pickup.route_trip "
+        # joint_str = joint_str + " left join master_data_routerinfo ON master_data_routerinfo.route_code = master_data_routermaster.route_code "
+        # joint_str = joint_str + " and master_data_routerinfo.trip_no = master_data_routermaster.trip_no "
+        # joint_str = joint_str + " left join master_data_driver ON master_data_driver.driver_code = master_data_routerinfo.driver_code "
+
+        # group_by = "GROUP BY truck_plan_management_pickup.pickup_no,"
+        # group_by = group_by + "truck_plan_management_pickup.supplier_code,"
+        # group_by = group_by + "truck_plan_management_pickup.plant_code,"
+        # group_by = group_by + "truck_plan_management_pickup.due_date,"
+        # group_by = group_by + "master_data_routermaster.release_time,"
+        # group_by = group_by + "master_data_routermaster.delivery_time,"
+        # group_by = group_by + "master_data_routermaster.route_code,"
+        # group_by = group_by + "master_data_routermaster.trip_no,"
+        # group_by = group_by + "master_data_routerinfo.truck_license,"
+        # group_by = group_by + "master_data_driver.name,"
+        # group_by = group_by + "truck_plan_management_pickup.status"
+        # where_str = " where 1 = 1  "
+
+        # if customer_code_selected_str is not None and customer_code_selected_str != "":
+
+        #     joint_str = joint_str + " left join master_data_project "
+        #     joint_str = joint_str + " ON  UPPER(master_data_project.project_code) = UPPER(master_data_routermaster.project_code) "
+        #     joint_str = joint_str + " left join master_data_customer "
+        #     joint_str = joint_str + " ON UPPER(master_data_customer.customer_code) =  UPPER(master_data_project.customer_code) "
+
+        #     where_str = where_str + " and UPPER(master_data_customer.customer_code) = '%s' " % customer_code_selected_str.upper()
         
-        if PUS_ref_selected_str is not None and PUS_ref_selected_str != "":
+        # if project_code_selected_str is not None and project_code_selected_str != "":
+
+        #     where_str = where_str + " and   UPPER(master_data_project.project_code) = '%s' " % project_code_selected_str.upper()
+
+        # if due_date_from_selected_str is not None and due_date_to_selected_str is None:
+
+        #     due_date_from_selected_str = datetime.strptime(due_date_from_selected_str, "%d/%m/%Y").strftime("%Y/%m/%d")
+        #     where_str = where_str + "and truck_plan_management_pickup.due_date  >= '%s' " % due_date_from_selected_str
+        
+        # if due_date_from_selected_str is  None and due_date_to_selected_str is not None:
+
+        #     due_date_to_selected_str = datetime.strptime(due_date_to_selected_str, "%d/%m/%Y").strftime("%Y/%m/%d")
+        #     where_str = where_str + "and truck_plan_management_pickup.due_date <= '%s' " % due_date_to_selected_str
+
+        # if due_date_from_selected_str is not None and due_date_to_selected_str is not None:
+
+        #     due_date_from_selected_str = datetime.strptime(due_date_from_selected_str, "%d/%m/%Y").strftime("%Y/%m/%d")
+        #     due_date_to_selected_str = datetime.strptime(due_date_to_selected_str, "%d/%m/%Y").strftime("%Y/%m/%d")
+
+        #     where_str = where_str + "and truck_plan_management_pickup.due_date between '%s' and '%s'" % (due_date_from_selected_str,due_date_to_selected_str)
+        
+        # if supplier_code_selected_str is not None and supplier_code_selected_str != "":
             
-            PUS_ref_selected_str = "%"+PUS_ref_selected_str+"%"
-            where_str = where_str + " and  truck_plan_management_pickup.pickup_no LIKE '%%%s%%'  " %  PUS_ref_selected_str
+        #     where_str = where_str + " and UPPER(truck_plan_management_pickup.supplier_code) = '%s' " % supplier_code_selected_str.upper()
         
-        query = query + joint_str + where_str + group_by + " Order by pickup_no"
-        cursor.execute(query)
-        result_pickUp_list = cursor.fetchall()
-        return_pickUp_list = []
+        # if PUS_ref_selected_str is not None and PUS_ref_selected_str != "":
+            
+        #     PUS_ref_selected_str = "%"+PUS_ref_selected_str+"%"
+        #     where_str = where_str + " and  truck_plan_management_pickup.pickup_no LIKE '%%%s%%'  " %  PUS_ref_selected_str
+        
+        # query = query + joint_str + where_str + group_by + " Order by pickup_no"
+        # cursor.execute(query)
+        # result_pickUp_list = cursor.fetchall()
+        # return_pickUp_list = []
 
-        for pickUp_obj in result_pickUp_list :
+        # for pickUp_obj in result_pickUp_list :
 
-            pickUp_serializer_obj = PickUp_Serializer()
-            pickUp_serializer_obj.pickup_no = pickUp_obj[0]
-            pickUp_serializer_obj.supplier_code = pickUp_obj[1]
-            pickUp_serializer_obj.plant_code = pickUp_obj[2]
-            pickUp_serializer_obj.due_date = datetime.strptime(pickUp_obj[3].strftime("%Y-%m-%d"), "%Y-%m-%d").date()
-            pickUp_serializer_obj.release_time = pickUp_obj[4]
-            pickUp_serializer_obj.delivery_time = pickUp_obj[5]
-            pickUp_serializer_obj.route_code = pickUp_obj[6]
-            pickUp_serializer_obj.route_trip = pickUp_obj[7]
-            pickUp_serializer_obj.truck_license = pickUp_obj[8]
-            pickUp_serializer_obj.name = pickUp_obj[9]
-            pickUp_serializer_obj.order_count = pickUp_obj[10]
-            pickUp_serializer_obj.status  = pickUp_obj[11]
-            self.csv_list.append((pickUp_obj[0],
-                            "Complete" if pickUp_obj[11] == 2 else "Waiting",
-                            pickUp_obj[1],
-                            pickUp_obj[2],
-                            pickUp_obj[11],
-                            datetime.strptime(pickUp_obj[3].strftime("%Y-%m-%d"), "%Y-%m-%d").date(),
-                            NumberFormat.formal_decimal(pickUp_obj[4]),
-                            NumberFormat.formal_decimal(pickUp_obj[5]),
-                            pickUp_obj[6],
-                            pickUp_obj[7],
-                            pickUp_obj[8],
-                            pickUp_obj[9],
-                            ))
+        #     pickUp_serializer_obj = PickUp_Serializer()
+        #     pickUp_serializer_obj.pickup_no = pickUp_obj[0]
+        #     pickUp_serializer_obj.supplier_code = pickUp_obj[1]
+        #     pickUp_serializer_obj.plant_code = pickUp_obj[2]
+        #     pickUp_serializer_obj.due_date = datetime.strptime(pickUp_obj[3].strftime("%Y-%m-%d"), "%Y-%m-%d").date()
+        #     pickUp_serializer_obj.release_time = pickUp_obj[4]
+        #     pickUp_serializer_obj.delivery_time = pickUp_obj[5]
+        #     pickUp_serializer_obj.route_code = pickUp_obj[6]
+        #     pickUp_serializer_obj.route_trip = pickUp_obj[7]
+        #     pickUp_serializer_obj.truck_license = pickUp_obj[8]
+        #     pickUp_serializer_obj.name = pickUp_obj[9]
+        #     pickUp_serializer_obj.order_count = pickUp_obj[10]
+        #     pickUp_serializer_obj.status  = pickUp_obj[11]
+        #     self.csv_list.append((pickUp_obj[0],
+        #                     "Complete" if pickUp_obj[11] == 2 else "Waiting",
+        #                     pickUp_obj[1],
+        #                     pickUp_obj[2],
+        #                     pickUp_obj[11],
+        #                     datetime.strptime(pickUp_obj[3].strftime("%Y-%m-%d"), "%Y-%m-%d").date(),
+        #                     NumberFormat.formal_decimal(pickUp_obj[4]),
+        #                     NumberFormat.formal_decimal(pickUp_obj[5]),
+        #                     pickUp_obj[6],
+        #                     pickUp_obj[7],
+        #                     pickUp_obj[8],
+        #                     pickUp_obj[9],
+        #                     ))
 
-            return_pickUp_list.append(pickUp_serializer_obj)
+        #     return_pickUp_list.append(pickUp_serializer_obj)
 
-        return return_pickUp_list
+        # return return_pickUp_list
 
 
     def search_generate_truck_plan(self,customer_code_selected_str,project_code_selected_str,due_date_selected_str):

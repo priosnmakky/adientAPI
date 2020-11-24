@@ -93,6 +93,7 @@ class FileUploadView(APIView):
                 column_max_int = sheet_obj.max_column
 
                 return_list = OrderUploadHelper.data_mapping_from_sheet(sheet_obj)
+    
                 orderValidatedHelper = OrderValidatedHelper(return_list[0],return_list[3],return_list[4])
                 error_list = orderValidatedHelper.get_error_list()
             
@@ -157,7 +158,6 @@ def get_files(request):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
         
-
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

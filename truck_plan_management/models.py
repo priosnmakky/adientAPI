@@ -9,7 +9,7 @@ class PickUp(models.Model):
     pickup_no = models.CharField(max_length=150,blank=True, null=True)
     supplier_code  = models.CharField(max_length=50,blank=True, null=True)
     plant_code  = models.CharField(max_length=50,blank=True, null=True)
-    due_date = models.DateField(("Date"),blank=True, null=True)
+    due_date = models.DateTimeField(default=datetime.now(), blank=True)
     route_code = models.CharField(max_length=150,blank=True, null=True)
     route_trip = models.CharField(max_length=5,blank=True, null=True)
     status = models.IntegerField(blank=True,null=True)

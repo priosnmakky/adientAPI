@@ -3,7 +3,7 @@ class RouteMasterDTO:
     customer_code = ""
     project_code = ""
     route_code = ""
-    trip_no = ""
+    route_trip = ""
     supplier_code = ""
     plant_code = ""
     pickup_before = 0

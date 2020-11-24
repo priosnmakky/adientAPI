@@ -17,6 +17,8 @@ from app.helper.error_helper.ErrorHelper import ErrorHelper
 from app.helper.config.ConfigMessage import ConfigMessage
 from app.helper.CSV_file_management.CSVFileManagement import CSVFileManagement
 from django.db.models import Q
+from rest_framework.response import Response
+from app.helper.pickup_gen_helper.PickupGenHelper import PickupGenHelper
 
 configMessage = ConfigMessage()
 
@@ -31,57 +33,69 @@ def search_order_for_generate_pickup(request):
 
         try:
 
-            search_order_data_obj = JSONParser().parse(request)
+            pickup_data = JSONParser().parse(request)
 
-            customer_code_selected_str = search_order_data_obj['customer_code_selected']
-            project_code_selected_str = search_order_data_obj['project_code_selected']
-            due_date_selected_str = search_order_data_obj['due_date_selected']
+            customer_code = pickup_data['customer_code_selected']
+            project_code = pickup_data['project_code_selected']
+            due_date = pickup_data['due_date_selected']
 
-            print(due_date_selected_str)
-
-            order_serializer_list = truckPlanManagementService.search_order_for_generate_pickup(
-                customer_code_selected_str,
-                project_code_selected_str,
-                due_date_selected_str
+            pickup_list =  truckPlanManagementService.search_generate_pickup(
+                customer_code,
+                project_code,
+                due_date
                 )
-        
-            order_list_serializer_DTO = serializerMapping.mapping_list_successful(
-                order_serializer_list,
-                Order_list_Serializer_DTO,
-                "",
-                None)
 
-            return JsonResponse(order_list_serializer_DTO.data, status=status.HTTP_200_OK)
+            pickup_list = PickupGenHelper.covert_data_list_to_serializer_list(pickup_list)
+
+            serializer = serializerMapping.mapping_serializer_list(
+                Order_list_Serializer_DTO,
+                pickup_list,
+                "success", 
+                None,
+                "",
+                None,
+                None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
         except Exception as e:
 
-            order_list_serializer_error_DTO = serializerMapping.mapping_list_error(Order_list_Serializer_DTO,e)
+            serializer = serializerMapping.mapping_serializer_list(
+                    Order_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
             
-            return JsonResponse(order_list_serializer_error_DTO.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST'])
 def search_and_print_PUS(request):
 
     if request.method == 'POST':
 
+        print('dsfsdfsdf')
         try:
 
             search_and_print_PUS_obj = JSONParser().parse(request)
 
-            customer_code_selected_str = search_and_print_PUS_obj['customer_code_selected']
-            project_code_selected_str = search_and_print_PUS_obj['project_code_selected']
-            supplier_code_selected_str = search_and_print_PUS_obj['supplier_code_selected']
-            due_date_from_selected_str = search_and_print_PUS_obj['due_date_from_selected']
-            due_date_to_selected_str = search_and_print_PUS_obj['due_date_to_selected']
-            PUS_ref_selected_str = search_and_print_PUS_obj['PUS_ref_selected']
+            customer_code = search_and_print_PUS_obj['customer_code_selected']
+            project_code = search_and_print_PUS_obj['project_code_selected']
+            supplier_code = search_and_print_PUS_obj['supplier_code_selected']
+            due_date_from = search_and_print_PUS_obj['due_date_from_selected']
+            due_date_to = search_and_print_PUS_obj['due_date_to_selected']
+            PUS_ref = search_and_print_PUS_obj['PUS_ref_selected']
 
             pickUp_serializer_list = truckPlanManagementService.search_pickUp_PUS(
-                customer_code_selected_str,
-                project_code_selected_str,
-                supplier_code_selected_str,
-                due_date_from_selected_str,
-                due_date_to_selected_str,
-                PUS_ref_selected_str
+                customer_code,
+                project_code,
+                supplier_code,
+                due_date_from,
+                due_date_to,
+                PUS_ref
                 )
  
             name_csv_str = "SearchAndPrintPUSCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -117,39 +131,49 @@ def generate_PUS(request):
 
             pickUp_list = JSONParser().parse(request)['orderList']
 
-            pickUp_added_list = []
-     
-            for pickUp_obj in pickUp_list :
-
-                pickUp_obj['due_date'] = datetime.strptime(pickUp_obj['due_date'], "%d/%m/%Y").date()
-                due_date_str = pickUp_obj['due_date'].strftime("%Y%m%d") 
-
-                pickUp_obj['supplier_code'] = pickUp_obj['supplier_code']
-                pickUp_obj['plant_code'] = pickUp_obj['plant_code']
-
             pickUp_serializer = PickUp_Serializer(data=pickUp_list,many = True)
 
             if pickUp_serializer.is_valid():
 
-                pickUp_serializer.save(is_active=True,updated_by=request.user.username,updated_date=datetime.utcnow())
+                pickUp_obj =  pickUp_serializer.save(is_active=True,updated_by=request.user.username,updated_date=datetime.utcnow())
 
-                pickUp_serializer_DTO = serializerMapping.mapping_obj_successful(
-                    pickUp_serializer.data,
+                serializer = serializerMapping.mapping_serializer_list(
                     PickUp_Serializer_DTO,
-                    configMessage.configs.get("GENERATEP_PUS_MASSAGE_SUCCESSFUL").data,
-                    None)
-
-                return JsonResponse(pickUp_serializer_DTO.data, status=status.HTTP_200_OK)
+                    pickUp_obj,
+                    "success", 
+                    configMessage.configs.get("STATION_MASTER_DELETE_MASSAGE_SUCCESSFUL").data,
+                    "",
+                    None,
+                    None )
             
-            pickUp_serializer_error_DTO = serializerMapping.mapping_obj_error(PickUp_Serializer_DTO,pickUp_serializer.errors)
+            else :
 
-            return JsonResponse(pickUp_serializer_error_DTO.data, status=status.HTTP_200_OK)
-# 
+                serializer = serializerMapping.mapping_serializer_obj(
+                    PickUp_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(pickUp_serializer.errors),
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+                
         except Exception as e:
 
-            pickUp_serializer_error_DTO = serializerMapping.mapping_obj_error(PickUp_Serializer_DTO,e)
+            serializer = serializerMapping.mapping_serializer_obj(
+                    PickUp_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
             
-            return JsonResponse(pickUp_serializer_error_DTO.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)    
+
+
+
 
 
 @api_view(['GET', 'POST'])
@@ -159,53 +183,80 @@ def create_route(request):
 
         try:
 
-            routerMaster_data = JSONParser().parse(request)
-            router_master_serializer_obj = RouterMaster_Serializer(data=routerMaster_data['routeMaster'])
+            pickup_data = JSONParser().parse(request)
+            routerMaster_data = pickup_data['routeMaster']
+            routerMaster_serializer_obj = RouterMaster_Serializer(data=routerMaster_data)
 
-            if router_master_serializer_obj.is_valid():
+            print(routerMaster_data)
+
+            if routerMaster_serializer_obj.is_valid():
+
+                routerMaster_obj = routerMaster_serializer_obj.save()
+
                 
-                return_router_master = router_master_serializer_obj.save()
-                pickUp_data = {
-                    'supplier_code':return_router_master.supplier_code, 
-                    'plant_code':return_router_master.plant_code,
-                    'due_date':routerMaster_data['add_due_date'],
-                    'route_code':return_router_master.route_code,
-                    'route_trip':return_router_master.trip_no,
-                    'updated_by':return_router_master.updated_by,
-                    'updated_date':return_router_master.updated_date,
-                        }
 
+                pickUp_data = {
+                    'supplier_code':routerMaster_obj.supplier_code, 
+                    'plant_code':routerMaster_obj.plant_code,
+                    'due_date':pickup_data['add_due_date'],
+                    'route_code':routerMaster_obj.route_code,
+                    'route_trip':routerMaster_obj.route_trip,
+                    'updated_by':routerMaster_obj.updated_by,
+                    'updated_date':routerMaster_obj.updated_date,
+                        }
 
                 pickUp_serializer = PickUp_Serializer(data=pickUp_data )
 
                 if pickUp_serializer.is_valid():
 
-                    pickUp_serializer.save()
-                    pickUp_serializer_DTO = serializerMapping.mapping_obj_successful(
-                        pickUp_serializer.data,
+                    pickUp_obj = pickUp_serializer.save() 
+                    serializer = serializerMapping.mapping_serializer_obj(
                         PickUp_Serializer_DTO,
+                        pickUp_obj,
+                        "success", 
                         configMessage.configs.get("GENERATEP_PUS_MANUAL_MASSAGE_SUCCESSFUL").data,
-                        None)
+                        "",
+                        None,
+                        None )
+                else :
+
+                    serializer = serializerMapping.mapping_serializer_obj(
+                        PickUp_Serializer_DTO,
+                        None,
+                        "Error",
+                        ErrorHelper.get_error_massage(pickUp_serializer.errors),
+                        None,
+                        None,
+                        None )
+
+
+            else :
+
+                serializer = serializerMapping.mapping_serializer_obj(
+                    PickUp_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(routerMaster_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
             
-                    return JsonResponse(pickUp_serializer_DTO.data, status=status.HTTP_200_OK)
-                
-                else : 
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-                    pickUp_serializer_DTO = serializerMapping.mapping_obj_error(PickUp_Serializer_DTO,ErrorHelper.get_error_massage(pickUp_serializer.errors))
-            
-                    return JsonResponse(pickUp_serializer_DTO.data, status=status.HTTP_200_OK)
-                
-            else : 
-
-                router_master_serializer_error_DTO = serializerMapping.mapping_obj_error(RouterMaster_list_Serializer_DTO,ErrorHelper.get_error_massage(router_master_serializer_obj.errors))
-
-                return JsonResponse(router_master_serializer_error_DTO.data, status=status.HTTP_200_OK)
-                    
         except Exception as e:
 
-            router_master_serializer_error_DTO = serializerMapping.mapping_obj_error(RouterMaster_list_Serializer_DTO,e)
-            
-            return JsonResponse(router_master_serializer_error_DTO.data, status=status.HTTP_200_OK)
+            serializer = serializerMapping.mapping_serializer_obj(
+                PickUp_Serializer_DTO,
+                None,
+                "Error",
+                e,
+                None,
+                None,
+                None )
+                
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 
 @api_view([ 'POST'])
 def get_order_by_pickup_no(request):
@@ -467,6 +518,7 @@ def search_and_print_truck_plan(request):
 
         try:
 
+            print('makkuy')
             search_and_print_truck_plan_obj = JSONParser().parse(request)
 
             customer_code_selected_str = search_and_print_truck_plan_obj['customer_code_selected']

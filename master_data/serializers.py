@@ -171,7 +171,7 @@ class RouterInfo_Serializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     project_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     route_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
-    trip_no = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
+    route_trip = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     truck_license = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     province = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     driver_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
@@ -180,28 +180,92 @@ class RouterInfo_Serializer(serializers.Serializer):
     updated_by = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     updated_date = serializers.DateTimeField(allow_null=True,required=False)
 
+    def validate_project_code(self, project_code):
+
+        if project_code is None or project_code.strip() == "" :
+            
+            raise serializers.ValidationError(detail=configMessage.configs.get("ROUTE_INFO_PROJECTCODE_REQUIRED").data)
+        
+        return project_code
+    
+    def validate_route_code(self, route_code):
+
+        if route_code is None or route_code.strip() == "" :
+            
+            raise serializers.ValidationError(detail=configMessage.configs.get("ROUTE_INFO_ROUTECODE_REQUIRED").data)
+        
+        return route_code
+    
+    def validate_route_trip(self, route_trip):
+
+        if route_trip is None or route_trip.strip() == "" :
+            
+            raise serializers.ValidationError(detail=configMessage.configs.get("ROUTE_INFO_ROUTETRIP_REQUIRED").data)
+        
+        return route_trip
+    
+    
+    def validate_province(self, province):
+
+        if province is None or province.strip() == "" :
+            
+            raise serializers.ValidationError(detail=configMessage.configs.get("ROUTE_INFO_PROVINCE_REQUIRED").data)
+        
+        return province
+    
+    def validate_truck_license(self, truck_license):
+
+        if truck_license is None or truck_license.strip() == "" :
+            
+            raise serializers.ValidationError(detail=configMessage.configs.get("ROUTE_INFO_TRUCKLICENSE_REQUIRED").data)
+        
+        return truck_license
+    
+    def validate_driver_code(self, driver_code):
+
+        if driver_code is None or driver_code.strip() == "" :
+            
+            raise serializers.ValidationError(detail=configMessage.configs.get("ROUTE_INFO_DRIVERCODE_REQUIRED").data)
+        
+        return driver_code
+
+
 
     def update(self, instance, validated_data):
 
         # instance.part_name = validated_data.get('part_name', instance.part_name)
-        instance.project_code = validated_data.get('project_code', instance.project_code)
-        instance.route_code = validated_data.get('route_code', instance.route_code)
-        instance.trip_no = validated_data.get('trip_no', instance.trip_no)
-        instance.truck_license = validated_data.get('truck_license', instance.truck_license)
+        # instance.project_code = validated_data.get('project_code', instance.project_code)
+        # instance.route_code = validated_data.get('route_code', instance.route_code)
+        # instance.route_trip = validated_data.get('route_trip', instance.route_trip)
+        # instance.truck_license = validated_data.get('truck_license', instance.truck_license)
         instance.province = validated_data.get('province', instance.province)
         instance.driver_code = validated_data.get('driver_code', instance.driver_code)
-        instance.route_no = validated_data.get('route_no', instance.route_no)
+        # instance.route_no = validated_data.get('route_no', instance.route_no)
         instance.updated_by = validated_data.get('updated_by', instance.updated_by)
         instance.updated_date = datetime.utcnow()
+        instance.is_active = True
         instance.save()
 
         return instance
     
 
     def create(self, validated_data):
-        # print(validated_data)
-       
-        return RouterInfo.objects.create(**validated_data)
+
+        routerInfo = RouterInfo()
+        routerInfo.project_code = validated_data['project_code']
+        routerInfo.route_code = validated_data['route_code']
+        routerInfo.route_trip = validated_data['route_trip']
+        routerInfo.province = validated_data['province']
+        routerInfo.truck_license = validated_data['truck_license']
+        routerInfo.driver_code = validated_data['driver_code']
+        routerInfo.updated_by = validated_data['updated_by']
+        routerInfo.updated_date = datetime.utcnow()
+        routerInfo.is_active = True
+        
+        routerInfo.save()
+
+        return routerInfo
+
 
 class RouterInfo_Serializer_DTO(serializers.Serializer):
 
@@ -280,7 +344,7 @@ class RouterMaster_Serializer(serializers.Serializer):
     project_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     route_no = serializers.CharField(max_length=250,allow_blank=True,allow_null=True,required=False)
     route_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
-    trip_no = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
+    route_trip = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     supplier_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     plant_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     pickup_before = serializers.IntegerField(allow_null=True,required=False)
@@ -296,7 +360,6 @@ class RouterMaster_Serializer(serializers.Serializer):
 
     def validate_project_code(self, project_code):
         
-        print(project_code)
         if project_code is None or project_code.strip() == "" :
 
             raise serializers.ValidationError(detail=configMessage.configs.get("ROUTE_MASTER_PROJECTCODE_REQUIRED").data)
@@ -308,15 +371,16 @@ class RouterMaster_Serializer(serializers.Serializer):
         if route_code is None or route_code.strip() == "" :
 
             raise serializers.ValidationError(detail=configMessage.configs.get("ROUTE_MASTER_ROUTECODE_REQUIRED").data)
+        
         return route_code
     
-    def validate_trip_no(self, trip_no):
+    def validate_route_trip(self, route_trip):
 
-        if trip_no is None or trip_no.strip() == "" :
+        if route_trip is None or route_trip.strip() == "" :
 
             raise serializers.ValidationError(detail=configMessage.configs.get("ROUTE_MASTER_TRIPNO_REQUIRED").data)
         
-        return trip_no
+        return route_trip
     
     def validate_supplier_code(self, supplier_code):
 
@@ -403,16 +467,29 @@ class RouterMaster_Serializer(serializers.Serializer):
 
         return complete_time
     
+    def validate(self, data):
+        
+        print(data['route_no'])
+        routerMaster_list = RouterMaster.objects.filter(
+            route_code = data['route_code'],
+            route_trip = data['route_trip'],
+            supplier_code = data['supplier_code'],
+            plant_code = data['plant_code'],
+            is_active=True
+            )
+
+        if not self.instance and len(routerMaster_list) > 0 :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("ROUTE_MASTER_DUPLICATE").data)
+
+
+        return data
+    
     
 
     def update(self, instance, validated_data):
 
-        instance.project_code = validated_data.get('project_code', instance.project_code)
-        instance.route_no = validated_data.get('route_no', instance.route_no)
-        instance.route_code = validated_data.get('route_code', instance.route_code)
-        instance.trip_no = validated_data.get('trip_no', instance.trip_no)
-        instance.supplier_code = validated_data.get('supplier_code', instance.supplier_code)
-        instance.plant_code = validated_data.get('plant_code', instance.plant_code)
+      
         instance.pickup_before = validated_data.get('pickup_before', instance.pickup_before)
         instance.release_time = validated_data.get('release_time', instance.release_time)
         instance.pickup_time = validated_data.get('pickup_time', instance.pickup_time)
@@ -421,18 +498,60 @@ class RouterMaster_Serializer(serializers.Serializer):
         instance.complete_time = validated_data.get('complete_time', instance.complete_time)
         instance.updated_by = validated_data.get('updated_by', instance.updated_by)
         instance.updated_date = datetime.utcnow()
+        instance.is_active = True
         instance.save()
 
         return instance
-    
 
     def create(self, validated_data):
+      
+        routerMaster_list = RouterMaster.objects.filter(route_code = validated_data['route_code'],
+            route_trip = validated_data['route_trip'],
+            supplier_code = validated_data['supplier_code'],
+            plant_code = validated_data['plant_code'])
+
+        if len(routerMaster_list) > 0:
+
+            routerMaster_obj = routerMaster_list[0]
+
+            routerMaster_list.update(
+                pickup_before=validated_data['pickup_before'],
+                release_time=validated_data['release_time'],
+                pickup_time=validated_data['pickup_time'],
+                depart_time=validated_data['depart_time'],
+                delivery_time=validated_data['delivery_time'],
+                complete_time=validated_data['complete_time'],
+                is_active=True
+            )
+
+            return routerMaster_obj
+        
+        else : 
+
+            routerMaster = RouterMaster()
+
+            routerMaster.project_code = validated_data['project_code']
+            routerMaster.route_no = validated_data['route_code'].upper()+ "-" + validated_data['route_trip'].upper() + "-" + validated_data['supplier_code'].upper() + "-" + validated_data['plant_code'].upper()
+            routerMaster.route_code = validated_data['route_code']
+            routerMaster.route_trip = validated_data['route_trip']
+            routerMaster.supplier_code = validated_data['supplier_code']
+            routerMaster.plant_code = validated_data['plant_code']
+            routerMaster.pickup_before = validated_data['pickup_before']
+            routerMaster.release_time = validated_data['release_time']
+            routerMaster.pickup_time = validated_data['pickup_time']
+            routerMaster.depart_time = validated_data['depart_time']
+            routerMaster.delivery_time = validated_data['delivery_time']
+            routerMaster.complete_time = validated_data['complete_time']
+            routerMaster.updated_by = validated_data['updated_by']
+            routerMaster.updated_date = datetime.utcnow()
+
+            routerMaster.is_active = True
+
+            routerMaster.save()
+
+            return routerMaster
+
     
-        validated_data['route_no'] = validated_data['route_code']+ "-" + validated_data['trip_no'] + "-" + validated_data['supplier_code'] + "-" + validated_data['plant_code']
-        return RouterMaster.objects.create(**validated_data)
-
-  
-
 class RouterMaster_Serializer_DTO(serializers.Serializer):
 
     serviceStatus = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
@@ -845,7 +964,7 @@ class Package_Serializer(serializers.Serializer):
     def create(self, validated_data):
 
         
-        package_list =  Package.objects.filter(package_no__iexact = validated_data.get('package_no'),is_active=False)
+        package_list =  Package.objects.filter(package_no = validated_data.get('package_no'),is_active=False)
 
         if len(package_list) > 0 :
 
@@ -911,12 +1030,72 @@ class Truck_Serializer(serializers.Serializer):
     updated_by = serializers.CharField(allow_blank=True,allow_null=True,required=False)
     updated_date = serializers.DateTimeField(allow_null=True,required=False)
 
+    def validate_truck_license(self, truck_license):
+
+        truck_list = Truck.objects.filter(truck_license= truck_license,is_active= True)
+        
+        if truck_license is None or truck_license  == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("TRUCK_MASTER_TRUCKLICENSE_REQUIRED").data)
+        
+        elif not self.instance and len(truck_list) > 0 :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("TRUCK_MASTER_DUPLICATE").data)
+
+        return truck_license
+    
+    def validate_province(self, province):
+
+        if province is None or province  == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("TRUCK_MASTER_PROVINCE_REQUIRED").data)
+        
+        return province
+    
+    def validate_truck_type(self, truck_type):
+
+        if truck_type is None or truck_type  == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("TRUCK_MASTER_TRUCKTYPE_REQUIRED").data)
+        
+        return truck_type
+    
+    def validate_fuel_type(self, fuel_type):
+
+        if fuel_type is None or fuel_type  == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("TRUCK_MASTER_FUELTYPE_REQUIRED").data)
+        
+        return fuel_type
+    
+    def validate_max_speed(self, max_speed):
+
+        if max_speed is None or max_speed  == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("TRUCK_MASTER_MAXSPEED_REQUIRED").data)
+        
+        return max_speed
+    
+    def validate_max_volume(self, max_volume):
+
+        if max_volume is None or max_volume  == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("TRUCK_MASTER_MAXVOLUME_REQUIRED").data)
+        
+        return max_volume
+    
+    def validate_max_weight(self, max_weight):
+
+        if max_weight is None or max_weight  == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("TRUCK_MASTER_MAXWEIGHT_REQUIRED").data)
+        
+        return max_weight
+  
 
     def update(self, instance, validated_data):
 
-        # instance.part_name = validated_data.get('part_name', instance.part_name)
-        print(validated_data)
-        instance.truck_license = validated_data.get('truck_license', instance.truck_license)
+    
         instance.province = validated_data.get('province', instance.province)
         instance.truck_type = validated_data.get('truck_type', instance.truck_type)
         instance.fuel_type = validated_data.get('fuel_type', instance.fuel_type)
@@ -924,11 +1103,52 @@ class Truck_Serializer(serializers.Serializer):
         instance.max_volume = validated_data.get('max_volume', instance.max_volume)
         instance.max_weight = validated_data.get('max_weight', instance.max_weight)
         instance.remark = validated_data.get('remark', instance.remark)
+        instance.is_active = True
         instance.updated_date = datetime.utcnow()
+
         instance.save()
+
         return instance
 
     def create(self, validated_data):
+
+        truck_list = Truck.objects.filter(truck_license = validated_data['truck_license'])
+
+        if len(truck_list) > 0:
+
+            truck_obj = truck_list[0]
+
+            truck_list.update(
+                province=validated_data['province'],
+                truck_type=validated_data['truck_type'],
+                fuel_type=validated_data['fuel_type'],
+                max_speed=validated_data['max_speed'],
+                max_volume=validated_data['max_volume'],
+                max_weight=validated_data['max_weight'],
+                remark=validated_data['max_weight'],
+                is_active=True
+            )
+
+            return truck_obj
+        
+        else : 
+
+            truck = Truck()
+            truck.truck_license = validated_data['truck_license']
+            truck.province = validated_data['province']
+            truck.truck_type = validated_data['truck_type']
+            truck.fuel_type = validated_data['fuel_type']
+            truck.max_speed = validated_data['max_speed']
+            truck.max_volume = validated_data['max_volume']
+            truck.max_weight = validated_data['max_weight']
+            truck.remark = validated_data['remark']
+            truck.updated_by = validated_data['updated_by']
+            truck.updated_date = datetime.utcnow()
+
+            truck.save()
+
+            return truck
+
 
         return Truck.objects.create(**validated_data)
 
@@ -981,24 +1201,87 @@ class Plant_list_Serializer_DTO(serializers.Serializer):
 
 class Driver_Serializer(serializers.Serializer):
 
-    driver_code = serializers.CharField(max_length=250,allow_blank=False,allow_null=False,required=True)
+    driver_code = serializers.CharField(max_length=250,allow_blank=True,allow_null=True,required=True)
     name = serializers.CharField(max_length=250,allow_blank=True,allow_null=True,required=False)
     tel = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
     remark = serializers.CharField(max_length=500,allow_blank=True,allow_null=True,required=False)
     updated_by = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     updated_date =serializers.DateTimeField(allow_null=True,required=False)
 
+    def validate_driver_code(self, driver_code):
+
+        driver_list = Driver.objects.filter(driver_code__iexact=driver_code,is_active= True)
+        
+        if driver_code is None or driver_code.strip()  == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("DRIVER_MASTER_DRIVERCODE_REQUIRED").data)
+        
+        elif not self.instance and len(driver_list) > 0 :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("DRIVER_MASTER_DUPLICATE").data)
+
+        return driver_code
+    
+    def validate_name(self, name):
+
+        if name is None or name.strip()  == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("DRIVER_MASTER_DRIVERNAME_REQUIRED").data)
+        
+        return name
+    
+    def validate_tel(self, tel):
+
+        if tel is None or tel.strip()  == "" :
+
+            raise serializers.ValidationError(detail=configMessage.configs.get("DRIVER_MASTER_DRIVERTEL_REQUIRED").data)
+        
+        return tel
+
     def update(self, instance, validated_data):
 
         instance.name = validated_data.get('name', instance.name)
         instance.tel = validated_data.get('tel', instance.tel)
         instance.remark = validated_data.get('remark', instance.remark)
+        instance.is_active = True
         instance.updated_date = datetime.utcnow()
+
         instance.save()
+
         return instance
 
     def create(self, validated_data):
-        return Driver.objects.create(**validated_data)
+
+        driver_list = Driver.objects.filter( driver_code= validated_data['driver_code'])
+
+        if len(driver_list) > 0:
+
+            driver_obj = driver_list[0]
+
+            driver_list.update(
+                name=validated_data['name'],
+                tel=validated_data['tel'],
+                remark=validated_data['remark'],
+                is_active=True
+            )
+
+            return driver_obj
+        
+        else : 
+
+            driver = Driver()
+            driver.driver_code = validated_data['driver_code']
+            driver.name = validated_data['name']
+            driver.tel = validated_data['tel']
+            driver.remark = validated_data['remark']
+            driver.updated_by = validated_data['updated_by']
+            driver.updated_date = datetime.utcnow()
+            driver.is_active = True
+
+            driver.save()
+
+            return driver
+
 
 class Driver_Serializer_DTO(serializers.Serializer):
 

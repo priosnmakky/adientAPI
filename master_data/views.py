@@ -46,6 +46,14 @@ from app.helper.package_helper.PackageHelper import PackageHelper
 from app.services.package_service.PackageService import PackageService
 from app.helper.part_helper.PartHelper import PartHelper
 from app.services.part_service.PartService import PartService
+from app.helper.truck_helper.TruckHelper import TruckHelper
+from app.services.truck_service.TruckService import TruckService
+from app.helper.driver_helper.DriverHelper import DriverHelper
+from app.services.driver_service.DriverService import DriverService
+from app.helper.routerMaster_helper.RouterMasterHelper import RouterMasterHelper
+from app.services.routerMaster_service.RouterMasterService import RouterMasterService
+from app.helper.routerInfo_helper.RouterInfoHelper import RouterInfoHelper
+from app.services.routerInfo_service.RouterInfoService import RouterInfoService
 import json
 
 
@@ -860,7 +868,6 @@ def edited_customer(request):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
 @api_view(['POST'])
 def search_customer(request):
 
@@ -1190,191 +1197,77 @@ def truck_list(request):
     
     if request.method == 'GET':
         try:
+
             truck_list = Truck.objects.filter(is_active=True)
-            truck_serializer_obj = Truck_Serializer(truck_list, many=True)
+            serializer = serializerMapping.mapping_serializer_list(
+                Truck_list_Serializer_DTO,
+                truck_list,
+                "success", 
+                "",
+                "",
+                None,
+                None )
+            
+            return JsonResponse(serializer.data, status=status.HTTP_200_OK)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get truck"
-            base_DTO_obj.data_list = truck_serializer_obj.data
-
-            truck_list_Serializer_DTO_obj = Truck_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(truck_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "error"
-            base_DTO_obj.massage = e 
-            # base_DTO_obj.data_list = order_serializer.data
+            serializer = serializerMapping.mapping_serializer_list(
+                    Truck_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
 
-            truck_list_Serializer_DTO_obj = Truck_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(truck_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
-
+            return Response(serializer.data, status=status.HTTP_200_OK)
         
-
-            # return JsonResponse(order_serializer.data, safe=False)
-
     elif request.method == 'POST':
-
-
+        
         try:
             truck_data = JSONParser().parse(request)
+            truck_serializer_obj = Truck_Serializer(data=truck_data)
 
-            if truck_data['truck_license'] is None or truck_data['truck_license'].strip() == "" :
+            if truck_serializer_obj.is_valid():
                 
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_TRUCKLICENSE_REQUIRED").data
-                base_DTO_obj.data = None
+                truck_serializer_obj.save()
+                truck_obj =  truck_serializer_obj.save(updated_by=request.user.username)
 
-                truck_Serializer_DTO = Truck_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(truck_Serializer_DTO.data, status=status.HTTP_200_OK) 
-            
-            elif truck_data['province'] is None or truck_data['province'].strip() == "" :
-
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_PROVINCE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                truck_Serializer_DTO = Truck_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(truck_Serializer_DTO.data, status=status.HTTP_200_OK) 
-            
-            elif truck_data['truck_type'] is None or truck_data['truck_type'].strip() == "" :
-
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_TRUCKTYPE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                truck_Serializer_DTO = Truck_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(truck_Serializer_DTO.data, status=status.HTTP_200_OK) 
-            
-            
-            elif truck_data['fuel_type'] is None or truck_data['fuel_type'].strip() == "" :
-
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_FUELTYPE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                truck_Serializer_DTO = Truck_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(truck_Serializer_DTO.data, status=status.HTTP_200_OK)
-            
-            elif truck_data['max_speed'] is None or truck_data['max_speed'] == "" :
-
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_MAXSPEED_REQUIRED").data
-                base_DTO_obj.data = None
-
-                truck_Serializer_DTO = Truck_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(truck_Serializer_DTO.data, status=status.HTTP_200_OK)
-            
-            elif truck_data['max_volume'] is None or truck_data['max_volume'] == "" :
-
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_MAXVOLUME_REQUIRED").data
-                base_DTO_obj.data = None
-
-                truck_Serializer_DTO = Truck_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(truck_Serializer_DTO.data, status=status.HTTP_200_OK)
-            
-            elif truck_data['max_weight'] is None or truck_data['max_weight'] == "" :
-
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_MAXWEIGHT_REQUIRED").data
-                base_DTO_obj.data = None
-
-                truck_Serializer_DTO = Truck_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(truck_Serializer_DTO.data, status=status.HTTP_200_OK)
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Truck_Serializer_DTO,
+                    truck_obj,
+                    "success", 
+                    configMessage.configs.get("PART_MASTER_ADD_MASSAGE_SUCCESSFUL").data,
+                    "",
+                    None,
+                    None )
             
             else : 
 
-                truck_list = Truck.objects.filter(truck_license = truck_data['truck_license'])
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Truck_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(truck_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
             
-         
-                if len(truck_list) >0 :
-
-                    if truck_list[0].is_active :
-
-                        base_DTO_obj =  base_DTO()
-                        base_DTO_obj.serviceStatus = "Error"
-                        base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_DUPLICATE").data
-                        base_DTO_obj.data = None
-
-                        truck_Serializer_DTO_reponse = Truck_Serializer_DTO(base_DTO_obj)
-
-                        return JsonResponse(truck_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-                    
-                    else:
-
-                        truck_list.update(
-                            province=truck_data['province'],
-                            truck_type=truck_data['truck_type'],
-                            fuel_type=truck_data['fuel_type'],
-                            max_speed=Decimal(truck_data['max_speed']),
-                            max_volume=Decimal(truck_data['max_volume']),
-                            max_weight=Decimal(truck_data['max_weight']),
-                            is_active = True
-                        )
-
-                        base_DTO_obj =  base_DTO()
-                        base_DTO_obj.serviceStatus = "success"
-                        base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_ADD_MASSAGE_SUCCESSFUL").data
-                        base_DTO_obj.data = None
-
-                        truck_Serializer_DTO_reponse = Truck_Serializer_DTO(base_DTO_obj)
-
-                        return JsonResponse(truck_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-
-                truck_serializer_obj = Truck_Serializer(data=truck_data)
-            
-                if truck_serializer_obj.is_valid():
-
-                    truck_serializer_obj.save()
-
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "success"
-                    base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_ADD_MASSAGE_SUCCESSFUL").data
-                    base_DTO_obj.data = truck_serializer_obj.data
-
-                    truck_Serializer_DTO_reponse = Truck_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(truck_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-                
-                else :
-                
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "Error"
-                    base_DTO_obj.massage = truck_serializer_obj.errors
-                    base_DTO_obj.data = None
-
-                    truck_Serializer_DTO_reponse = Truck_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(truck_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            truck_Serializer_DTO_reponse = Truck_Serializer_DTO(base_DTO_obj)
-
-        return JsonResponse(truck_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
+            serializer = serializerMapping.mapping_serializer_obj(
+                Truck_Serializer_DTO,
+                None,
+                "Error",
+                e,
+                None,
+                None,
+                None )
+                
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -1386,29 +1279,31 @@ def deleted_truck(request):
 
             truck_data = JSONParser().parse(request)
             truck_list = Truck.objects.filter(truck_license__in=truck_data)
-            
             truck_list.update(is_active = False)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_DELETE_MASSAGE_SUCCESSFUL").data
-            base_DTO_obj.data_list = None
-
-            truck_list_serializer_DTO_reponse = Truck_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(truck_list_serializer_DTO_reponse.data, safe=False) 
+            serializer = serializerMapping.mapping_serializer_list(
+                Truck_list_Serializer_DTO,
+                truck_list,
+                "success", 
+                configMessage.configs.get("TRUCK_MASTER_DELETE_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
             
-
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            truck_Serializer_DTO_reponse = Truck_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(truck_Serializer_DTO_reponse.data, safe=False)
+            serializer = serializerMapping.mapping_serializer_list(
+                    Truck_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -1418,108 +1313,54 @@ def edited_truck(request):
 
         try:
 
-            truck_data = JSONParser().parse(request)     
+            truck_data = JSONParser().parse(request)
 
-            if truck_data['province'] is None or truck_data['province'].strip() == "" :
+            truck_obj = Truck.objects.filter( truck_license = truck_data["truck_license"] )[0]
+            truck_serializer_obj = Truck_Serializer(truck_obj,data=truck_data)
 
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_PROVINCE_REQUIRED").data
-                base_DTO_obj.data = None
+            if truck_serializer_obj.is_valid():
 
-                truck_Serializer_DTO = Truck_Serializer_DTO(base_DTO_obj)
+                truck_serializer_obj.save()
 
-                return JsonResponse(truck_Serializer_DTO.data, status=status.HTTP_200_OK) 
-            
-            elif truck_data['truck_type'] is None or truck_data['truck_type'].strip() == "" :
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Truck_Serializer_DTO,
+                    truck_obj,
+                    "success", 
+                    configMessage.configs.get("TRUCK_MASTER_EDIT_MASSAGE_SUCCESSFUL").data ,
+                    "",
+                    None,
+                    None 
+                    )
 
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_TRUCKTYPE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                truck_Serializer_DTO = Truck_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(truck_Serializer_DTO.data, status=status.HTTP_200_OK) 
-            
-            
-            elif truck_data['fuel_type'] is None or truck_data['fuel_type'].strip() == "" :
-
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_FUELTYPE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                truck_Serializer_DTO = Truck_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(truck_Serializer_DTO.data, status=status.HTTP_200_OK)
-            
-            elif truck_data['max_speed'] is None or truck_data['max_speed'] == "" :
-
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_MAXSPEED_REQUIRED").data
-                base_DTO_obj.data = None
-
-                truck_Serializer_DTO = Truck_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(truck_Serializer_DTO.data, status=status.HTTP_200_OK)
-            
-            elif truck_data['max_volume'] is None or truck_data['max_volume'] == "" :
-
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_MAXVOLUME_REQUIRED").data
-                base_DTO_obj.data = None
-
-                truck_Serializer_DTO = Truck_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(truck_Serializer_DTO.data, status=status.HTTP_200_OK)
-            
-            elif truck_data['max_weight'] is None or truck_data['max_weight'] == "" :
-
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_MAXWEIGHT_REQUIRED").data
-                base_DTO_obj.data = None
-
-                truck_Serializer_DTO = Truck_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(truck_Serializer_DTO.data, status=status.HTTP_200_OK)
-            
             else :
 
-                truck_obj = Truck.objects.filter( truck_license = truck_data["truck_license"] )
-                truck_serializer_obj = Truck_Serializer(truck_obj[0],data=truck_data)
-
-                if truck_serializer_obj.is_valid():
-
-                    truck_serializer_obj.save()
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Truck_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(truck_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
                     
-
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "success"
-                    base_DTO_obj.massage = configMessage.configs.get("TRUCK_MASTER_EDIT_MASSAGE_SUCCESSFUL").data  
-                    base_DTO_obj.data_list = Truck.objects.all()
-
-                    truck_list_serializer_DTO_reponse = Truck_list_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(truck_list_serializer_DTO_reponse.data, safe=False) 
-
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            truck_Serializer_DTO_reponse = Truck_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(truck_Serializer_DTO_reponse.data, safe=False)
-
+            serializer = serializerMapping.mapping_serializer_obj(
+                    Truck_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
-def seach_truck(request):
+def search_truck(request):
 
     if request.method == 'POST':
 
@@ -1527,243 +1368,140 @@ def seach_truck(request):
 
             truck_data_obj = JSONParser().parse(request)
 
-            truck_licese_str = truck_data_obj['truck_licese']
-            truck_province_str = truck_data_obj['truck_province']
-            truck_type_str = truck_data_obj['truck_type']
-            truck_fuel_str = truck_data_obj['truck_fuel']
+            truck_licese = truck_data_obj['truck_licese']
+            province = truck_data_obj['truck_province']
+            truck_type = truck_data_obj['truck_type']
+            truck_fuel = truck_data_obj['truck_fuel']
 
-            print(truck_licese_str)
-            print(truck_province_str)
-            print(truck_type_str)
-            print(truck_fuel_str)
-            query = "select * from master_data_truck "
-
-            joint_str = "" 
-            where_str = " where 1 = 1 and master_data_truck.is_active = true "
-
-            if truck_licese_str is not None and truck_licese_str != "" :
-
-                truck_licese_str = "%"+truck_licese_str+"%"
-                where_str = where_str + " and  master_data_truck.truck_license LIKE '%%%s%%'  " %  truck_licese_str
-
-            if truck_province_str is not None and truck_province_str != "" :
-
-                where_str = where_str + " and  UPPER(master_data_truck.province) = '%s' " % truck_province_str.upper()
-            
-            if truck_type_str is not None and truck_type_str != "" :
-
-                where_str = where_str + " and  UPPER(master_data_truck.truck_type) = '%s' " % truck_type_str.upper()
-            
-            if truck_fuel_str is not None and truck_fuel_str != "" :
-
-                where_str = where_str + " and  UPPER(master_data_truck.fuel_type) = '%s' " % truck_fuel_str.upper()
-             
-            query = query + joint_str + where_str + " Order By master_data_truck.updated_date desc"
-
-            truck_list = Truck.objects.raw(query)
-
-            truck_csv_list = []
-
-            truck_csv_list.insert(0, [
-                        "Truck License",
-                        "Province",
-                        "Truck Type",
-                        "Fuel Type",
-                        "Max Speed",
-                        "Max Volume",
-                        "Max Weight",
-                        "Remark",
-                        "Update By",
-                        "Update Date",
-                    ]
-                )
-            
-            for truck_obj in truck_list:
-
-                truck_row_list = (
-                    truck_obj.truck_license,
-                    truck_obj.province,
-                    truck_obj.truck_type,
-                    truck_obj.fuel_type,
-                    truck_obj.max_speed,
-                    truck_obj.max_volume,
-                    truck_obj.max_weight,
-                    truck_obj.remark,
-                    truck_obj.updated_by,
-                    truck_obj.updated_date.strftime("%d/%m/%Y"),
-
-                    )
-                
-                truck_csv_list.append(truck_row_list)
+            truckService = TruckService()
+            truck_list =  truckService.search_truck(truck_licese,province,truck_type,truck_fuel)
 
             name_csv_str = "TruckCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj.covert_to_header([
+                "Truck License",
+                "Province",
+                "Truck Type",
+                "Fuel Type",
+                "Max Speed",
+                "Max Volume",
+                "Max Weight",
+                "Remark",
+                "Update By",
+                "Update Date",])
 
-            with open("media/" +  name_csv_str +'.csv', 'w', newline='',encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerows(truck_csv_list)
+            truck_CSV_list = TruckHelper.covert_data_list_to_CSV_list(truck_list)
+            CSV_file_management_obj.covert_to_CSV_data_list(truck_CSV_list)
+            return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
+
+            serializer_list =  TruckHelper.covert_data_list_to_serializer_list(truck_list)
+
+            serializer = serializerMapping.mapping_serializer_list(
+                    Truck_list_Serializer_DTO,
+                    serializer_list,
+                    "success", 
+                    "",
+                    name_csv_str + '.csv',
+                    None,
+                    None
+                )
             
-            truck_serializer = Truck_Serializer(truck_list, many=True)
-
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "seach truck"
-            base_DTO_obj.data_list = truck_serializer.data
-            base_DTO_obj.csv_name =  name_csv_str + '.csv'
-
-            truck_list_Serializer_DTO = Truck_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(truck_list_Serializer_DTO.data,safe=False)
-
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
+            serializer = serializerMapping.mapping_serializer_list(
+                    Truck_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None 
+                )
 
-            truck_Serializer_DTO_reponse = Truck_Serializer_DTO(base_DTO_obj)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            return JsonResponse(truck_Serializer_DTO_reponse.data, safe=False)
 
 @api_view(['GET', 'POST', 'DELETE'])
 def driver_list(request):
     
     if request.method == 'GET':
         try:
+            
             driver_list = Driver.objects.filter(is_active=True)
-            driver_serializer_obj = Driver_Serializer(driver_list, many=True)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get driver"
-            base_DTO_obj.data_list = driver_serializer_obj.data
-
-            driver_list_Serializer_DTO_obj = Driver_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(driver_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
+            serializer = serializerMapping.mapping_serializer_list(
+                Driver_list_Serializer_DTO,
+                driver_list,
+                "success", 
+                "",
+                "",
+                None,
+                None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "error"
-            base_DTO_obj.massage = e 
-            # base_DTO_obj.data_list = order_serializer.data
+            serializer = serializerMapping.mapping_serializer_list(
+                    Driver_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
 
-            driver_list_Serializer_DTO_obj = Driver_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(driver_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
-
-        
-
-            # return JsonResponse(order_serializer.data, safe=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
 
-
         try:
+
             driver_data = JSONParser().parse(request)
+            driver_serializer_obj = Driver_Serializer(data=driver_data)
 
-            if driver_data['driver_code'] is None or driver_data['driver_code'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("DRIVER_MASTER_DRIVERCODE_REQUIRED").data
-                base_DTO_obj.data = None
+            if driver_serializer_obj.is_valid():
 
-                driver_Serializer_DTO = Driver_Serializer_DTO(base_DTO_obj)
+                driver_serializer_obj.save()
+                driver_obj =  driver_serializer_obj.save(updated_by=request.user.username)
 
-                return JsonResponse(driver_Serializer_DTO.data, status=status.HTTP_200_OK) 
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Driver_Serializer_DTO,
+                    driver_obj,
+                    "success", 
+                    configMessage.configs.get("DRIVER_MASTER_ADD_MASSAGE_SUCCESSFUL").data,
+                    "",
+                    None,
+                    None )
             
-            elif driver_data['name'] is None or driver_data['name'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("DRIVER_MASTER_DRIVERNAME_REQUIRED").data
-                base_DTO_obj.data = None
+            else : 
 
-                driver_Serializer_DTO = Driver_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(driver_Serializer_DTO.data, status=status.HTTP_200_OK) 
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Driver_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(driver_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
             
-            elif driver_data['tel'] is None or driver_data['tel'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error" 
-                base_DTO_obj.massage = configMessage.configs.get("DRIVER_MASTER_DRIVERTEL_REQUIRED").data
-                base_DTO_obj.data = None
-
-                driver_Serializer_DTO = Driver_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(driver_Serializer_DTO.data, status=status.HTTP_200_OK) 
-            
-            else :
-                 
-                driver_list = Driver.objects.filter(driver_code = driver_data['driver_code'])
-                
-                if len(driver_list) >0 :
-
-                    if driver_list[0].is_active :
-                        base_DTO_obj =  base_DTO()
-                        base_DTO_obj.serviceStatus = "Error"
-                        base_DTO_obj.massage = configMessage.configs.get("DRIVER_MASTER_DUPLICATE").data
-                        base_DTO_obj.data = None
-
-                        driver_Serializer_DTO_reponse = Driver_Serializer_DTO(base_DTO_obj)
-
-                        return JsonResponse(driver_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-                    
-                    else :
-                        
-                        driver_list.update(
-                            name=driver_data['name'],
-                            tel=driver_data['tel'],
-                            remark=driver_data['remark'],
-                            is_active=True
-                        )
-
-                        base_DTO_obj =  base_DTO()
-                        base_DTO_obj.serviceStatus = "success"
-                        base_DTO_obj.massage = configMessage.configs.get("DRIVER_MASTER_ADD_MASSAGE_SUCCESSFUL").data
-                        base_DTO_obj.data = None
-
-                        driver_Serializer_DTO_reponse = Driver_Serializer_DTO(base_DTO_obj)
-
-                        return JsonResponse(driver_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-
-                driver_serializer_obj = Driver_Serializer(data=driver_data)
-
-                if driver_serializer_obj.is_valid():
-                    
-                    driver_serializer_obj.save()
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "success"
-                    base_DTO_obj.massage = configMessage.configs.get("DRIVER_MASTER_ADD_MASSAGE_SUCCESSFUL").data
-                    base_DTO_obj.data = driver_serializer_obj.data
-
-                    driver_Serializer_DTO_reponse = Driver_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(driver_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-                
-                else : 
-
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "Error"
-                    base_DTO_obj.massage = driver_serializer_obj.errors
-                    base_DTO_obj.data = None
-
-                    driver_Serializer_DTO_reponse = Driver_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(driver_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
+            serializer = serializerMapping.mapping_serializer_obj(
+                Driver_Serializer_DTO,
+                None,
+                "Error",
+                e,
+                None,
+                None,
+                None )
+                
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            driver_Serializer_DTO_reponse = Driver_Serializer_DTO(base_DTO_obj)
-
-        return JsonResponse(driver_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST', 'DELETE'])
 def deleted_driver(request):
@@ -1777,26 +1515,29 @@ def deleted_driver(request):
             
             driver_list.update(is_active = False)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = configMessage.configs.get("DRIVER_MASTER_DELETE_MASSAGE_SUCCESSFUL").data
-            base_DTO_obj.data_list = None
-
-            driver_list_serializer_DTO_reponse = Driver_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(driver_list_serializer_DTO_reponse.data, safe=False) 
+            serializer = serializerMapping.mapping_serializer_list(
+                Driver_list_Serializer_DTO,
+                driver_list,
+                "success", 
+                configMessage.configs.get("DRIVER_MASTER_DELETE_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
             
-
+            return Response(serializer.data, status=status.HTTP_200_OK) 
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage =  e
-            base_DTO_obj.data = None
-
-            driver_Serializer_DTO_reponse = Driver_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(driver_Serializer_DTO_reponse.data, safe=False)
+            serializer = serializerMapping.mapping_serializer_list(
+                    Driver_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -1807,158 +1548,188 @@ def edited_driver(request):
         try:
 
             driver_data = JSONParser().parse(request)
+            driver_obj = Driver.objects.filter( driver_code = driver_data["driver_code"] )[0]
+            driver_serializer_obj = Driver_Serializer(driver_obj,data=driver_data)
 
-            if driver_data['driver_code'] is None or driver_data['driver_code'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage =  configMessage.configs.get("DRIVER_MASTER_DRIVERCODE_REQUIRED").data
-                base_DTO_obj.data = None
+            if driver_serializer_obj.is_valid():
 
-                driver_Serializer_DTO = Driver_Serializer_DTO(base_DTO_obj)
+                driver_serializer_obj.save()
 
-                return JsonResponse(driver_Serializer_DTO.data, status=status.HTTP_200_OK) 
-            
-            elif driver_data['name'] is None or driver_data['name'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("DRIVER_MASTER_DRIVERNAME_REQUIRED").data
-                base_DTO_obj.data = None
-
-                driver_Serializer_DTO = Driver_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(driver_Serializer_DTO.data, status=status.HTTP_200_OK) 
-            
-            elif driver_data['tel'] is None or driver_data['tel'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("DRIVER_MASTER_DRIVERTEL_REQUIRED").data
-                base_DTO_obj.data = None
-
-                driver_Serializer_DTO = Driver_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(driver_Serializer_DTO.data, status=status.HTTP_200_OK) 
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Driver_Serializer_DTO,
+                    driver_obj,
+                    "success", 
+                    configMessage.configs.get("DRIVER_MASTER_EDIT_MASSAGE_SUCCESSFUL").data,
+                    "",
+                    None,
+                    None 
+                    )
             
             else :
-                driver_obj = Driver.objects.filter( driver_code = driver_data["driver_code"] )
 
-                driver_serializer_obj = Driver_Serializer(driver_obj[0],data=driver_data)
-
-                if driver_serializer_obj.is_valid():
-
-                    driver_serializer_obj.save()
+                serializer = serializerMapping.mapping_serializer_obj(
+                    Driver_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(driver_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
                     
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "success"
-                    base_DTO_obj.massage = configMessage.configs.get("DRIVER_MASTER_EDIT_MASSAGE_SUCCESSFUL").data
-                    base_DTO_obj.data_list = Driver.objects.all()
+        except Exception as e:    
 
-                    driver_list_serializer_DTO_reponse = Driver_list_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(driver_list_serializer_DTO_reponse.data, safe=False) 
-                
-        except Exception as e:
-
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            Driver_Serializer_DTO_reponse = Driver_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(Driver_Serializer_DTO_reponse.data, safe=False)
+            serializer = serializerMapping.mapping_serializer_obj(
+                    Driver_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
 @api_view(['POST'])
-def seach_driver(request):
+def search_driver(request):
 
     if request.method == 'POST':
 
         try:
 
             driver_data_obj = JSONParser().parse(request)
+            driver_code = driver_data_obj['driver_code']
+            driver_name = driver_data_obj['driver_name']
 
-            driver_code_str = driver_data_obj['driver_code']
-            driver_name_str = driver_data_obj['driver_name']
-
-            query = "select * from master_data_driver "
-
-            joint_str = "" 
-            where_str = " where 1 = 1 and master_data_driver.is_active = true "
-
-            if driver_code_str is not None:
-
-                driver_code_str = "%"+driver_code_str+"%"
-                where_str = where_str + " and  master_data_driver.driver_code LIKE '%%%s%%'  " %  driver_code_str 
-            
-            if driver_name_str is not None :
-
-                driver_name_str = "%"+driver_name_str+"%"
-                where_str = where_str + " and  master_data_driver.name LIKE '%%%s%%'  " %  driver_name_str 
-
-            
-            query = query + joint_str + where_str + " Order by updated_date desc"
-
-            driver_list = Driver.objects.raw(query)
-
-            driver_csv_list = []
-
-            driver_csv_list.insert(0, [
-                        "Driver Code",
-                        "Driver Name",
-                        "Driver Tel",
-                        "Remark",
-                        "Updated By",
-                        "Updated Date"
-                    ]
-                )
-            
-            for driver_obj in driver_list:
-
-                driver_row_list = (
-                    driver_obj.driver_code,
-                    driver_obj.name,
-                    driver_obj.tel,
-                    driver_obj.remark,
-                    driver_obj.updated_by,
-                    driver_obj.updated_date.strftime("%d/%m/%Y"),
-
-                    )
-                
-                driver_csv_list.append(driver_row_list)
+            driverService  = DriverService()
+            driver_list  = driverService.search_driver(driver_code,driver_name)
 
             name_csv_str = "DriverMasterCSV" +datetime.now().strftime("%Y%m%d_%H%M%S")
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj.covert_to_header([
+                "Driver Code",
+                "Driver Name",
+                "Driver Tel",
+                "Remark",
+                "Updated By",
+                "Updated Date"])
 
-            with open("media/" +  name_csv_str +'.csv', 'w', newline='',encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerows(driver_csv_list)
+            driver_CSV_list = DriverHelper.covert_data_list_to_CSV_list(driver_list)
+            CSV_file_management_obj.covert_to_CSV_data_list(driver_CSV_list)
+            return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
+
+            serializer_list =  DriverHelper.covert_data_list_to_serializer_list(driver_list)
+
+            serializer = serializerMapping.mapping_serializer_list(
+                    Driver_list_Serializer_DTO,
+                    serializer_list,
+                    "success", 
+                    "",
+                    name_csv_str + '.csv',
+                    None,
+                    None
+                )
             
-            
-            
-            driver_serializer = Driver_Serializer(driver_list, many=True)
-
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "seach driver"
-            base_DTO_obj.data_list = driver_serializer.data
-            base_DTO_obj.csv_name =  name_csv_str + '.csv'
-
-            driver_list_Serializer_DTO = Driver_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(driver_list_Serializer_DTO.data,safe=False)
-
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
+            serializer = serializerMapping.mapping_serializer_list(
+                    Driver_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None 
+                )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        # try:
 
-            driver_Serializer_DTO_reponse = Truck_Serializer_DTO(base_DTO_obj)
+        #     driver_data_obj = JSONParser().parse(request)
 
-            return JsonResponse(driver_Serializer_DTO_reponse.data, safe=False)
+        #     driver_code_str = driver_data_obj['driver_code']
+        #     driver_name_str = driver_data_obj['driver_name']
+
+        #     query = "select * from master_data_driver "
+
+        #     joint_str = "" 
+        #     where_str = " where 1 = 1 and master_data_driver.is_active = true "
+
+        #     if driver_code_str is not None:
+
+        #         driver_code_str = "%"+driver_code_str+"%"
+        #         where_str = where_str + " and  master_data_driver.driver_code LIKE '%%%s%%'  " %  driver_code_str 
+            
+        #     if driver_name_str is not None :
+
+        #         driver_name_str = "%"+driver_name_str+"%"
+        #         where_str = where_str + " and  master_data_driver.name LIKE '%%%s%%'  " %  driver_name_str 
+
+            
+        #     query = query + joint_str + where_str + " Order by updated_date desc"
+
+        #     driver_list = Driver.objects.raw(query)
+
+        #     driver_csv_list = []
+
+        #     driver_csv_list.insert(0, [
+        #                 "Driver Code",
+        #                 "Driver Name",
+        #                 "Driver Tel",
+        #                 "Remark",
+        #                 "Updated By",
+        #                 "Updated Date"
+        #             ]
+        #         )
+            
+        #     for driver_obj in driver_list:
+
+        #         driver_row_list = (
+        #             driver_obj.driver_code,
+        #             driver_obj.name,
+        #             driver_obj.tel,
+        #             driver_obj.remark,
+        #             driver_obj.updated_by,
+        #             driver_obj.updated_date.strftime("%d/%m/%Y"),
+
+        #             )
+                
+        #         driver_csv_list.append(driver_row_list)
+
+        #     name_csv_str = "DriverMasterCSV" +datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        #     with open("media/" +  name_csv_str +'.csv', 'w', newline='',encoding='utf-8') as file:
+        #         writer = csv.writer(file)
+        #         writer.writerows(driver_csv_list)
+            
+            
+            
+        #     driver_serializer = Driver_Serializer(driver_list, many=True)
+
+        #     base_DTO_obj =  base_DTO()
+        #     base_DTO_obj.serviceStatus = "success"
+        #     base_DTO_obj.massage = "seach driver"
+        #     base_DTO_obj.data_list = driver_serializer.data
+        #     base_DTO_obj.csv_name =  name_csv_str + '.csv'
+
+        #     driver_list_Serializer_DTO = Driver_list_Serializer_DTO(base_DTO_obj)
+
+        #     return JsonResponse(driver_list_Serializer_DTO.data,safe=False)
+
+        # except Exception as e:
+
+        #     base_DTO_obj =  base_DTO()
+        #     base_DTO_obj.serviceStatus = "Error"
+        #     base_DTO_obj.massage = e
+        #     base_DTO_obj.data = None
+
+        #     driver_Serializer_DTO_reponse = Truck_Serializer_DTO(base_DTO_obj)
+
+        #     return JsonResponse(driver_Serializer_DTO_reponse.data, safe=False)
 
 @api_view(['POST'])
 def search_route_master(request):
@@ -1966,61 +1737,19 @@ def search_route_master(request):
     if request.method == 'POST':
 
         try:
-            customer_code_selected = request.data['customer_code_selected']
-            project_code_selected = request.data['project_code_selected']
-            supplier_code_selected = request.data['supplier_code_selected']
-            plant_code_selected = request.data['plant_code_selected']
-            route_code_selected = request.data['route_code_selected']
-            trip_no_selected = request.data['trip_no_selected']
+            customer_code = request.data['customer_code_selected']
+            project_code = request.data['project_code_selected']
+            supplier_code = request.data['supplier_code_selected']
+            plant_code = request.data['plant_code_selected']
+            route_code = request.data['route_code_selected']
+            route_trip = request.data['trip_no_selected']
 
-            print(request.data['trip_no_selected'])
+            routerMasterService = RouterMasterService()
+            routerMaster_list =  routerMasterService.search_routerMaster(customer_code,project_code,supplier_code,plant_code,route_code,route_trip)
 
-            query = "select * from master_data_routermaster "
-
-            joint_str = "" 
-            where_str = " where 1 = 1   and  master_data_routermaster.is_active = true "
-
-
-            if customer_code_selected is not None:
-
-                joint_str = joint_str + " INNER JOIN master_data_project "
-                joint_str = joint_str + " ON UPPER(master_data_project.project_code) = UPPER(master_data_routermaster.project_code) "
-                joint_str = joint_str + " INNER JOIN master_data_customer "
-                joint_str = joint_str + " ON UPPER(master_data_customer.customer_code) = UPPER(master_data_project.customer_code) "
-                where_str = where_str + " and  UPPER(master_data_customer.customer_code) = '%s' " % customer_code_selected.upper()
-                    
-            if project_code_selected is not None:
-
-                where_str = where_str + " and  UPPER(master_data_routermaster.project_code) = '%s' " % project_code_selected.upper()
-
-            if supplier_code_selected is not None:
-
-                where_str = where_str + " and  UPPER(master_data_routermaster.supplier_code) = '%s' " % supplier_code_selected.upper()
-            
-            if plant_code_selected is not None:
-
-                where_str = where_str + " and  UPPER(master_data_routermaster.plant_code) = '%s' " % plant_code_selected.upper()
-            
-            if route_code_selected is not None:
-
-                where_str = where_str + " and  UPPER(master_data_routermaster.route_code) = '%s' " % route_code_selected.upper()
-            
-            if trip_no_selected is not None:
-
-                where_str = where_str + " and  UPPER(master_data_routermaster.trip_no) = '%s' " % trip_no_selected.upper()
-            
-            query = query + joint_str + where_str + " order by master_data_routermaster.updated_date desc"
-
-            print(query)
-
-            routerMaster_list = RouterMaster.objects.raw(query)
-
-
-
-            routerMaster_csv_list = []
-
-            routerMaster_csv_list.insert(0, [
-                "Customer",
+            name_csv_str = "RouterMasterCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj.covert_to_header([
                 "Project Code",
                 "Route Code",
                 "Trip No",
@@ -2033,83 +1762,41 @@ def search_route_master(request):
                 "Delivery Time",
                 "Complete Time",
                 "Update by",
-                "Update Date"
-                ]
-            )
+                "Update Date"])
 
-            route_master_dto_list = []
-            for routerMaster_obj in routerMaster_list:
+            routerMaster_CSV_list = RouterMasterHelper.covert_data_list_to_CSV_list(routerMaster_list)
+            CSV_file_management_obj.covert_to_CSV_data_list(routerMaster_CSV_list)
+            return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
 
-                print(routerMaster_obj.project_code)
-                route_master_dto_obj =  RouteMasterDTO()
-                route_master_dto_obj.route_no = routerMaster_obj.route_no
-                route_master_dto_obj.customer_code = Project.objects.get(project_code__iexact=routerMaster_obj.project_code).customer_code
-                route_master_dto_obj.project_code = routerMaster_obj.project_code
-                route_master_dto_obj.route_code = routerMaster_obj.route_code
-                route_master_dto_obj.trip_no = routerMaster_obj.trip_no
-                route_master_dto_obj.supplier_code = routerMaster_obj.supplier_code
-                route_master_dto_obj.plant_code = routerMaster_obj.plant_code
-                route_master_dto_obj.pickup_before = routerMaster_obj.pickup_before
-                route_master_dto_obj.release_time = formal_decimal(routerMaster_obj.release_time)
-                route_master_dto_obj.pickup_time = formal_decimal(routerMaster_obj.pickup_time)
-                route_master_dto_obj.depart_time = formal_decimal(routerMaster_obj.depart_time)
-                route_master_dto_obj.delivery_time = formal_decimal(routerMaster_obj.delivery_time)
-                route_master_dto_obj.complete_time = formal_decimal(routerMaster_obj.complete_time)
-                route_master_dto_obj.updated_by = routerMaster_obj.updated_by
-                route_master_dto_obj.updated_date = routerMaster_obj.updated_date
-            
-                route_master_dto_list.append(route_master_dto_obj)
+            serializer_list =  RouterMasterHelper.covert_data_list_to_serializer_list(routerMaster_list)
 
-                route_master_row_list = (
-                                route_master_dto_obj.customer_code,
-                                route_master_dto_obj.project_code,
-                                route_master_dto_obj.route_code,
-                                route_master_dto_obj.trip_no,
-                                route_master_dto_obj.supplier_code,
-                                route_master_dto_obj.plant_code,
-                                route_master_dto_obj.pickup_before,
-                                formal_decimal(route_master_dto_obj.release_time),
-                                formal_decimal(route_master_dto_obj.pickup_time),
-                                formal_decimal(route_master_dto_obj.depart_time),
-                                formal_decimal(route_master_dto_obj.delivery_time),
-                                formal_decimal(route_master_dto_obj.complete_time),
-                                route_master_dto_obj.updated_by,
-                                route_master_dto_obj.updated_date.strftime("%d/%m/%Y")
-
-                                )
-
-                routerMaster_csv_list.append(route_master_row_list)
-
-            name_csv_str = "RouterMasterCSV" +datetime.now().strftime("%Y%m%d_%H%M%S")
-
-            with open("media/" +  name_csv_str +'.csv', 'w', newline='',encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerows(routerMaster_csv_list)
-            
-            route_serializer = RouterMaster_Serializer(route_master_dto_list, many=True)
+            serializer = serializerMapping.mapping_serializer_list(
+                    RouterMaster_list_Serializer_DTO,
+                    serializer_list,
+                    "success", 
+                    "",
+                    name_csv_str + '.csv',
+                    None,
+                    None
+                )
 
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get part"
-            base_DTO_obj.data_list = route_serializer.data
-            base_DTO_obj.csv_name =  name_csv_str + '.csv'
-
-            router_master_list_Serializer_DTO = RouterMaster_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(router_master_list_Serializer_DTO.data, safe=False)
-
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            router_master_list_Serializer_DTO = RouterMaster_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(router_master_list_Serializer_DTO.data, safe=False)
-
+            serializer = serializerMapping.mapping_serializer_list(
+                    RouterMaster_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None 
+                )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+  
 def formal_decimal(number_str):
 
     number_array = number_str.split(".")
@@ -2131,260 +1818,81 @@ def routeMaster_list(request):
     
     if request.method == 'GET':
         try:
+
             routerMaster_list = RouterMaster.objects.filter(is_active=True)
-            routerMaster_serializer_obj = RouterMaster_Serializer(routerMaster_list, many=True)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get routerMaster"
-            base_DTO_obj.data_list = routerMaster_serializer_obj.data
+            serializer = serializerMapping.mapping_serializer_list(
+                RouterMaster_list_Serializer_DTO,
+                routerMaster_list,
+                "success", 
+                "",
+                "",
+                None,
+                None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            routerMaster_list_Serializer_DTO_obj = RouterMaster_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(routerMaster_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "error"
-            base_DTO_obj.massage = e 
-            # base_DTO_obj.data_list = order_serializer.data
+            serializer = serializerMapping.mapping_serializer_list(
+                    RouterMaster_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
 
-            routerMaster_list_Serializer_DTO_obj = RouterMaster_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(routerMaster_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
 
         try:
+
             routerMaster_data = JSONParser().parse(request)
-            print("dfsdfsdfsdfsdf")
-            print(routerMaster_data)
-            time_rex = re.compile("([0-2]|""){1}[0-9]{1}[.][0-5]{1}[0-9]{1}")
+            routerMaster_serializer_obj = RouterMaster_Serializer(data=routerMaster_data)
 
-            if routerMaster_data['project_code'] is None or routerMaster_data['project_code'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_PROJECTCODE_REQUIRED").data
-                base_DTO_obj.data = None
+            if routerMaster_serializer_obj.is_valid():
 
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
+                routerMaster_serializer_obj.save()
+                routerMaster_obj =  routerMaster_serializer_obj.save(updated_by=request.user.username)
 
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-            
-            elif routerMaster_data['route_code'] is None or routerMaster_data['route_code'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_ROUTECODE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-
-            elif routerMaster_data['trip_no'] is None or routerMaster_data['trip_no'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_TRIPNO_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-            
-            elif routerMaster_data['supplier_code'] is None or routerMaster_data['supplier_code'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_SUPPLIERCODE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-            
-            elif routerMaster_data['plant_code'] is None or routerMaster_data['plant_code'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_PLANTCODE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            elif routerMaster_data['pickup_before'] is None or routerMaster_data['pickup_before'] == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_PICKUPBEFORE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            elif routerMaster_data['release_time'] is None or routerMaster_data['release_time'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_RELEASETIME_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-
-            elif not time_rex.match(routerMaster_data['release_time'] ) :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_RELEASETIME_INCORRECT_FORMAT").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            elif routerMaster_data['pickup_time'] is None or routerMaster_data['pickup_time'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_PICKUPTIME_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            elif not time_rex.match(routerMaster_data['pickup_time'] ) :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_PICKUPTIME_INCORRECT_FORMAT").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            elif routerMaster_data['depart_time'] is None or routerMaster_data['depart_time'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_DEPARTTIME_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            elif not time_rex.match(routerMaster_data['depart_time'] ) :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_DEPARTTIME_INCORRECT_FORMAT").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            elif routerMaster_data['delivery_time'] is None or routerMaster_data['delivery_time'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_DELIVERYTIME_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            elif not time_rex.match(routerMaster_data['delivery_time'] ) :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_DELIVERYTIME_INCORRECT_FORMAT").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            elif routerMaster_data['complete_time'] is None or routerMaster_data['complete_time'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_COMPLETETIME_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-            
-            elif not time_rex.match(routerMaster_data['complete_time'] ) :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_COMPLETETIME_INCORRECT_FORMAT").data
-                base_DTO_obj.data = None
-
-                routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerMaster_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
+                serializer = serializerMapping.mapping_serializer_obj(
+                    RouterMaster_Serializer_DTO,
+                    routerMaster_obj,
+                    "success", 
+                    configMessage.configs.get("ROUTE_MASTER_ADD_MASSAGE_SUCCESSFUL").data,
+                    "",
+                    None,
+                    None )
             
             else : 
-
-                route_no_str = routerMaster_data['route_code'] + "-" + routerMaster_data['trip_no'] + "-" + routerMaster_data['supplier_code'] + "-" + routerMaster_data['plant_code']
-                route_no_str = route_no_str.upper()
-                routerMaster_data['release_time'] = formal_decimal(routerMaster_data['release_time'])
-                routerMaster_data['pickup_time'] = formal_decimal(routerMaster_data['pickup_time'])
-                routerMaster_data['depart_time'] = formal_decimal(routerMaster_data['depart_time'])
-                routerMaster_data['delivery_time'] = formal_decimal(routerMaster_data['delivery_time'])
-                routerMaster_data['complete_time'] = formal_decimal(routerMaster_data['complete_time'])
-
-                routerMaster_list = RouterMaster.objects.filter(route_no = route_no_str)
-                routerMaster_data['route_no'] = route_no_str
-                router_master_serializer_obj = RouterMaster_Serializer(data=routerMaster_data)
-
                 
-                if router_master_serializer_obj.is_valid():
-
-                    router_master_serializer_obj.save()
-                    
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "success"
-                    base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_ADD_MASSAGE_SUCCESSFUL").data
-                    base_DTO_obj.data = router_master_serializer_obj.data
-
-                    router_master_serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(router_master_serializer_DTO_reponse.data, status=status.HTTP_201_CREATED) 
-                
-                else : 
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "Error"
-                    base_DTO_obj.massage = router_master_serializer_obj.errors[list(router_master_serializer_obj.errors)[0]][0]
-                    base_DTO_obj.data = None
-                
-                    router_master_serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(router_master_serializer_DTO_reponse.data, status=status.HTTP_201_CREATED)
+                serializer = serializerMapping.mapping_serializer_obj(
+                    RouterMaster_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(routerMaster_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            router_master_serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-        return JsonResponse(router_master_serializer_DTO_reponse.data, status=status.HTTP_200_OK)
+            serializer = serializerMapping.mapping_serializer_obj(
+                RouterMaster_Serializer_DTO,
+                None,
+                "Error",
+                e,
+                None,
+                None,
+                None )
+                
+            return Response(serializer.data, status=status.HTTP_200_OK)
+         
+     
 
 @api_view(['POST'])
 def upload_route_master(request):
@@ -2402,284 +1910,65 @@ def upload_route_master(request):
                 upload_route_master_file = request.FILES['file']
                 fs = FileSystemStorage(location="media/") #defaults to   MEDIA_ROOT  
                 file_name_str = fs.save(upload_route_master_file.name, upload_route_master_file)
-                
-                routerMaster_list = []
-                validateError_list = []
+
                 validateWarning_list = []
+                validate_error_list_serializer= []
+
+                # routerMaster_list = CSVFileManagement.read_CSV_file("media/" + file_name_str,',','|')
 
                 with open("media/" +file_name_str, newline='') as csvfile:
-                    spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-                    row_int = 0
-                    
-                    for row in spamreader:
-                       
-                        if row_int > 0 :
-                            routerMaster_obj =  RouteMasterDTO()
-                            
-                         
-
-                            if not str(row[0]) :
-                                    validateError_obj = validateError()
-                                    validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_CUSTOMERCODE_REQUIRED").data  
-                                    validateError_obj.row = row_int + 1
-                                    validateError_obj.column = 1
-                                    validateError_list.append(validateError_obj)
-                                
-                            else : 
-                                    
-                                customer_list = Customer.objects.filter(customer_code__iexact = str(row[0]))
-                                if len(customer_list) <=0 :
-                                        
-                                    validateError_obj = validateError()
-                                    validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_CUSTOMERCODE_EXISTING").data  
-                                    validateError_obj.row = row_int + 1
-                                    validateError_obj.column = 1
-                                    validateError_list.append(validateError_obj)
-
-                                else :
-
-                                    routerMaster_obj.customer_code = str(row[0])
-
-    
-                            if not str(row[1]) :
-
-                                    validateError_obj = validateError()
-                                    validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_PROJECTCODE_REQUIRED").data
-                                    validateError_obj.row = row_int + 1
-                                    validateError_obj.column = 2
-                                    validateError_list.append(validateError_obj)
-                                
-                            else : 
-                                project_list = Project.objects.filter(project_code__iexact = str(row[1]))
-                                    
-                                if len(project_list) <=0 :
-
-                                    validateError_obj = validateError()
-                                    validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_PROJECTCODE_EXISTING").data
-                                    validateError_obj.row = row_int + 1
-                                    validateError_obj.column = 2
-                                    validateError_list.append(validateError_obj)
-
-                                else :
-
-                                    routerMaster_obj.project_code = str(row[1])
-                                
-                            if not str(row[2]) :
-
-                                validateError_obj = validateError()
-                                validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_ROUTECODE_REQUIRED").data
-                                validateError_obj.row = row_int + 1
-                                validateError_obj.column = 3
-                                validateError_list.append(validateError_obj)
-                                
-                            else : 
-                                    
-                                routerMaster_obj.route_code = str(row[2])
-                            
-                            if not str(row[3]) :
-
-                                validateError_obj = validateError()
-                                validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_TRIPNO_REQUIRED").data
-                                validateError_obj.row = row_int + 1
-                                validateError_obj.column = 4
-                                validateError_list.append(validateError_obj)
-                                
-                            else : 
-                                    
-                                routerMaster_obj.trip_no = str(row[3])
-                            
-                            RouterMaster_list = RouterMaster.objects.filter(route_code__iexact=str(row[2]),trip_no__iexact=str(row[3]),supplier_code__iexact=str(row[4]),plant_code__iexact=str(row[5]))
-
-                            if len(RouterMaster_list) > 0 : 
-
-                                routerMaster_obj.is_update = True
-
-                            if not str(row[4]) :
-
-                                    validateError_obj = validateError()
-                                    validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_SUPPLIERCODE_REQUIRED").data
-                                    validateError_obj.row = row_int + 1
-                                    validateError_obj.column = 5
-                                    validateError_list.append(validateError_obj)
-
-                                
-                            else : 
-                                    
-                                # routerMaster_obj.supplier_code = str(row[4])
-                                supplier_list = Station.objects.filter(station_code__iexact=str(row[4]).strip(),station_type__iexact="SUPPLIER",is_active=True)
-                                if len(supplier_list) <=0 :
-
-                                    validateError_obj = validateError()
-                                    validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_SUPPLIERCODE_EXISTING").data
-                                    validateError_obj.row = row_int + 1
-                                    validateError_obj.column = 5
-                                    validateError_list.append(validateError_obj)
-
-                                else :
-
-                                    routerMaster_obj.supplier_code = str(row[4])
-                                
-
-                            if not str(row[5]) :
-
-                                    validateError_obj = validateError()
-                                    validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_PLANTCODE_REQUIRED").data
-                                    validateError_obj.row = row_int + 1
-                                    validateError_obj.column = 5
-                                    validateError_list.append(validateError_obj)
-                                
-                            else : 
-                                    
-                                plant_list = Station.objects.filter(station_code__iexact=str(row[5]).strip(),station_type__iexact="PLANT",is_active=True)
-                                    
-                                if len(plant_list) <=0 :
-
-                                    validateError_obj = validateError()
-                                    validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_PLANTCODE_EXISTING").data
-                                    validateError_obj.row = row_int + 1
-                                    validateError_obj.column = 6
-                                    validateError_list.append(validateError_obj)
-
-                                else :
-
-                                    routerMaster_obj.plant_code = str(row[5])
-                            
-                      
-                            if  not row[6].isdigit() :
-                                
-                                validateError_obj = validateError()
-                                validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_PICKUPBEFORE_INTEGER").data
-                                validateError_obj.row = row_int + 1
-                                validateError_obj.column = 7
-                                validateError_list.append(validateError_obj)
-                            else :
-
-                                routerMaster_obj.pickup_before = row[6]
-                            
-                            rex = re.compile("([0-2]|""){1}[0-9]{1}[.][0-5]{1}")
-
-                            if  not isinstance(row[7], int) :
-    
-                                if rex.match(str(row[7])):
-                                    routerMaster_obj.release_time = str(row[7])
-                                else:
-
-                                    validateError_obj = validateError()
-                                    validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_RELEASETIME_INCORRECT_FORMAT").data
-                                    validateError_obj.row = row_int + 1
-                                    validateError_obj.column = 8
-                                    validateError_list.append(validateError_obj)
-
-                            if  not isinstance(row[8], int) :
-    
-                                if rex.match(str(row[8])):
-                                    routerMaster_obj.pickup_time = str(row[8])
-                                else:
-
-                                    validateError_obj = validateError()
-                                    validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_PICKUPTIME_INCORRECT_FORMAT").data
-                                    validateError_obj.row = row_int + 1
-                                    validateError_obj.column = 9
-                                    validateError_list.append(validateError_obj)
-                            
-                            if  not isinstance(row[9], int) :
-    
-                                if rex.match(str(row[9])):
-                                    routerMaster_obj.depart_time = str(row[9])
-                                else:
-
-                                    validateError_obj = validateError()
-                                    validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_DEPARTTIME_INCORRECT_FORMAT").data
-                                    validateError_obj.row = row_int + 1
-                                    validateError_obj.column = 10
-                                    validateError_list.append(validateError_obj)
-                            
-                            if  not isinstance(row[10], int) :
-    
-                                if rex.match(str(row[10])):
-                                    routerMaster_obj.delivery_time = str(row[10])
-                                else:
-
-                                    validateError_obj = validateError()
-                                    validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_DELIVERYTIME_INCORRECT_FORMAT").data
-                                    validateError_obj.row = row_int + 1
-                                    validateError_obj.column = 11
-                                    validateError_list.append(validateError_obj)
-                            
-                            if  not isinstance(row[11], int) :
-    
-                                if rex.match(str(row[11])):
-                                    routerMaster_obj.complete_time = str(row[11])
-
-                                else :
-
-                                    validateError_obj = validateError()
-                                    validateError_obj.error = configMessage.configs.get("ROUTE_MASTER_COMPLETETIME_INCORRECT_FORMAT").data
-                                    validateError_obj.row = row_int + 1
-                                    validateError_obj.column = 12
-                                    validateError_list.append(validateError_obj)
-
-                            routerMaster_list.append(routerMaster_obj)
-
-                        row_int = row_int + 1
-
+                    routerMaster_list = csv.reader(csvfile, delimiter=',', quotechar='|')
             
-            if len(validateError_list) <= 0:
-
-                row_int = 0
-                
-                for routerMaster_obj in routerMaster_list:
-                    row_int = row_int +1
-                    
-                    if routerMaster_obj.is_update :
-                        
-                        routeMaster_update = RouterMaster.objects.filter(route_code__iexact=routerMaster_obj.route_code,trip_no__iexact=routerMaster_obj.trip_no,supplier_code__iexact=routerMaster_obj.supplier_code,plant_code__iexact=routerMaster_obj.plant_code)[0]
-                        routeMaster_update.pickup_before = int(routerMaster_obj.pickup_before)
-                        routeMaster_update.release_time = formal_decimal(routerMaster_obj.release_time)
-                        routeMaster_update.pickup_time = formal_decimal(routerMaster_obj.pickup_time)
-                        routeMaster_update.depart_time = formal_decimal(routerMaster_obj.depart_time)
-                        routeMaster_update.delivery_time = formal_decimal(routerMaster_obj.delivery_time)
-                        routeMaster_update.complete_time = formal_decimal(routerMaster_obj.complete_time)
-                        routeMaster_update.updated_by = request.user.username
-                        routeMaster_update.updated_date = datetime.utcnow()
-                        routeMaster_update.is_active = True
-                        routeMaster_update.save()
-
-                    else :
-                        
-                        validate_warning_serializer_obj =  validate_warning_serializer()
-                        validate_warning_serializer_obj.error = configMessage.configs.get("ROUTE_MASTER_EXISTING").data
-                        validate_warning_serializer_obj.row = row_int + 1
-                        validateWarning_list.append(validate_warning_serializer_obj)
-
-                    
-            validate_error_list_serializer = validate_error_serializer(validateError_list, many=True)   
-            validate_warning_list_serializer = validate_warning_serializer(validateWarning_list, many=True)   
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = configMessage.configs.get("ROUTE_INFO_EDIT_MASSAGE_SUCCESSFUL").data
-            base_DTO_obj.data_list = None
-            base_DTO_obj.validate_error_list =  validate_error_list_serializer.data
-            base_DTO_obj.validate_warning_list = validate_warning_list_serializer.data
-
-            router_master_list_Serializer_DTO = RouterMaster_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(router_master_list_Serializer_DTO.data, safe=False)            
-
-
- 
+                    routerMasterHelper = RouterMasterHelper()
         
+                    routerMaster_list = routerMasterHelper.validate_routeMaster(routerMaster_list)
+
+                    if len(routerMasterHelper.validateError_list) <= 0: 
+
+                        # print(routerMaster_list)
+                        routerMasterService =  RouterMasterService()
+                        test = routerMasterService.update_routerMaster(routerMaster_list)
+                        print(test)
+
+                    validate_error_list_serializer = validate_error_serializer(routerMasterHelper.validateError_list, many=True)   
+
+                base_DTO_obj =  base_DTO()
+                base_DTO_obj.serviceStatus = "success"
+                base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_EDIT_MASSAGE_SUCCESSFUL").data
+                base_DTO_obj.data_list = None
+                base_DTO_obj.validate_error_list =  validate_error_list_serializer.data
+
+                serializer = RouterMaster_list_Serializer_DTO(base_DTO_obj)
+                
+                return Response(serializer.data, status=status.HTTP_200_OK)
+                
+            else :
+
+                serializer = serializerMapping.mapping_serializer_obj(
+                    RouterMaster_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(file_serializer.errors),
+                    None,
+                    None,
+                    None )
+                
+                return Response(serializer.data, status=status.HTTP_200_OK)
+                
+
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data_list = None
-            base_DTO_obj.validate_error_list =  None
+            serializer = serializerMapping.mapping_serializer_obj(
+                    RouterMaster_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            router_master_list_Serializer_DTO = RouterMaster_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(router_master_list_Serializer_DTO.data, safe=False)
 
 @api_view(['GET', 'POST', 'DELETE'])
 def deleted_routeMaster(request):
@@ -2693,166 +1982,111 @@ def deleted_routeMaster(request):
             routeMaster_list = RouterMaster.objects.filter(route_no__in=routeMaster_data)
             routeMaster_list.update(is_active = False)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = configMessage.configs.get("ROUTE_MASTER_DELETE_MASSAGE_SUCCESSFUL").data
-            base_DTO_obj.data_list = RouterMaster.objects.all()
-
-            routerMaster_list_serializer_DTO_reponse = RouterMaster_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(routerMaster_list_serializer_DTO_reponse.data, safe=False) 
+            serializer = serializerMapping.mapping_serializer_list(
+                RouterMaster_list_Serializer_DTO,
+                routeMaster_list,
+                "success", 
+                configMessage.configs.get("ROUTE_MASTER_DELETE_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            routerMaster_Serializer_DTO_reponse = RouterMaster_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(routerMaster_Serializer_DTO_reponse.data, safe=False)
-
+            serializer = serializerMapping.mapping_serializer_list(
+                    RouterMaster_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
 
 @api_view(['GET', 'POST', 'DELETE'])
 def routeInfo_list(request):
     
     if request.method == 'GET':
+
         try:
+
             routerInfo_list = RouterInfo.objects.filter(is_active=True)
-            routerInfo_serializer_obj = RouterInfo_Serializer(routerInfo_list, many=True)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get routeInfo"
-            base_DTO_obj.data_list = routerInfo_serializer_obj.data
-
-            routerInfo_list_Serializer_DTO_obj = RouterInfo_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(routerInfo_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
+            serializer = serializerMapping.mapping_serializer_list(
+                RouterInfo_list_Serializer_DTO,
+                routerInfo_list,
+                "success", 
+                "",
+                "",
+                None,
+                None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "error"
-            base_DTO_obj.massage = e 
-            # base_DTO_obj.data_list = order_serializer.data
+            serializer = serializerMapping.mapping_serializer_list(
+                    RouterInfo_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
 
-            routerInfo_list_Serializer_DTO_obj = RouterInfo_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(routerInfo_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
-
-        
-
-            # return JsonResponse(order_serializer.data, safe=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
 
-
         try:
+
             routerInfo_data = JSONParser().parse(request)
-            routerInfo_data['updated_by'] = request.user.username
+            routerInfo_serializer_obj = RouterInfo_Serializer(data=routerInfo_data)
 
-            if routerInfo_data['project_code'] is None or routerInfo_data['project_code'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_INFO_PROJECTCODE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerInfo_Serializer_DTO = RouterInfo_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerInfo_Serializer_DTO.data, status=status.HTTP_200_OK) 
-
-            elif routerInfo_data['route_code'] is None or routerInfo_data['route_code'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_INFO_ROUTECODE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerInfo_Serializer_DTO = RouterInfo_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerInfo_Serializer_DTO.data, status=status.HTTP_200_OK) 
+            if routerInfo_serializer_obj.is_valid():
             
-            elif routerInfo_data['trip_no'] is None or routerInfo_data['trip_no'].strip() == "" :
+                routerInfo_serializer_obj.save()
+                routerInfo_obj =  routerInfo_serializer_obj.save(updated_by=request.user.username)
+
+                serializer = serializerMapping.mapping_serializer_obj(
+                    RouterInfo_Serializer_DTO,
+                    routerInfo_obj,
+                    "success", 
+                    configMessage.configs.get("ROUTE_INFO_ADD_MASSAGE_SUCCESSFUL").data,
+                    "",
+                    None,
+                    None )
                 
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_INFO_TRIPNO_REQUIRED").data
-                base_DTO_obj.data = None
+            else : 
 
-                routerInfo_Serializer_DTO = RouterInfo_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerInfo_Serializer_DTO.data, status=status.HTTP_200_OK) 
+                serializer = serializerMapping.mapping_serializer_obj(
+                    RouterInfo_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(routerInfo_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
             
-            elif routerInfo_data['province'] is None or routerInfo_data['province'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage =configMessage.configs.get("ROUTE_INFO_PROVINCE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerInfo_Serializer_DTO = RouterInfo_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerInfo_Serializer_DTO.data, status=status.HTTP_200_OK)
-        
-            elif routerInfo_data['truck_license'] is None or routerInfo_data['truck_license'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_INFO_TRUCKLICENSE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerInfo_Serializer_DTO = RouterInfo_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerInfo_Serializer_DTO.data, status=status.HTTP_200_OK)  
+            return Response(serializer.data, status=status.HTTP_200_OK)
             
-            elif routerInfo_data['driver_code'] is None or routerInfo_data['driver_code'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_INFO_DRIVERCODE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerInfo_Serializer_DTO = RouterInfo_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerInfo_Serializer_DTO.data, status=status.HTTP_200_OK)
-
-            else:  
-
-                routerInfo_serializer_obj = RouterInfo_Serializer(data=routerInfo_data)
-                if routerInfo_serializer_obj.is_valid():
-                    
-                    routerInfo_serializer_obj.save()
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "success"
-                    base_DTO_obj.massage = configMessage.configs.get("ROUTE_INFO_ADD_MASSAGE_SUCCESSFUL").data
-                    base_DTO_obj.data = routerInfo_serializer_obj.data
-
-                    routerInfo_Serializer_DTO_reponse = RouterInfo_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(routerInfo_Serializer_DTO_reponse.data, status=status.HTTP_200_OK) 
-                
-
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = routerInfo_serializer_obj.errors
-                base_DTO_obj.data = None
-
-                routerInfo_Serializer_DTO_reponse = RouterInfo_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerInfo_Serializer_DTO_reponse.data, status=status.HTTP_200_OK)
-
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            routerInfo_Serializer_DTO = RouterInfo_Serializer_DTO(base_DTO_obj)
-
-        return JsonResponse(routerInfo_Serializer_DTO.data, status=status.HTTP_200_OK)
+            serializer = serializerMapping.mapping_serializer_obj(
+                RouterInfo_Serializer_DTO,
+                None,
+                "Error",
+                e,
+                None,
+                None,
+                None )
+                
+            return Response(serializer.data, status=status.HTTP_200_OK)
+         
 
 @api_view(['POST'])
 def search_route_info(request):
@@ -2860,129 +2094,59 @@ def search_route_info(request):
     if request.method == 'POST':
 
         try:
-            customer_code_selected = request.data['customer_code_selected']
-            project_code_selected = request.data['project_code_selected']
-          
-            route_code_selected = request.data['route_code_selected']
-            trip_no_selected = request.data['trip_no_selected']
 
-            query = "select * from master_data_routerinfo "
+            customer_code = request.data['customer_code_selected']
+            project_code = request.data['project_code_selected']
+            route_code = request.data['route_code_selected']
+            route_trip = request.data['trip_no_selected']
 
-            joint_str = "" 
-            where_str = " where 1 = 1  and master_data_routerinfo.is_active = true  "
+            routerInfoService = RouterInfoService()
+            routerInfo_list = routerInfoService.search_RouterInfo(customer_code,project_code,route_code,route_trip)
 
-
-            if customer_code_selected is not None:
-
-                joint_str = joint_str + " INNER JOIN master_data_project "
-                joint_str = joint_str + " ON UPPER(master_data_project.project_code) = UPPER(master_data_routerinfo.project_code) "
-                joint_str = joint_str + " INNER JOIN master_data_customer "
-                joint_str = joint_str + " ON UPPER(master_data_customer.customer_code) = UPPER(master_data_project.customer_code) "
-                where_str = where_str + " and  UPPER(master_data_customer.customer_code) = '%s' " % customer_code_selected.upper()
-                    
-            if project_code_selected is not None:
-
-                where_str = where_str + " and  UPPER(master_data_routerinfo.project_code) = '%s' " % project_code_selected.upper()
-
-
-            if route_code_selected is not None:
-                joint_str = joint_str + " INNER JOIN master_data_routermaster "
-                joint_str = joint_str + " ON UPPER(master_data_routermaster.route_code) = UPPER(master_data_routerinfo.route_code) "
-                where_str = where_str + " and  UPPER(master_data_routermaster.route_code) = '%s' " % route_code_selected.upper()
-            
-            if trip_no_selected is not None and route_code_selected is None:
-
-                joint_str = joint_str + " INNER JOIN master_data_routermaster "
-                joint_str = joint_str + " ON UPPER(master_data_routermaster.route_code) = UPPER(master_data_routerinfo.route_code) "
-                where_str = where_str + " and  UPPER(master_data_routermaster.trip_no) = '%s' " % trip_no_selected.upper()
-
-            if trip_no_selected is not None and route_code_selected is not None:
-
-                where_str = where_str + " and  UPPER(master_data_routermaster.trip_no) = '%s' " % trip_no_selected.upper()
-
-            query = query + joint_str + where_str + " Order By master_data_routerinfo.updated_date desc"
-            print(query)
-            routerInfo_list = RouterInfo.objects.raw(query)
-
-            routerInfo_csv_list = []
-
-            routerInfo_csv_list.insert(0, [
+            name_csv_str = "RouterInfoCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj.covert_to_header([
                 "Project Code",
                 "Route Code",
                 "Trip No",
-                "Truck License"
                 "Province",
+                "Truck License",
                 "Driver",
                 "Update by",
-                "Update Date"
-                ]
-            )
+                "Update Date"])
 
-            routeInfo_dto_list = []
-            for routerInfo_obj in routerInfo_list:
+            routerInfo_CSV_list = RouterInfoHelper.covert_data_list_to_CSV_list(routerInfo_list)
+            CSV_file_management_obj.covert_to_CSV_data_list(routerInfo_CSV_list)
+            return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
 
-                routeInfo_dto_obj =  RouteInfoDTO()
-                routeInfo_dto_obj.id = routerInfo_obj.id
-                routeInfo_dto_obj.project_code = routerInfo_obj.project_code
-                # routeInfo_dto_obj.route_no = routerInfo_obj.route_no
-                routeInfo_dto_obj.driver_code = routerInfo_obj.driver_code
-                routeInfo_dto_obj.route_code = routerInfo_obj.route_code
-                routeInfo_dto_obj.trip_no = routerInfo_obj.trip_no
-                routeInfo_dto_obj.truck_license = routerInfo_obj.truck_license
-                routeInfo_dto_obj.province = routerInfo_obj.province
-                
-                if routerInfo_obj.driver_code :
-                    routeInfo_dto_obj.driver_name = Driver.objects.filter(driver_code=routerInfo_obj.driver_code)[0].name
-                
-                routeInfo_dto_obj.updated_by = routerInfo_obj.updated_by
-                routeInfo_dto_obj.updated_date = routerInfo_obj.updated_date
+            serializer_list =  RouterInfoHelper.covert_data_list_to_serializer_list(routerInfo_list)
 
+            serializer = serializerMapping.mapping_serializer_list(
+                    RouterInfo_list_Serializer_DTO,
+                    serializer_list,
+                    "success", 
+                    "",
+                    name_csv_str + '.csv',
+                    None,
+                    None
+                )
             
-                routeInfo_dto_list.append(routeInfo_dto_obj)
-
-                routeInfo_row_list = (
-                                routeInfo_dto_obj.project_code,
-                                routeInfo_dto_obj.route_code,
-                                routeInfo_dto_obj.trip_no,
-                                routeInfo_dto_obj.truck_license,
-                                routeInfo_dto_obj.province,
-                                routeInfo_dto_obj.driver_name,
-                                routeInfo_dto_obj.updated_by,
-                                routeInfo_dto_obj.updated_date.strftime("%d/%m/%Y")
-                                )
-
-                routerInfo_csv_list.append(routeInfo_row_list)
-
-            name_csv_str = "RouterInfoCSV" +datetime.now().strftime("%Y%m%d_%H%M%S")
-
-            with open("media/" +  name_csv_str +'.csv', 'w', newline='',encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerows(routerInfo_csv_list)
-
-            routeInfo_serializer = RouterInfo_Serializer(routeInfo_dto_list, many=True)
-
-            
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = "get part"
-            base_DTO_obj.data_list = routeInfo_serializer.data
-            base_DTO_obj.csv_name =  name_csv_str + '.csv'
-
-            routerInfo_list_Serializer_DTO = RouterInfo_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(routerInfo_list_Serializer_DTO.data, safe=False)
-
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
+            serializer = serializerMapping.mapping_serializer_list(
+                    RouterInfo_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            routerInfo_list_Serializer_DTO = RouterInfo_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(routerInfo_list_Serializer_DTO.data, safe=False)
-
+    
 @api_view(['GET', 'POST', 'DELETE'])
 def edited_routeInfo(request):
 
@@ -2991,70 +2155,49 @@ def edited_routeInfo(request):
         try:
 
             routerInfo_data = JSONParser().parse(request)
+            routerInfo_obj = RouterInfo.objects.filter( id=routerInfo_data['id'])[0]
+            routerInfo_serializer_obj = RouterInfo_Serializer(routerInfo_obj,data=routerInfo_data)
 
-            if routerInfo_data['province'] is None or routerInfo_data['province'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_INFO_PROVINCE_REQUIRED").data
-                base_DTO_obj.data = None
+            if routerInfo_serializer_obj.is_valid():
 
-                routerInfo_Serializer_DTO = RouterInfo_Serializer_DTO(base_DTO_obj)
+                routerInfo_serializer_obj.save()
 
-                return JsonResponse(routerInfo_Serializer_DTO.data, status=status.HTTP_200_OK) 
-            
-            elif routerInfo_data['truck_license'] is None or routerInfo_data['truck_license'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error" 
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_INFO_TRUCKLICENSE_REQUIRED").data
-                base_DTO_obj.data = None
+                serializer = serializerMapping.mapping_serializer_obj(
+                    RouterInfo_Serializer_DTO,
+                    routerInfo_obj,
+                    "success", 
+                    configMessage.configs.get("ROUTE_INFO_EDIT_MASSAGE_SUCCESSFUL").data,
+                    "",
+                    None,
+                    None 
+                    )
 
-                routerInfo_Serializer_DTO = RouterInfo_Serializer_DTO(base_DTO_obj)
+            else :
 
-                return JsonResponse(routerInfo_Serializer_DTO.data, status=status.HTTP_200_OK)
-            
-            
-            
-            elif routerInfo_data['driver_code'] is None or routerInfo_data['driver_code'].strip() == "" :
-                
-                base_DTO_obj =  base_DTO()
-                base_DTO_obj.serviceStatus = "Error"
-                base_DTO_obj.massage = configMessage.configs.get("ROUTE_INFO_DRIVERCODE_REQUIRED").data
-                base_DTO_obj.data = None
-
-                routerInfo_Serializer_DTO = RouterInfo_Serializer_DTO(base_DTO_obj)
-
-                return JsonResponse(routerInfo_Serializer_DTO.data, status=status.HTTP_200_OK)
-            
-            else : 
-
-                routerInfo_obj = RouterInfo.objects.filter( id=routerInfo_data['id'])
-                routerInfo_serializer_obj = RouterInfo_Serializer(routerInfo_obj[0],data=routerInfo_data)
-
-                if routerInfo_serializer_obj.is_valid():
-
-                    routerInfo_serializer_obj.save()
+                serializer = serializerMapping.mapping_serializer_obj(
+                    RouterInfo_Serializer_DTO,
+                    None,
+                    "Error",
+                    ErrorHelper.get_error_massage(routerInfo_serializer_obj.errors),
+                    None,
+                    None,
+                    None )
                     
-                    base_DTO_obj =  base_DTO()
-                    base_DTO_obj.serviceStatus = "success"
-                    base_DTO_obj.massage = configMessage.configs.get("ROUTE_INFO_EDIT_MASSAGE_SUCCESSFUL").data
-                    base_DTO_obj.routeInfo_list = RouterInfo.objects.all()
-
-                    routerInfo_list_serializer_DTO_reponse = RouterInfo_list_Serializer_DTO(base_DTO_obj)
-
-                    return JsonResponse(routerInfo_list_serializer_DTO_reponse.data, safe=False) 
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            routerInfo_Serializer_DTO_reponse = RouterInfo_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(routerInfo_Serializer_DTO_reponse.data, safe=False)
+            serializer = serializerMapping.mapping_serializer_obj(
+                    RouterInfo_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -3065,31 +2208,33 @@ def deleted_routeInfo(request):
         try:
 
             routeInfo_data = JSONParser().parse(request)
-            print(routeInfo_data)
             routerInfo_list = RouterInfo.objects.filter(id__in=routeInfo_data)
             routerInfo_list.update(is_active = False)
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "success"
-            base_DTO_obj.massage = configMessage.configs.get("ROUTE_INFO_DELETE_MASSAGE_SUCCESSFUL").data
-            base_DTO_obj.data_list = RouterInfo.objects.filter(is_active=True)
-
-            routerInfo_list_serializer_DTO_reponse = RouterInfo_list_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(routerInfo_list_serializer_DTO_reponse.data, safe=False) 
+            serializer = serializerMapping.mapping_serializer_list(
+                RouterInfo_list_Serializer_DTO,
+                routerInfo_list,
+                "success", 
+                configMessage.configs.get("ROUTE_INFO_DELETE_MASSAGE_SUCCESSFUL").data,
+                "",
+                None,
+                None )
             
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
 
-            base_DTO_obj =  base_DTO()
-            base_DTO_obj.serviceStatus = "Error"
-            base_DTO_obj.massage = e
-            base_DTO_obj.data = None
-
-            routerInfo_Serializer_DTO_reponse = RouterInfo_Serializer_DTO(base_DTO_obj)
-
-            return JsonResponse(routerInfo_Serializer_DTO_reponse.data, safe=False)
-
-
+            serializer = serializerMapping.mapping_serializer_list(
+                    RouterInfo_list_Serializer_DTO,
+                    None,
+                    "Error",
+                    e,
+                    None,
+                    None,
+                    None )
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+      
 @api_view(['GET', 'POST', 'DELETE'])
 def calendarMaster_list(request):
     
@@ -3259,6 +2404,7 @@ def add_packages_master(request):
                 add_package.image_url = ""
                 add_package.is_active = True
                 add_package.save()
+                
         return JsonResponse("test", safe=False)
 
 
