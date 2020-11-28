@@ -15,6 +15,20 @@ def format_2digital(number) :
     return format(number, '.2f')
 
 @register.filter
+def covert_none(data) :
+
+    if data is None :
+        return ''
+
+    return data
+
+@register.filter
 def covert_date(date) :
+    print(date)
     return date.strftime("%d/%m/%Y")
+
+@register.filter
+def covert_time(date) :
+
+    return date.strftime("%H:%M")
 

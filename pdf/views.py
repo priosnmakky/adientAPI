@@ -218,9 +218,8 @@ def render_truckplan_pdf(request):
                 barcode.generate_code128(truckplan_data['truckplan_no'])
 
                 data_list = truckPlanManagementService.truck_report(truckplan_data['truckplan_no'])
-                print(data_list)
-
-                context = {"pickup_obj" :data_list[0][0],"order_list":data_list[1],"barcode_pic_name" :name_barcode_img_str}
+          
+                context = {"pickup_obj" :data_list[0][0],"order_list":data_list[1],"barcode_pic_name" :name_barcode_img_str,"loop_times":range(1,15)}
                 name_pdf_str = "TruckPlanPDF_" +datetime.now().strftime("%Y%m%d_%H%M%S") + ".pdf"
                 html = render_to_string('pdf/truckPlan_template.html',context)
                 PDFManagement.generate_pdf(html,name_pdf_str,link_callback)

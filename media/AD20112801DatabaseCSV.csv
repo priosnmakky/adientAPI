@@ -1,0 +1,25 @@
+﻿1;2480322;AD20112801;20200604A165;04/06/2020;150;{"add": "150", "update": [], "delete": []};AUN;Metal;UPR CROSS TUBE;add
+1;2480322;AD20112801;20200608A207;08/06/2020;300;{"add": "300", "update": [], "delete": []};AUN;Metal;UPR CROSS TUBE;add
+1;2480322;AD20112801;20200609A171;09/06/2020;300;{"add": "300", "update": [], "delete": []};AUN;Metal;UPR CROSS TUBE;add
+1;2480322;AD20112801;20200611A096;11/06/2020;150;{"add": "150", "update": [], "delete": []};AUN;Metal;UPR CROSS TUBE;add
+1;2480322;AD20112801;20200619A109;19/06/2020;150;{"add": "150", "update": [], "delete": []};AUN;Metal;UPR CROSS TUBE;add
+2;2527824;AD20112801;20200608A208;08/06/2020;300;{"add": "300", "update": [], "delete": []};AUN;Metal;SUPPORT TUBE UPR;add
+2;2527824;AD20112801;20200609A001;09/06/2020;300;{"add": "50", "update": [50], "delete": []};AUN;Metal;SUPPORT TUBE UPR;update
+3;2621969;AD20112801;20200601A001;01/06/2020;150;{"add": "200", "update": [200], "delete": []};AUN;Metal;RR MEMB PIPE RH R/C;update
+3;2621969;AD20112801;20200609A002;09/06/2020;150;{"add": "50", "update": [50], "delete": []};AUN;Metal;RR MEMB PIPE RH R/C;update
+343;1779825;AD20112801;20200603A006;03/06/2020;3500;{"add": "3500", "update": [], "delete": []};NSG;Foam;REINFORCEMENT SIDE BOLSTER RECLINER;add
+;;AD20112801;20200602A001;;;{"add": "10", "update": [], "delete": [10]};;;;delete
+;;AD20112801;20200606A001;;;{"add": "5", "update": [], "delete": [5]};;;;delete
+;;AD20112801;20200619A001;;;{"add": "150", "update": [], "delete": [150]};;;;delete
+;;AD20112801;20200615A001;;;{"add": "79", "update": [], "delete": [79]};;;;delete
+;;AD20112801;20200605A005;;;{"add": "40", "update": [], "delete": [40]};;;;delete
+;;AD20112801;20200605A002;;;{"add": "1", "update": [], "delete": [1]};;;;delete
+;;AD20112801;20200603A001;;;{"add": "400", "update": [], "delete": [400]};;;;delete
+;;AD20112801;20200606A003;;;{"add": "1", "update": [], "delete": [1]};;;;delete
+;;AD20112801;20200604A001;;;{"add": "5", "update": [], "delete": [5]};;;;delete
+;;AD20112801;20200602A064;;;{"add": "3500", "update": [], "delete": [3500]};;;;delete
+;;AD20112801;20200606A002;;;{"add": "10", "update": [], "delete": [10]};;;;delete
+;;AD20112801;20200613A001;;;{"add": "78", "update": [], "delete": [78]};;;;delete
+;;AD20112801;20200612A001;;;{"add": "77", "update": [], "delete": [77]};;;;delete
+;;AD20112801;20200605A001;;;{"add": "1", "update": [], "delete": [1]};;;;delete
+;;AD20112801;20200611A001;;;{"add": "150", "update": [], "delete": [150]};;;;delete

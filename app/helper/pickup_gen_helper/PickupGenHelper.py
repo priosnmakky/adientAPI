@@ -20,7 +20,7 @@ class PickupGenHelper:
             order_serializer_obj.plant_code = pickup_obj[2]
             order_serializer_obj.route_code = pickup_obj[3]
             order_serializer_obj.route_trip = pickup_obj[4]
-            order_serializer_obj.due_date = datetime.strptime(pickup_obj[5].strftime("%Y-%m-%d"), "%Y-%m-%d")
+            order_serializer_obj.due_date = pickup_obj[5]
             order_serializer_obj.order_count = pickup_obj[6]
         
 

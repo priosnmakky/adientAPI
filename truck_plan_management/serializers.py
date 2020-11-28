@@ -13,7 +13,7 @@ class PickUp_Serializer(serializers.Serializer):
     pickup_no = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     supplier_code  = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
     plant_code  = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
-    due_date = serializers.DateField(format="%d/%m/%Y", input_formats=['%d/%m/%Y',],allow_null=True,required=False)
+    due_date = serializers.DateTimeField(allow_null=True,required=False)
     route_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     route_trip = serializers.CharField(max_length=5,allow_blank=True,allow_null=True,required=False)
     truckplan_no = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
@@ -41,19 +41,21 @@ class PickUp_Serializer(serializers.Serializer):
         instance.due_date = validated_data.get('due_date', instance.due_date)
         instance.route_code = validated_data.get('route_code', instance.route_code)
         instance.route_trip = validated_data.get('route_trip', instance.route_trip)
+        
         instance.is_active = True
         instance.updated_by = validated_data.get('updated_by', instance.updated_by)
         instance.updated_date = datetime.utcnow()
         instance.save()
 
     def validate_due_date(self, due_date):
-   
+
         if due_date is None :
 
             raise serializers.ValidationError(detail=configMessage.configs.get("UPLOAD_PICKUP_DUEDATE_REQUIRED").data)
-        return datetime.strptime(str(due_date), "%Y-%m-%d").date() 
+        return due_date
 
     def create(self, validated_data):
+
 
         order_obj = Order.objects.filter(
             supplier_code=validated_data.get('supplier_code'),
@@ -67,7 +69,7 @@ class PickUp_Serializer(serializers.Serializer):
             is_route_completed=True,
             is_part_completed=True
             )
-
+        
         due_date_str = str(validated_data.get('due_date').year) + "{0:0=2d}".format(int(validated_data.get('due_date').month)) + "{0:0=2d}".format(int(validated_data.get('due_date').day)) 
         genetate_PUS_obj = Genetate_PUS(validated_data.get('supplier_code'),due_date_str) 
         pickup_no = genetate_PUS_obj.generate_PUS() 
@@ -98,7 +100,7 @@ class TruckPlan_Serializer(serializers.Serializer):
 
 
     truckplan_no = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
-    due_date = serializers.DateField(format="%d/%m/%Y", input_formats=['%d/%m/%Y',],allow_null=True,required=False)
+    due_date = serializers.DateTimeField(allow_null=True,required=False)
     route_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     route_trip = serializers.CharField(max_length=5,allow_blank=True,allow_null=True,required=False)
     is_active = serializers.BooleanField(required=False)

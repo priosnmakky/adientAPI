@@ -56,7 +56,7 @@ class OrderComfirmHelper:
         order_add_obj.part_number = order_obj[1]
         order_add_obj.file_no = order_obj[2]
         order_add_obj.order_no = order_obj[3]
-        order_add_obj.due_date = datetime.strptime(str(order_obj[4]), "%d/%m/%Y")
+        order_add_obj.due_date = datetime.strptime(str(order_obj[4]), "%d/%m/%Y %H:%M")
         order_add_obj.order_qty = int(order_obj[5])
         order_add_obj.history_updated = order_obj[6]
         order_add_obj.supplier_code = order_obj[7]

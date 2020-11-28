@@ -14,7 +14,7 @@ class OrderSerializer(serializers.Serializer):
     item_no = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
     file_no = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     order_no = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
-    due_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=['%d/%m/%Y',],allow_null=True,required=False)
+    due_date = serializers.DateTimeField(allow_null=True,required=False)
     order_qty = serializers.IntegerField(allow_null=True,required=False)
     package_no = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     package_name = serializers.CharField(max_length=500,allow_blank=True,allow_null=True,required=False)

@@ -1,6 +1,6 @@
 from master_data.models import Customer
 from order.models import File,Order
-from datetime import datetime
+from datetime import datetime,timedelta
 
 class OrderUploadHelper:
 
@@ -70,6 +70,7 @@ class OrderUploadHelper:
         supplierName_list = []
         plantName_list = []
         due_date_list = []
+        
 
 
         for row_int in range(3,sheet_obj.max_row + 1):
@@ -83,7 +84,7 @@ class OrderUploadHelper:
                 if order_data_str != None or sheet_obj.cell(row=2, column=column_int).value != None:
                     
                     order_data_str ="" if order_data_str == None  else order_data_str
-
+                    
                     if column_int == 1 :
                         
                         order_list.append((str(order_data_str),row_int,column_int))
@@ -107,10 +108,15 @@ class OrderUploadHelper:
 
                         plantName_list.append(str(order_data_str))
                         order_list.append((str(order_data_str),row_int,column_int))
+                    
  
-                    elif column_int > 5 :
+                    elif column_int > 6 :
 
                             due_date_datetime = sheet_obj.cell(row=2, column=column_int).value
+                            time_datetime = sheet_obj.cell(row=row_int, column=6).value
+                            due_date_datetime = datetime.combine(due_date_datetime,time_datetime)
+                            due_date_datetime = due_date_datetime - timedelta(hours=7)
+                   
                             if not due_date_datetime in [ d[0] for d in due_date_list] :
 
                                 due_date_db_list = Order.objects.filter(

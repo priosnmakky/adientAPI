@@ -93,7 +93,7 @@ class OrderManageHelper:
             part_number, #part_number
             file_no, #file_no
             order_no, #order_no
-            "" if due_date == "" else due_date.strftime("%d/%m/%Y"), #due_date 
+            "" if due_date == "" else due_date.strftime("%d/%m/%Y %H:%M"), #due_date 
             order_qry, #order_qty
             history_str, #history_str
             supplier_code, # supplier_code
