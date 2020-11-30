@@ -149,16 +149,11 @@ def generate_PUS(request):
         try:
 
             pickUp_list = JSONParser().parse(request)['orderList']
-            
-            print(pickUp_list)
-            # for pickUp_obj in pickUp_list :
-
-            #     pickUp_obj['due_date'] = datetime.strptimepickUp_obj(['due_date'], "%d/%m/%Y")
 
             pickUp_serializer = PickUp_Serializer(data=pickUp_list,many = True)
     
             if pickUp_serializer.is_valid():
-                print(pickUp_list)
+
                 pickUp_obj =  pickUp_serializer.save(is_active=True,updated_by=request.user.username,updated_date=datetime.utcnow())
 
                 serializer = serializerMapping.mapping_serializer_list(

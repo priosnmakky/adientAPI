@@ -4,31 +4,66 @@ register = template.Library()
 
 @register.filter
 def round_number(number):
-    return round(number, 2)
+
+    if number is None :
+        
+        return 00.00
+
+    else:
+
+        return round(number, 2)
 
 @register.filter
 def math_ceil(number):
-    return math.ceil(number)
+    if number is None :
+        
+        return 00.00
+
+    else:
+
+        return math.ceil(number)
 
 @register.filter
 def format_2digital(number) :
-    return format(number, '.2f')
+
+    if number is None :
+        
+        return 00.00
+
+    else:
+            
+        return format(number, '.2f')
 
 @register.filter
 def covert_none(data) :
 
     if data is None :
+        
         return ''
+    
+    else :
 
-    return data
+        return data
 
 @register.filter
 def covert_date(date) :
-    print(date)
-    return date.strftime("%d/%m/%Y")
+    
+    if date is None :
+
+        return ""
+
+    else :
+
+        return date.strftime("%d/%m/%Y")
 
 @register.filter
 def covert_time(date) :
 
-    return date.strftime("%H:%M")
+    if date is None :
+
+        return ""
+
+    else :
+
+        return date.strftime("%H:%M")
 

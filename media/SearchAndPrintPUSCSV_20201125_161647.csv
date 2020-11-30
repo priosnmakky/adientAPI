@@ -1,4 +1,0 @@
-﻿PUS Ref,Status,Supplier,Plant,Order Count,Due Date,Release Time,Delivery Time,Route Code,Trip,Truck License,Driver Name
-AUN___2020112401,Waiting,AUN,AT,0,2020-11-24,12.30,17.20,test-gen-pus1234,1,,
-SPV___2020061701,Complete,SPV,JIT-Rayong,20,2020-06-17,10.20,10.20,SPV-JITRayong,1,,
-AUN___2020061801,Complete,AUN,Foam,10,2020-06-18,12.30,16.30,AUN-Foam,1,,
