@@ -39,6 +39,19 @@
                 font-family: "Kanit-ExtraLight";
                 src: url("PDF/static/font/Kanit-ExtraLightItalic.ttf");
             }
+             @font-face 
+            {
+                font-family: "TH-Sara-bun-New";
+                src: url("PDF/static/font/THSarabunNew.ttf");
+
+            }
+
+            @font-face 
+            {
+                font-family: "TH-Sara-bun-New-Bold";
+                src: url("PDF/static/font/THSarabunNew Bold.ttf");
+
+            }
 
             body 
             {
@@ -99,6 +112,16 @@
             {
                 font-family: "kanit-regular";
             }
+            .TH-Sara-bun-New
+            { 
+                font-family: "TH-Sara-bun-New";
+
+            }
+            .TH-Sara-bun-New-Bold
+            {
+                font-family: "TH-Sara-bun-New-Bold";
+   
+            }
             .container-text
             {
                 
@@ -119,10 +142,6 @@
             {
                 font-size:11px;
             }
-            .font-size-17-text
-            {
-                font-size:17px;
-            }
             .font-size-9-text
             {
                 font-size:9px;
@@ -130,6 +149,26 @@
             .font-size-10-text
             {
                 font-size:10px;
+            }
+             .font-size-13-text
+            {
+                font-size:13px;
+            }
+            .font-size-15-text
+            {
+                font-size:15px;
+            }
+            .font-size-17-text
+            {
+                font-size:17px;
+            }
+            .font-size-20-text
+            {
+                font-size:20px;
+            }
+            .font-size-25-text
+            {
+                font-size:25px;
             }
            
             .margin-left-40-text
@@ -221,6 +260,14 @@
                 background: red;
                 border-radius: 50%;
             }
+            .padding-top-5
+            {
+                padding-top:5px;
+            }
+            .padding-top-2
+            {
+                padding-top:2px;
+            }
 
         </style>
     </head>
@@ -233,11 +280,11 @@
                 </th>
                 <th colspan="5" class="header-center border-bottom-none text-center" >
                     <div class="container-text font-size-17-text" >
-                        <div class="bloc-text kanit--text" >
+                        <div class="bloc-text TH-Sara-bun-New-Bold font-size-25-text" >
                             TRUCK PLAN FOR 
                         </div>
                         </br>
-                        <div class="bloc-text kanit-extraLight-text" >
+                        <div class="bloc-text TH-Sara-bun-New font-size-20-text" >
                             {{pickup_obj.0 | covert_none}}
                         </div>
                     </div>
@@ -245,10 +292,10 @@
                 <th colspan="4" class="header-right border-bottom-none" >
                     <img class="right" src='{{barcode_pic_name}}.png' alt=""> </br>
                     <div class="container-text font-size-13-text text-left" >
-                        <div class="bloc-text margin-left-40-text kanit-regular-text" >
+                        <div class="bloc-text margin-left-40-text TH-Sara-bun-New-Bold  font-size-15-text  margin-left-40-text" >
                             เลขที่เอกสาร  &nbsp;   &nbsp; 
                         </div>
-                        <div class="bloc-text kanit-extraLight-text margin-left-40-text" >
+                        <div class="bloc-text TH-Sara-bun-New font-size-20-text margin-left-40-text" >
                             {{pickup_obj.1 | covert_none}}
                         </div>
                     </div>
@@ -262,69 +309,69 @@
                 </th>
             </tr>
             <tr>
-                <th colspan="3" class="kanit-regular-text font-size-13-text border-top-none 
-                border-right-none border-bottom-none text-left 
+                <th colspan="3" class="TH-Sara-bun-New-Bold  font-size-17-text border-top-none 
+                border-right-none border-bottom-none text-left padding-top-2
                 padding-left-1">
                     เลขที่รูท
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text  padding-top-2
                 border-top-none border-right-none border-left-none text-center  ">
                     {{pickup_obj.2 | covert_none}}
                 </th>
                 <th colspan="1" class="border-none">
                 </th>
-                <th colspan="3" class="kanit-regular-text font-size-13-text border-none text-left 
+                <th colspan="3" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-none text-left 
                 padding-left-1">
                     เที่ยวที่
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text padding-top-2
                 border-top-none border-right-none border-left-none  text-center">
                     {{pickup_obj.3 | covert_none}}
                 </th>
                 <th colspan="1" class="border-none">
                 </th>
-                <th colspan="4" class="kanit-regular-text font-size-13-text border-none text- 
+                <th colspan="4" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-none text- 
                 padding-left-1 text-left">
                     เวลาเริ่มต้น
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text padding-top-2
                 border-top-none  border-left-none  ">
                     {{pickup_obj.4 | covert_none}}
                 </th>
             </tr>
             <tr>
-                <th colspan="3" class="kanit-regular-text font-size-13-text border-top-none 
+                <th colspan="3" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none 
                 border-right-none border-bottom-none text-left 
                 padding-left-1">
                     จุดส่ง
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text padding-top-2 
                 border-top-none border-right-none border-left-none text-center  ">
                     {{pickup_obj.5 | covert_none }}
                 </th>
                 <th colspan="1" class="border-none">
                 </th>
-                <th colspan="3" class="kanit-regular-text font-size-13-text border-none text-left 
+                <th colspan="3" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-none text-left 
                 padding-left-1">
                     วันที่เริ่มงาน
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text padding-top-2 
                 border-top-none border-right-none border-left-none  text-center">
                     {{pickup_obj.6 | covert_date }}
                 </th>
                 <th colspan="1" class="border-none">
                 </th>
-                <th colspan="4" class="kanit-regular-text font-size-13-text border-none text- 
+                <th colspan="4" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-none text- 
                 padding-left-1 text-left">
                     เวลาถึง Sup สุดท้าย
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text padding-top-2 font-size-13-text  
                 border-top-none  border-left-none  ">
                     {{pickup_obj.7 | covert_none }}
                 </th>
             </tr>
             <tr>
-                <th colspan="3" class="kanit-regular-text font-size-13-text border-top-none 
+                <th colspan="3" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none 
                 border-right-none border-bottom-none text-left 
                 padding-left-1">
                     ประเภทรูท
@@ -335,115 +382,115 @@
                 </th>
                 <th colspan="1" class="border-none">
                 </th>
-                <th colspan="3" class="kanit-regular-text font-size-13-text border-none text-left 
+                <th colspan="3" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-none text-left 
                 padding-left-1">
                     วันที่เสร็จงาน
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text padding-top-2
                 border-top-none border-right-none border-left-none  text-center">
                     {{pickup_obj.6 | covert_date }}
                     {% comment %} {{pickup_obj.6 | covert_date }} {% endcomment %}
                 </th>
                 <th colspan="1" class="border-none">
                 </th>
-                <th colspan="4" class="kanit-regular-text font-size-13-text border-none text- 
+                <th colspan="4" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-none text- 
                 padding-left-1 text-left">
                     เวลาออก Sup สุดท้าย
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text  padding-top-2
                 border-top-none  border-left-none  ">
                     {{pickup_obj.8  | covert_none }}
                 </th>
             </tr>
             <tr>
-                <th colspan="3" class="kanit-regular-text font-size-13-text border-top-none 
+                <th colspan="3" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none 
                 border-right-none border-bottom-none text-left 
                 padding-left-1">
                     ปริมาตรรวม
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text  padding-top-2
                 border-top-none border-right-none border-left-none text-center  ">
                     {{pickup_obj.9 | format_2digital }}
                 </th>
                 <th colspan="1" class="border-none">
                 </th>
-                <th colspan="3" class="kanit-regular-text font-size-13-text border-none text-left 
+                <th colspan="3" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-none text-left 
                 padding-left-1">
                     ทะเบียนรถ
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text  padding-top-2
                 border-top-none border-right-none border-left-none  text-center">
                     {{pickup_obj.10 | covert_none}}
                 </th>
                 <th colspan="1" class="border-none">
                 </th>
-                <th colspan="4" class="kanit-regular-text font-size-13-text border-none text- 
+                <th colspan="4" class="TH-Sara-bun-New-Bold  font-size-17-text  padding-top-2 border-none text- 
                 padding-left-1 text-left">
                     เวลาถึงจุดส่งงาน
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New font-size-17-text padding-top-2
                 border-top-none  border-left-none  ">
                     {{pickup_obj.11 | covert_none}}
                 </th>
             </tr>
             <tr>
-                <th colspan="3" class="kanit-regular-text font-size-13-text border-top-none 
-                border-right-none border-bottom-none text-left 
+                <th colspan="3" class="TH-Sara-bun-New-Bold  font-size-17-text border-top-none 
+                border-right-none border-bottom-none text-left padding-top-2
                 padding-left-1">
                     นํ้าหนักรวม
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text padding-top-2
                 border-top-none border-right-none border-left-none text-center  ">
                     {{pickup_obj.12 | covert_none}}
                 </th>
                 <th colspan="1" class="border-none">
                 </th>
-                <th colspan="3" class="kanit-regular-text font-size-13-text border-none text-left 
+                <th colspan="3" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-none text-left 
                 padding-left-1">
                     พนักงานขับรถ
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-11-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text padding-top-2
                 border-top-none border-right-none border-left-none  text-center">
                     {{pickup_obj.13 | covert_none}}
                 </th>
                 <th colspan="1" class="border-none">
                 </th>
-                <th colspan="4" class="kanit-regular-text font-size-13-text border-none text- 
+                <th colspan="4" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-none text- 
                 padding-left-1 text-left">
                     เวลาออกจากจุดส่งงาน
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New font-size-17-text padding-top-2
                 border-top-none  border-left-none  ">
                     {{pickup_obj.16 | covert_none}}
                 </th>
             </tr>
             <tr>
-                <th colspan="3" class="kanit-regular-text font-size-13-text border-top-none 
+                <th colspan="3" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none 
                 border-right-none border-bottom-none text-left 
                 padding-left-1">
                     บรรจุภณัฑ์รวม
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text padding-top-2
                 border-top-none border-right-none border-left-none text-center  ">
                     {{pickup_obj.14 | covert_none}}
                 </th>
                 <th colspan="1" class="border-none">
                 </th>
-                <th colspan="3" class="kanit-regular-text font-size-13-text border-none text-left 
+                <th colspan="3" class="TH-Sara-bun-New-Bold  font-size-17-text  padding-top-2 border-none text-left 
                 padding-left-1 border-bottom-none">
                     เบอรโ์ทรศัพท์
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text  padding-top-2
                 border-top-none border-right-none border-left-none text-center  ">
                     {{pickup_obj.15 | covert_none}}
                 </th>
                 <th colspan="1" class="border-none">
                 </th>
-                <th colspan="4" class="kanit-regular-text font-size-13-text border-none text- 
+                <th colspan="4" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-none text- 
                 padding-left-1 text-left border-bottom-none">
                     เวลาเสร็จงาน
                 </th>
-                <th colspan="3" class="kanit-extraLight-text font-size-13-text  
+                <th colspan="3" class="TH-Sara-bun-New  font-size-17-text padding-top-2 
                 border-top-none border-right-none border-left-none text-center  ">
                     {{pickup_obj.16 | covert_none}}
                 </th>
@@ -456,95 +503,95 @@
             </tr>
             {% for order in order_list %}
             <tr>
-                <th colspan="1" rowspan="2" class="kanit-regular-text font-size-13-text border-bottom-none ">
+                <th colspan="1" rowspan="2" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-bottom-none ">
                     ลำดับ 
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-bottom-none">
                     เวลารับ                   
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-bottom-none">
                     ซัพพลายเออร์                   
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-bottom-none">
                     จุดรับสินค้า                   
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-bottom-none">
                     จำนวน PUS                   
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-bottom-none">
                     จุดส่งสินค้า                   
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-bottom-none">
                     วันที่ส่ง                   
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-bottom-none">
                     เวลาส่ง                   
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-bottom-none">
                     ลายเซ็น                   
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-bottom-none">
                     หมายเหตุ                   
                 </th>
             </tr>
             <tr>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2 border-top-none">
                     {{order.0 | covert_none}}           
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2 border-top-none">
                     {{order.1 | covert_none}} 
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2 border-top-none">
                     {{order.2 | covert_none}}                 
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2 border-top-none">
                     {{order.3 | covert_none}}             
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2 border-top-none">
                     {{order.4 | covert_none}}                
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New font-size-17-text padding-top-2 border-top-none">
                     {{order.5 | covert_date}} 
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New font-size-17-text padding-top-2 border-top-none">
                     {{order.5 | covert_time}}
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2 border-top-none border-bottom-none">
                                       
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2 border-top-none border-bottom-none">
                                        
                 </th>
             </tr>
             <tr>
-                <th colspan="1" rowspan="1" class="kanit-regular-text font-size-13-text border-top-none border-bottom-none">
+                <th colspan="1" rowspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2 border-top-none border-bottom-none">
                     {{ forloop.counter }}             
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-top-none border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none border-bottom-none">
                     กล่อง            
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-top-none border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none border-bottom-none">
                     แร็ค                  
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-top-none border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none border-bottom-none">
                     พาเลท                   
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-top-none border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none border-bottom-none">
                     อื่นๆ                 
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-top-none border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none border-bottom-none">
                     จำนวนรวม                 
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-top-none border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none border-bottom-none">
                     CBN                
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-top-none border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none border-bottom-none">
                     นํ้าหน้ก ต้น             
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-top-none border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none border-bottom-none">
                                       
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text border-top-none border-bottom-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none border-bottom-none">
                                        
                 </th>
             </tr>
@@ -552,31 +599,31 @@
                 <th colspan="1" rowspan="1" class="border-top-none">
                           
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2 border-top-none">
                      {{order.6 | covert_none }}  
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2 border-top-none">
                               
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2 border-top-none">
                                       
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2 border-top-none">
                                    
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New font-size-17-text padding-top-2 border-top-none">
                     {{order.6 | covert_none}}               
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none">
                     {{order.7 | format_2digital}}           
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none">
                     {{order.8 | format_2digital}}        
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none ">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none ">
                                       
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-extraLight-text font-size-13-text border-top-none">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2 border-top-none">
                                        
                 </th>
             </tr>
@@ -589,32 +636,32 @@
         </table>
         <table class="padding-none border-none">
             <tr>
-                <th colspan="1" rowspan="2" class="kanit-regular-text font-size-13-text">
+                <th colspan="1" rowspan="2" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     ยอด </br>
                     รวม
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     กล่อง
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     เเร็ค
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     พาเลท
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     อื่นๆ
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     จำนวนรวม
                 </th>
-                <th colspan="8" rowspan="2" class="kanit-regular-text border-left-none border-top-none border-bottom-none">
+                <th colspan="8" rowspan="2" class="border-left-none border-top-none border-bottom-none">
                    
                 </th>
 
             </tr>
             <tr>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     {{pickup_obj.14 | format_2digital}}
                 </th>
                 <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text">
@@ -626,7 +673,7 @@
                 <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text">
                     
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-13-text">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     {{pickup_obj.14 | format_2digital}}
                 </th>
                 
@@ -639,7 +686,7 @@
         </table>
         <table class="padding-none border-none" >
             <tr>
-                <th colspan="11" rowspan="1" class="kanit-regular-text font-size-10-text padding-top-8 text-left border-right-none">
+                <th colspan="11" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-13-text  padding-top-8 text-left border-right-none">
                     &nbsp; *ข้อกำหนด: พน้กงานขับรถต้องทำการบันทึกข้อมูลในแบบฟอร์มให้ถูกต้อง และครบถ้วน*
                 </th>
                 <th colspan="6" rowspan="2" class="kanit-regular-text font-size-10-text padding-top-8 
@@ -653,7 +700,7 @@
                             <th class="border-none">  &nbsp;</th>
                         </tr>
                         <tr>
-                            <th class="border-bottom-none  kanit-regular-text font-size-11-text" style="padding-top:7px" >
+                            <th class="border-bottom-none  TH-Sara-bun-New-Bold  font-size-17-text padding-top-2" style="padding-top:7px" >
                                 ลงซื่อเจ้าหน้าที่  </br>
                                 (ตัวบรรจง)  
                             </th>
@@ -666,104 +713,103 @@
                         
                 </th>
             </tr>
-                <th colspan="1" rowspan="2" class="kanit-regular-text font-size-13-text">
+                <th colspan="1" rowspan="2" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     ลำดับ    
                 </th>
-                <th colspan="2" rowspan="2" class="kanit-regular-text font-size-13-text">
+                <th colspan="2" rowspan="2" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     สถานี    
                 </th>
-                <th colspan="1" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="1" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     กำหนด 
                 </th>
-                <th colspan="1" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="1" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     เวลา                  
                 </th>
-                <th colspan="1" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="1" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     เวลา                  
                 </th>
-                <th colspan="1" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="1" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     เวลา                  
                 </th>
-                <th colspan="1" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="1" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     เวลา                  
                 </th>
-                <th colspan="1" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="1" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     เวลา                  
                 </th>
-                <th colspan="2" rowspan="2" class="kanit-regular-text font-size-11-text ">
+                <th colspan="2" rowspan="2" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     เลขไมส์                
                 </th>
                 
             </tr>
 
             <tr>
-                <th colspan="1" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="1" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     การ 
                 </th>
-                <th colspan="1" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="1" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     เข้า 
                 </th>
-                <th colspan="1" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="1" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     ออก 
                 </th>
-                <th colspan="1" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="1" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     เปิดตู้ 
                 </th>
-                <th colspan="1" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="1" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     ปิดตู้ 
                 </th>
-                <th colspan="1" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="1" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     ออก 
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     เลขชีล 1  
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-11-text ">
+                <th colspan="2" rowspan="1" class="TH-Sara-bun-New-Bold  font-size-17-text padding-top-2">
                     เลขชีล 2  
                 </th>
-                <th colspan="2" rowspan="1" class="kanit-regular-text font-size-11-text ">
                     เลขชีล 3  
                 </th>
             </tr>
 
             <tr>
-                <th colspan="1"  class="kanit-extraLight-text font-size-11-text ">
+                <th colspan="1"  class="TH-Sara-bun-New  font-size-17-text padding-top-2">
                         1
                 </th>
-                <th colspan="2"  class="kanit-extraLight-text font-size-11-text ">
+                <th colspan="2"  class="TH-Sara-bun-New  font-size-17-text padding-top-2">
                          
                 </th>
-                <th colspan="1"  class="kanit-extraLight-text font-size-11-text ">
+                <th colspan="1"  class="TH-Sara-bun-New  font-size-17-text padding-top-2">
                          
                 </th>
-                <th colspan="1"  class="kanit-extraLight-text font-size-11-text ">
+                <th colspan="1"  class="TH-Sara-bun-New  font-size-17-text padding-top-2">
                          
                 </th>
-                <th colspan="1"  class="kanit-extraLight-text font-size-11-text ">
+                <th colspan="1"  class="TH-Sara-bun-New  font-size-17-text padding-top-2">
                          
                 </th>
-                <th colspan="1" class="kanit-extraLight-text font-size-11-text ">
+                <th colspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2">
                          
                 </th>
-                <th colspan="1" class="kanit-extraLight-text font-size-11-text ">
+                <th colspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2">
                          
                 </th>
-                <th colspan="1" class="kanit-extraLight-text font-size-11-text ">
+                <th colspan="1" class="TH-Sara-bun-New  font-size-17-text padding-top-2">
                          
                 </th>
-                <th colspan="2" class="kanit-extraLight-text font-size-11-text ">
+                <th colspan="2" class="TH-Sara-bun-New  font-size-17-text padding-top-2">
                          
                 </th>
-                <th colspan="2" class="kanit-extraLight-text font-size-11-text ">
+                <th colspan="2" class="TH-Sara-bun-New  font-size-17-text padding-top-2">
                          
                 </th>
-                <th colspan="2" class="kanit-extraLight-text font-size-11-text ">
+                <th colspan="2" class="TH-Sara-bun-New  font-size-17-text padding-top-2">
                          
                 </th>
-                <th colspan="2" class="kanit-extraLight-text font-size-11-text ">
+                <th colspan="2" class="TH-Sara-bun-New  font-size-17-text padding-top-2">
                          
                 </th>
-                <th colspan="2" class="kanit-extraLight-text font-size-11-text ">
+                <th colspan="2" class="TH-Sara-bun-New  font-size-17-text padding-top-2">
                          
                 </th>
             </tr> 
@@ -779,35 +825,35 @@
                 <th colspan="4"  class="border-none">
                     <table class="padding-none ">
                         <tr>
-                            <th  class="kanit-regular-text font-size-11-text">
+                            <th  class="TH-Sara-bun-New-Bold  font-size-15-text padding-top-2">
                                 สถานีเชื้อเพลิง
                             </th>
                             <th>
                             </th>
                         </tr>
                         <tr>
-                            <th  class="kanit-regular-text font-size-11-text">
+                            <th  class="TH-Sara-bun-New-Bold  font-size-15-text padding-top-2">
                                 วัน-เวลา ที่เดิม
                             </th>
                             <th>
                             </th>
                         </tr>
                         <tr>
-                            <th  class="kanit-regular-text font-size-11-text">
+                            <th  class="TH-Sara-bun-New-Bold  font-size-15-text padding-top-2">
                                 ชนิดเชื้อเพลิง
                             </th>
                             <th>
                             </th>
                         </tr>
                         <tr>
-                            <th  class="kanit-regular-text font-size-11-text">
+                            <th  class="TH-Sara-bun-New-Bold  font-size-15-text padding-top-2">
                                 เลขไมล์ขณะเติม
                             </th>
                             <th>
                             </th>
                         </tr>
                         <tr>
-                            <th  class="kanit-regular-text font-size-11-text">
+                            <th  class="TH-Sara-bun-New-Bold  font-size-15-text padding-top-2">
                                 ปริมาณ (ลิตร)
                             </th>
                             <th>
@@ -819,7 +865,7 @@
                     <table class="padding-none ">
                         <tr>
                             <th width="100%">
-                                <img style="height:94px" width="100%"  src='PDF/static/img/reason-late.png' alt="">
+                                <img  height="172px" width="350px"  src='PDF/static/img/reason-late.png' alt="">
                             </th>
                         </tr>
                     </table> 
@@ -827,48 +873,48 @@
                 <th colspan="8"  class="kanit-regular-tex font-size-11-text border-none">
                     <table class="padding-none ">
                         <tr>
-                            <th colspan="8" class="kanit-regular-text font-size-11-text">
+                            <th colspan="8" class="TH-Sara-bun-New-Bold  font-size-15-text padding-top-2">
                                 หมายเหตุปัญหาระหว่างปฏิบัติงาน
                             </th>
                         </tr>
                         <tr>
-                            <th colspan="8" class="kanit-regular-text font-size-11-text">
+                            <th colspan="8" class="TH-Sara-bun-New-Bold  font-size-15-text padding-top-2">
                                 
                             </th>
                         </tr>
                         <tr>
-                            <th colspan="2" class="kanit-regular-text font-size-11-text">
+                            <th colspan="2" class="TH-Sara-bun-New-Bold  font-size-15-text padding-top-2">
                                 รับเงิน (บาท)
                             </th>
                             <th colspan="2" >
                             </th>
-                            <th colspan="2" class="kanit-regular-text font-size-1-text">
+                            <th colspan="2" class="TH-Sara-bun-New-Bold  font-size-15-text padding-top-2">
                                 คืนเงิน (บาท)
                             </th>
                             <th colspan="2" >
                             </th>
                         </tr>
                         <tr>
-                            <th colspan="2" class="kanit-regular-text font-size-11-text">
+                            <th colspan="2" class="TH-Sara-bun-New-Bold  font-size-15-text padding-top-2">
                                 ผู้ปล่อยรถ
                             </th>
                             <th colspan="2" >
  
                             </th>
-                            <th colspan="2" class="kanit-regular-text font-size-10-text">
+                            <th colspan="2" class="TH-Sara-bun-New-Bold  font-size-15-text padding-top-2">
                                 ตรวจสอบขากลับ
                             </th>
                             <th colspan="2" >
                             </th>
                         </tr>
                         <tr>
-                            <th colspan="2" class="kanit-regular-text font-size-11-text">
+                            <th colspan="2" class="TH-Sara-bun-New-Bold  font-size-15-text padding-top-2">
                                 วันที่
                             </th>
                             <th colspan="2" >
  
                             </th>
-                            <th colspan="2" class="kanit-regular-text font-size-11-text">
+                            <th colspan="2" class="TH-Sara-bun-New-Bold  font-size-15-text padding-top-2">
                                 วันที่
                             </th>
                             <th colspan="2" >

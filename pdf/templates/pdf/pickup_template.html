@@ -7,6 +7,9 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
         <title>Django PDF</title>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;1,100;1,200;1,300;1,400&display=swap" rel="stylesheet">
         <style>       
 
             .div-border
@@ -37,14 +40,36 @@
             @font-face 
             {
                 font-family: "Kanit-ExtraLight";
-                src: url("PDF/static/font/Kanit-ExtraLight.ttf");
+                src: url("PDF/static/font/Kanit-ExtraLightItalic.ttf");
+
+            }
+            @font-face 
+            {
+                font-family: "Kanit-Thin";
+                src: url("PDF/static/font/THSarabunNew.ttf");
+
+            }
+
+            @font-face 
+            {
+                font-family: "TH-Sara-bun-New";
+                src: url("PDF/static/font/THSarabunNew.ttf");
+
+            }
+
+            @font-face 
+            {
+                font-family: "TH-Sara-bun-New-Bold";
+                src: url("PDF/static/font/THSarabunNew Bold.ttf");
+
             }
 
             body 
             {
                 font-family: "kanit-regular";
                 font-size:15px;
-                border-style: solid
+                border-style: solid;
+                font-family: 'Kanit', sans-serif;
             }
 
             .header-left
@@ -94,10 +119,27 @@
             .kanit-extraLight-text
             {
                 font-family: "Kanit-ExtraLight";
+                font-weight:100;
             }
             .kanit-regular-text
             {
                 font-family: "kanit-regular";
+                font-weight:100;
+            }
+            .Kanit-Thin
+            {   
+                font-family: "Kanit-Thin";
+                font-weight:100;
+            }
+            .TH-Sara-bun-New
+            { 
+                font-family: "TH-Sara-bun-New";
+
+            }
+            .TH-Sara-bun-New-Bold
+            {
+                font-family: "TH-Sara-bun-New-Bold";
+   
             }
             .container-text
             {
@@ -114,6 +156,22 @@
             .font-size-13-text
             {
                 font-size:13px;
+            }
+            .font-size-15-text
+            {
+                font-size:15px;
+            }
+            .font-size-17-text
+            {
+                font-size:17px;
+            }
+            .font-size-20-text
+            {
+                font-size:20px;
+            }
+            .font-size-25-text
+            {
+                font-size:25px;
             }
             .font-size-9-text
             {
@@ -176,6 +234,14 @@
             {
                 padding:8px;
             }
+            .padding-top-5
+            {
+                padding-top:5px;
+            }
+            .padding-top-2
+            {
+                padding-top:2px;
+            }
             .padding-none
             {
                 padding:none;
@@ -193,6 +259,10 @@
                 border: 1px solid black;
                 overflow: auto;
             }
+            .vertical-align-center
+            {
+                vertical-align: center;
+            }
 
         </style>
     </head>
@@ -207,21 +277,21 @@
                     </th>
                     <th colspan="5" class="header-center border-bottom-none" >
                         <div class="container-text" >
-                            <div class="bloc-text" >
-                                PICK UP SHEET for
+                            <div class="bloc-text TH-Sara-bun-New-Bold font-size-25-text"  >
+                                PICK UP SHEET for 
                             </div>
-                            <div class="bloc-text kanit-extraLight-text" >
+                            <div class="bloc-text TH-Sara-bun-New font-size-20-text" >
                                 {{pickup_obj.0}}
                             </div>
                         </div>
                     </th>
                     <th colspan="4" class="header-right border-bottom-none" >
                         <img class="right" src='{{barcode_pic_name}}.png' alt=""> </br>
-                        <div class="container-text font-size-9-text" >
-                            <div class="bloc-text margin-left-40-text" >
+                        <div class="container-text " >
+                            <div class="bloc-text TH-Sara-bun-New-Bold  font-size-15-text  margin-left-40-text" >
                                 Shipment No.#  &nbsp;   &nbsp; 
                             </div>
-                            <div class="bloc-text kanit-extraLight-text margin-left-40-text" >
+                            <div class="bloc-text TH-Sara-bun-New font-size-20-text margin-left-40-text" >
                                 {{pickup_obj.1}}
                             </div>
                         </div>
@@ -230,17 +300,17 @@
 
                 <tr>
                     <th colspan="12" class="border-top-none text-vertical-top kanit-regular-text" style="vertical-align:bottom;padding-top:8px" >
-                        <div class="container-text font-size-12-text" >
-                            <div class="bloc-text margin-left-40-text" >
-                                Route No.:  &nbsp;    
+                        <div class="container-text" >
+                            <div class="bloc-text TH-Sara-bun-New-Bold  font-size-20-text margin-left-40-text" >
+                                Route No.  &nbsp;    
                             </div>
-                            <div class="bloc-text kanit-extraLight-text margin-left-40-text" >
+                            <div class="bloc-text TH-Sara-bun-New font-size-20-text margin-left-40-text" >
                                 {{pickup_obj.2}}
                             </div>
-                            <div class="bloc-text margin-left-40-text" >
+                            <div class="bloc-text TH-Sara-bun-New-Bold font-size-20-text margin-left-40-text" >
                                 Customer name :  &nbsp;    
                             </div>
-                            <div class="bloc-text kanit-extraLight-text margin-left-40-text" >
+                            <div class="bloc-text TH-Sara-bun-New font-size-20-text margin-left-40-text" >
                                 {{pickup_obj.0}}
                             </div>
                         </div>
@@ -251,43 +321,43 @@
             <table class="padding-none">
 
                     <tr>
-                        <th colspan="22" class="text-left border-none  kanit-regular-text " >
+                        <th colspan="22" class="text-left border-none  TH-Sara-bun-New-Bold font-size-20-text padding-top-5" >
                             PICK UP(ส่วนของการรับ)
                         </th>
-                        <th colspan="1" class="text-left border-none  kanit-regular-text " >
+                        <th colspan="1" class="border-none" >
                             
                         </th>
-                        <th colspan="22" class="text-left border-none kanit-regular-text" >
+                        <th colspan="22" class="text-left border-none TH-Sara-bun-New-Bold font-size-20-text padding-top-5" >
                             DELIVERY(ส่วนของการส่ง)
                         </th>
                     </tr>
                     <tr>
-                        <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             สถานที่รับ
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.3}}
                         </th>
-                        <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             วันที่รับ
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                            {{pickup_obj.5 | covert_date}}  
                         </th>
                       
-                        <th colspan="1"  class="text-center  border-none  kanit-regular-text font-size-12-text" >
+                        <th colspan="1"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                            
                         </th>
-                        <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             สถานที่ส่ง
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.6 }}     
                         </th>
-                        <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             วันที่ส่ง
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.5 | covert_date}} 
                         </th>
                     </tr>
@@ -295,86 +365,86 @@
                         <th colspan="11"  class="border-left-none" >
                           
                         </th>
-                        <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             เวลารับ
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.8 }}
                         </th>
-                        <th colspan="1"  class="text-center  border-none  kanit-regular-text font-size-12-text" >
+                        <th colspan="1"  class="text-center  border-none TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             
                         </th>
-                         <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                         <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             จุดลงงาน
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.7 }}
                         </th>
-                        <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             เวลาส่งงาน
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.9 }}
                         </th>   
                     </tr>
                     <tr>
-                        <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             ทะเบียนรถ
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.10 | covert_none}}
                         </th>
-                        <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             พนักงานขับรถ
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.11 | covert_none}}
                         </th>
                       
-                       <th colspan="1"  class="text-center  border-none  kanit-regular-text font-size-12-text" >
+                       <th colspan="1"  class="text-center  border-none" >
                            
                         </th>
-                         <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                         <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             ทะเบียบรถ
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.10 | covert_none}}
                         </th>
-                        <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             พนักงานขับรถ
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.11 | covert_none}}
                         </th>
                     </tr>
 
                     <tr class='border-bottom-none'>
-                        <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             ประเภทรถ
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center  TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.12 | covert_none}}
                         </th>
-                        <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="5"  class="text-center  TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             เบอร์โทรศัพท์
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.13 | covert_none}}
                         </th>
                       
-                        <th colspan="1"  class="text-center  border-none  kanit-regular-text font-size-12-text" >
+                        <th colspan="1"  class="border-none" >
                            
                         </th>
-                        <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             ประเภทรถ
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.12 | covert_none}}
                         </th>
-                        <th colspan="5"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="5"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             เบอร์โทรศัพท์
                         </th>
-                        <th colspan="6"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="6"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{pickup_obj.13 | covert_none}}
                         </th>
                     </tr>
@@ -382,29 +452,29 @@
             <table class="padding-none margin-top-10">
 
                 <tr>
-                    <th colspan="11"  class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="11"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         Driver Signed </br>
-                        <div class="font-size-9-text">
+                        <div class="font-size-13-text padding-none">
                             (ลงชื่อพนังงานขับรถ ตัวบรรจง)
                         </div>
                     </th>
-                    <th colspan="11"  class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="11"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         Supplier Signed </br>
-                        <div class="font-size-9-text">
+                        <div class="font-size-13-text padding-none">
                             (ลงชื่อพนังงานเตรียมสินค้าตัวบรรจง)
                         </div>
                     </th>
-                    <th colspan="1"  class="text-center  border-none  kanit-regular-text font-size-12-text" >
+                    <th colspan="1"  class="text-center  border-none" >
                     </th>
-                    <th colspan="11"  class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="11"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         Driver Signed </br>
-                        <div class="font-size-9-text">
+                        <div class="font-size-13-text padding-none">
                             (ลงชื่อพนังงานขับรถ ตัวบรรจง)
                         </div>
                     </th>
-                    <th colspan="11"  class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="11"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         Supplier Signed </br>
-                        <div class="font-size-9-text">
+                        <div class="font-size-13-text padding-none">
                             (ลงชื่อพนังงานเตรียมสินค้าตัวบรรจง)
                         </div>
                     </th>
@@ -422,47 +492,47 @@
 
             <table class="padding-none margin-top-10"  >
                 <tr>
-                    <th colspan="4" rowspan="2" class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="4" rowspan="2" class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         No.
                     </th>
-                    <th colspan="16" rowspan="2" class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="16" rowspan="2" class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         Order No.
                     </th>
-                    <th colspan="16" rowspan="2" class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="16" rowspan="2" class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         เลขพาร์ท
                     </th>
-                    <th colspan="17" rowspan="2" class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="17" rowspan="2" class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         Part Description
                     </th>
-                    <th colspan="11" rowspan="2" class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="11" rowspan="2" class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         Order Due </br>
                         Date/time
                     </th>
-                    <th colspan="11" rowspan="2" class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="11" rowspan="2" class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         ชนิด</br>
                         บรรรจุภัทฑ์
                     </th>
-                    <th colspan="26" rowspan="1" class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="26" rowspan="1" class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         จำนวน
                     </th>
-                    <th colspan="12" rowspan="2" class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="12" rowspan="2" class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         CBM
                     </th>
-                    <th colspan="8" rowspan="2" class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="8" rowspan="2" class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         นํ้าหนัก
                     </th>
-                    <th colspan="14" rowspan="2" class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="14" rowspan="2" class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         หมายเหตุ
                     </th>
                 </tr>
                 <tr >
-                    <th colspan="7" rowspan="1" class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="7" rowspan="1" class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         ชิ้นงาน
                     </th>
-                    <th colspan="12" rowspan="1" class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="12" rowspan="1" class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         กล่อง/แร็ค
                     </th>
-                    <th colspan="7" rowspan="1" class="text-center    kanit-regular-text font-size-12-text" >
+                    <th colspan="7" rowspan="1" class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                         รับจริง
                     </th>
                           
@@ -470,40 +540,40 @@
                 {% for order in order_list %}
                     <tr style="padding:1px">
 
-                        <th colspan="4"  class="text-center    kanit-regular-text font-size-12-text" >
+                        <th colspan="4"  class="text-center TH-Sara-bun-New-Bold font-size-17-text padding-top-2t" >
                            {{ forloop.counter }}
                         </th>
-                        <th colspan="16"  class="text-center border-left-none border-right-none   kanit-regular-text font-size-12-text" >
+                        <th colspan="16"  class="text-center border-left-none border-right-none  TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{order.0}}
                         </th>
-                        <th colspan="16"  class="text-center  border-left-none border-right-none  kanit-regular-text font-size-12-text" >
+                        <th colspan="16"  class="text-center  border-left-none border-right-none TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                              {{order.1}}
                         </th>
-                        <th colspan="17"  class="text-center  border-left-none border-right-none   kanit-regular-text font-size-12-text" >
+                        <th colspan="17"  class="text-center  border-left-none border-right-none TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{order.2}}
                         </th>
-                        <th colspan="11"  class="text-center  border-left-none border-right-none   kanit-regular-text font-size-12-text" >
+                        <th colspan="11"  class="text-center  border-left-none border-right-none TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{order.3 | covert_date}}
                         </th>
-                        <th colspan="11"  class="text-center  border-left-none  kanit-regular-text font-size-12-text" >
+                        <th colspan="11"  class="text-center  border-left-none TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{order.4}}
                         </th>
-                        <th colspan="7"  class="text-center  border-left-none border-right-none  kanit-regular-text font-size-12-text" >
+                        <th colspan="7"  class="text-center  border-left-none border-right-none  TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{order.5}}
                         </th>
-                        <th colspan="12"  class="text-center border-left-none border-right-none   kanit-regular-text font-size-12-text" >
+                        <th colspan="12"  class="text-center border-left-none border-right-none  TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{order.6}}
                         </th>
-                        <th colspan="7"  class="text-center  border-left-none border-right-none  kanit-regular-text font-size-12-text" >
+                        <th colspan="7"  class="text-center  border-left-none border-right-none TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             
                         </th>
-                        <th colspan="12"  class="text-center  border-left-none border-right-none   kanit-regular-text font-size-12-text" >
+                        <th colspan="12"  class="text-center  border-left-none border-right-none TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{order.7 | format_2digital}}
                         </th>
-                        <th colspan="8"  class="text-center   border-left-none border-right-none  kanit-regular-text font-size-12-text" >
+                        <th colspan="8"  class="text-center   border-left-none border-right-none TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                             {{order.8 | format_2digital}}
                         </th>
-                        <th colspan="14"  class="text-center  border-left-none   kanit-regular-text font-size-12-text" >
+                        <th colspan="14"  class="text-center  border-left-none TH-Sara-bun-New-Bold font-size-17-text padding-top-2" >
                           
                         </th>
                                 
@@ -511,6 +581,7 @@
                         {% endfor %}
                          
                 </table> 
+                
             </tbody>
     
     

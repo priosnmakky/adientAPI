@@ -25,7 +25,7 @@ def files_management():
             if during_datetime.days > 1 :
                 
                 for filename in os.listdir(root):
-                    file_path = os.path.join(root0, filename)
+                    file_path = os.path.join(root, filename)
                     try:
 
                         if os.path.isfile(file_path) or os.path.islink(file_path):
