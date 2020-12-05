@@ -50,9 +50,12 @@ from app.services.order_service.OrderService import OrderService
 from app.helper.order_helper.OrderMissMatchHelper import OrderMissMatchHelper
 from app.helper.order_helper.OrderUploadLogHelper import OrderUploadLogHelper
 from app.helper.order_helper.OrderTransactionHelper import OrderTransactionHelper
+from app.helper.config.ConfigPart import ConfigPart
+from django.conf import settings
 
 
 configMessage = ConfigMessage()
+configPart = ConfigPart()
 serializerMapping = SerializerMapping()
 
 class FileUploadView(APIView):
@@ -75,6 +78,8 @@ class FileUploadView(APIView):
             customer_code = request.POST.get("customer_code", "")
             project_code = request.POST.get("project_code", "")
 
+            uploaded_part = FileManagement.validate_folder(configPart.configs.get("UPLOAD_ORDER_PART").data)
+            uploaded_part = "media/" + uploaded_part + "/"
             self.order_csv_list_database = []
             self.order_csv_list = []
 
@@ -105,17 +110,22 @@ class FileUploadView(APIView):
                     return Response(serializer.data, status=status.HTTP_200_OK)
 
                 else :
-                    
+
                     orderManageHelper = OrderManageHelper(file_obj.file_no,return_list[0],return_list[5])
                     orderManageHelper.order_management()
-   
                     name_csv_str = file_obj.file_no + "DatabaseCSV"
-                    CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',";")
+                    CSV_file_management_obj = CSVFileManagement(
+                        name_csv_str,
+                        uploaded_part,
+                        '',";")
                     CSV_file_management_obj.covert_to_CSV_data_list(orderManageHelper.get_order_csv_list_database())
                     return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
 
                     name_csv_str = file_obj.file_no
-                    CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+                    CSV_file_management_obj = CSVFileManagement(
+                        name_csv_str,
+                        uploaded_part,
+                        '',',')
                     CSV_file_management_obj.covert_to_header(["Item No","Order ID","Part Number","Part Description","Supplier Name","Plant","Order Amount","Date"])
                     order_csv_list =  orderManageHelper.get_order_csv_list()
                     CSV_file_management_obj.covert_to_CSV_data_list(orderManageHelper.get_order_csv_list())
@@ -137,14 +147,15 @@ class FileUploadView(APIView):
 def get_files(request):
 
     try: 
-
+        print('get_files')
         if request.method == 'GET':
       
             file_list = File.objects.filter(updated_by= request.user.username, status = 1)
 
             if len(file_list) > 0 :
 
-                serializer = serializerMapping.mapping_serializer_list(File_list_Serializer_DTO,file_list,"success",None,file_list[0].file_no,None,None )
+                csv_name = FileManagement.find_file(configPart.configs.get("UPLOAD_ORDER_PART").data,file_list[0].file_no+".csv")
+                serializer = serializerMapping.mapping_serializer_list(File_list_Serializer_DTO,file_list,"success",None,csv_name,None,None )
 
             else :
 
@@ -200,15 +211,6 @@ def not_confirm(request):
             file_deleted_obj.delete()
             order_deleted_obj.delete()
             
-            fileManagement =  FileManagement("media/" + str(file_no_str) + ".csv")
-            fileManagement.remove_file()
-
-            fileManagement =  FileManagement("media/" + str(file_no_str) + "DatabaseCSV.csv")
-            fileManagement.remove_file()
-
-            fileManagement =  FileManagement("media/" +  str(file_file_str))
-            fileManagement.remove_file()
-        
             serializer = serializerMapping.mapping_serializer_obj(File_Serializer_DTO,file_deleted_obj,"success", configMessage.configs.get("CANCEN_CONFIRM_ORDER_MASSAGE_SUCCESSFUL").data,None,None,None )        
 
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -236,13 +238,16 @@ def search_miss_match(request):
             start_date = request.data['start_date_selected']
             end_date = request.data['end_date_selected']
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("MISS_MATCH_ORDER_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             orderService = OrderService()
             order_list =  orderService.search_miss_match(customer_code,project_code,supplier_code,plant_code,start_date,end_date)
 
             order_serializer_list = OrderMissMatchHelper.covert_data_list_to_serializer_list(order_list)
 
             name_csv_str = "OrderMissMatchCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                 "File ID",
                 "Order ID",
@@ -267,7 +272,7 @@ def search_miss_match(request):
                 order_serializer.data,
                 "success", 
                 "",
-                name_csv_str + ".csv",
+                CSV_part_str +"/"+ name_csv_str + ".csv",
                 None,
                 None )
 
@@ -323,6 +328,9 @@ def search_pending_order(request):
             start_date = request.data['start_date_selected']
             end_date = request.data['end_date_selected']
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("PENDING_ORDER_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             orderService = OrderService()
             order_list =  orderService.search_pending_order(
                 customer_code,
@@ -336,7 +344,7 @@ def search_pending_order(request):
 
 
             name_csv_str = "OrderPendingCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                 "File ID",
                 "Order ID",
@@ -361,7 +369,7 @@ def search_pending_order(request):
                 order_serializer.data,
                 "success", 
                 "",
-                name_csv_str + ".csv",
+                CSV_part_str + "/" + name_csv_str + ".csv",
                 None,
                 None )
 
@@ -390,6 +398,9 @@ def search_upload_order_log_file(request):
             start_date = request.data['start_date_selected']
             end_date = request.data['end_date_selected']
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("UPLOAD_LOG_ORDER_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             orderService = OrderService()
             file_list =  orderService.search_upload_order_log_file(
                 customer_code,
@@ -400,7 +411,7 @@ def search_upload_order_log_file(request):
             serializer_list = OrderUploadLogHelper.covert_data_list_to_serializer_list(file_list)
 
             name_csv_str = "UloadOrderLogFileCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                 "Customer Code",
                 "Project",
@@ -419,7 +430,7 @@ def search_upload_order_log_file(request):
                 serializer_list,
                 "success", 
                 "",
-                name_csv_str + ".csv",
+                CSV_part_str + "/" + name_csv_str + ".csv",
                 None,
                 None )
 
@@ -545,6 +556,9 @@ def search_order_transaction(request):
             supplier_code = request.data['supplier_selected']
             plant_code = request.data['plant_selected']
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("TRANSACTION_ORDER_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             orderService = OrderService()
             order_list =  orderService.search_order_transaction(
                 customer_code,
@@ -560,7 +574,7 @@ def search_order_transaction(request):
             order_transaction_list = orderTransactionHelper.transaction_management(order_list)
             
             name_csv_str = "OrderTransactionCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                 "Action",
                 "File ID",
@@ -586,7 +600,7 @@ def search_order_transaction(request):
                 order_transaction_list,
                 "success", 
                 "",
-                name_csv_str+".csv",
+                CSV_part_str + "/" +name_csv_str+".csv",
                 None,
                 None )
 

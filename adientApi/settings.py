@@ -45,14 +45,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    # project 
-    'project.apps.ProjectConfig',
-    # customer 
-    'customers.apps.CustomersConfig',
-    # upload
-    'uploads.apps.UploadsConfig',
-    # part master
-    'partMaster.apps.PartmasterConfig',
+
      # part master
     'order.apps.OrderConfig',
     # master data
@@ -148,10 +141,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/statica/'
 STATICFILES_DIRS =(
-    os.path.join(BASE_DIR, 'static'),
-    '/static',
+    os.path.join(BASE_DIR, 'staticas'),
+    '/statica',
 )
 
 REST_FRAMEWORK = {

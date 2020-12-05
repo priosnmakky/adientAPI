@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from uploads.models import File
 from master_data.models import Part,RouterMaster,Project,Customer,Package,Station,Truck,Driver,RouterInfo,CalendarMaster
 from datetime import datetime, timedelta
 import pandas as pd

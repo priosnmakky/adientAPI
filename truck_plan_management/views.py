@@ -22,6 +22,10 @@ from app.helper.pickup_gen_helper.PickupGenHelper import PickupGenHelper
 from app.helper.pickup_print_helper.PickupPrintHelper import PickupPrintHelper
 from app.helper.truckplan_gen_helper.TruckGenHelper import TruckGenHelper
 from app.helper.truckplan_print_helper.TruckplanPrintHelper import TruckplanPrintHelper
+from app.helper.config.ConfigPart import ConfigPart
+from app.helper.file_management.FileManagement import FileManagement
+
+configPart = ConfigPart()
 
 configMessage = ConfigMessage()
 
@@ -84,6 +88,9 @@ def search_and_print_PUS(request):
 
             search_and_print_PUS_obj = JSONParser().parse(request)
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("PUS_TRUCKMANAGEMENT_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             customer_code = search_and_print_PUS_obj['customer_code_selected']
             project_code = search_and_print_PUS_obj['project_code_selected']
             supplier_code = search_and_print_PUS_obj['supplier_code_selected']
@@ -101,7 +108,7 @@ def search_and_print_PUS(request):
                 )
             
             name_csv_str = "SearchAndPrintPUSCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                "PUS Ref","Status","Supplier","Plant",
                "Order Count","Due Date",
@@ -119,7 +126,7 @@ def search_and_print_PUS(request):
                 serializer_list,
                 "success", 
                 "",
-                name_csv_str + '.csv',
+                CSV_part_str + "/" + name_csv_str + '.csv',
                 None,
                 None )
             
@@ -516,6 +523,7 @@ def search_generate_truck_plan(request):
             project_code = truckplan_data['project_code_selected']
             due_date = truckplan_data['due_date_to_selected']
 
+
             truckplan_list = truckPlanManagementService.search_generate_truck_plan(
                 customer_code,
                 project_code,
@@ -615,6 +623,9 @@ def search_and_print_truck_plan(request):
             due_date_to = search_and_print_truck_plan_obj['due_date_to_selected']
             truck_plan_ref = search_and_print_truck_plan_obj['truck_plan_ref']
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("TRUCK_PLAN_TRUCKMANAGEMENT_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             truckplan_list = truckPlanManagementService.search_and_print_truck_plan(
                 customer_code,
                 project_code,
@@ -624,7 +635,7 @@ def search_and_print_truck_plan(request):
                 )
             
             name_csv_str = "SearchAndPrintTruckPlanCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                "Truck Plan Ref.","PUS Record","Status",
                "Due Date","Release Time","Delivery Time",
@@ -642,7 +653,7 @@ def search_and_print_truck_plan(request):
                 serializer_list,
                 "success", 
                 "",
-                name_csv_str + '.csv',
+                CSV_part_str + "/" + name_csv_str + '.csv',
                 None,
                 None )
             

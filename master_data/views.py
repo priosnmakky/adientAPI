@@ -55,9 +55,11 @@ from app.services.routerMaster_service.RouterMasterService import RouterMasterSe
 from app.helper.routerInfo_helper.RouterInfoHelper import RouterInfoHelper
 from app.services.routerInfo_service.RouterInfoService import RouterInfoService
 import json
+from app.helper.config.ConfigPart import ConfigPart
 
 
 configMessage = ConfigMessage()
+configPart = ConfigPart()
 serializerMapping = SerializerMapping()
 
 
@@ -653,11 +655,14 @@ def search_project(request):
             project_data_obj = JSONParser().parse(request)
             customer_code = project_data_obj['customer_code']
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("PROJECT_MASTERDATA_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             projectService = ProjectService()
             project_list =  projectService.search_project(customer_code)
             
             name_csv_str = "ProjectMasterCSV" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                "Project Code",
                 "Customer Code",
@@ -675,7 +680,7 @@ def search_project(request):
                 serializer_list,
                 "success", 
                 "",
-                name_csv_str + '.csv',
+                CSV_part_str + "/" + name_csv_str + '.csv',
                 None,
                 None )
             
@@ -880,11 +885,14 @@ def search_customer(request):
             customer_code = customer_data_obj['customer_code']
             stationCode_code = customer_data_obj['stationCode_selected']
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("STATION_MASTERDATA_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             customerService = CustomerService()
             customer_list =  customerService.search_customer(customer_code,project_code,stationCode_code)
 
             name_csv_str = "StationMasterCSV" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                "Customer",
                 "Project",
@@ -909,7 +917,7 @@ def search_customer(request):
                 serializer_list,
                 "success", 
                 "",
-                name_csv_str + '.csv',
+                CSV_part_str + "/" + name_csv_str + '.csv',
                 None,
                 None )
             
@@ -1143,11 +1151,14 @@ def search_package(request):
             package_code = package_data_obj['packageCode_selected']
             package_no = package_data_obj['packageNo_selected']
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("PACKAGES_MASTERDATA_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             packageService = PackageService()
             package_list = packageService.search_package(customer_code,project_code,supplier_code,package_code,package_no)
      
             name_csv_str = "PackageMasterCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                "Supplier Code",
                 "Package Code",
@@ -1171,7 +1182,7 @@ def search_package(request):
                 serializer_list,
                 "success", 
                 "",
-                name_csv_str + '.csv',
+                CSV_part_str + "/" + name_csv_str + '.csv',
                 None,
                 None )
             
@@ -1373,11 +1384,14 @@ def search_truck(request):
             truck_type = truck_data_obj['truck_type']
             truck_fuel = truck_data_obj['truck_fuel']
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("TRUCK_MASTERDATA_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             truckService = TruckService()
             truck_list =  truckService.search_truck(truck_licese,province,truck_type,truck_fuel)
 
             name_csv_str = "TruckCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                 "Truck License",
                 "Province",
@@ -1401,7 +1415,7 @@ def search_truck(request):
                     serializer_list,
                     "success", 
                     "",
-                    name_csv_str + '.csv',
+                    CSV_part_str + "/" + name_csv_str + '.csv',
                     None,
                     None
                 )
@@ -1603,11 +1617,14 @@ def search_driver(request):
             driver_code = driver_data_obj['driver_code']
             driver_name = driver_data_obj['driver_name']
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("DRIVER_MASTERDATA_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             driverService  = DriverService()
             driver_list  = driverService.search_driver(driver_code,driver_name)
 
             name_csv_str = "DriverMasterCSV" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                 "Driver Code",
                 "Driver Name",
@@ -1627,7 +1644,7 @@ def search_driver(request):
                     serializer_list,
                     "success", 
                     "",
-                    name_csv_str + '.csv',
+                    CSV_part_str + "/" + name_csv_str + '.csv',
                     None,
                     None
                 )
@@ -1647,91 +1664,7 @@ def search_driver(request):
                 )
             
             return Response(serializer.data, status=status.HTTP_200_OK)
-        # try:
-
-        #     driver_data_obj = JSONParser().parse(request)
-
-        #     driver_code_str = driver_data_obj['driver_code']
-        #     driver_name_str = driver_data_obj['driver_name']
-
-        #     query = "select * from master_data_driver "
-
-        #     joint_str = "" 
-        #     where_str = " where 1 = 1 and master_data_driver.is_active = true "
-
-        #     if driver_code_str is not None:
-
-        #         driver_code_str = "%"+driver_code_str+"%"
-        #         where_str = where_str + " and  master_data_driver.driver_code LIKE '%%%s%%'  " %  driver_code_str 
-            
-        #     if driver_name_str is not None :
-
-        #         driver_name_str = "%"+driver_name_str+"%"
-        #         where_str = where_str + " and  master_data_driver.name LIKE '%%%s%%'  " %  driver_name_str 
-
-            
-        #     query = query + joint_str + where_str + " Order by updated_date desc"
-
-        #     driver_list = Driver.objects.raw(query)
-
-        #     driver_csv_list = []
-
-        #     driver_csv_list.insert(0, [
-        #                 "Driver Code",
-        #                 "Driver Name",
-        #                 "Driver Tel",
-        #                 "Remark",
-        #                 "Updated By",
-        #                 "Updated Date"
-        #             ]
-        #         )
-            
-        #     for driver_obj in driver_list:
-
-        #         driver_row_list = (
-        #             driver_obj.driver_code,
-        #             driver_obj.name,
-        #             driver_obj.tel,
-        #             driver_obj.remark,
-        #             driver_obj.updated_by,
-        #             driver_obj.updated_date.strftime("%d/%m/%Y"),
-
-        #             )
-                
-        #         driver_csv_list.append(driver_row_list)
-
-        #     name_csv_str = "DriverMasterCSV" +datetime.now().strftime("%Y%m%d_%H%M%S")
-
-        #     with open("media/" +  name_csv_str +'.csv', 'w', newline='',encoding='utf-8') as file:
-        #         writer = csv.writer(file)
-        #         writer.writerows(driver_csv_list)
-            
-            
-            
-        #     driver_serializer = Driver_Serializer(driver_list, many=True)
-
-        #     base_DTO_obj =  base_DTO()
-        #     base_DTO_obj.serviceStatus = "success"
-        #     base_DTO_obj.massage = "seach driver"
-        #     base_DTO_obj.data_list = driver_serializer.data
-        #     base_DTO_obj.csv_name =  name_csv_str + '.csv'
-
-        #     driver_list_Serializer_DTO = Driver_list_Serializer_DTO(base_DTO_obj)
-
-        #     return JsonResponse(driver_list_Serializer_DTO.data,safe=False)
-
-        # except Exception as e:
-
-        #     base_DTO_obj =  base_DTO()
-        #     base_DTO_obj.serviceStatus = "Error"
-        #     base_DTO_obj.massage = e
-        #     base_DTO_obj.data = None
-
-        #     driver_Serializer_DTO_reponse = Truck_Serializer_DTO(base_DTO_obj)
-
-        #     return JsonResponse(driver_Serializer_DTO_reponse.data, safe=False)
-
-@api_view(['POST'])
+      
 def search_route_master(request):
 
     if request.method == 'POST':
@@ -1744,11 +1677,14 @@ def search_route_master(request):
             route_code = request.data['route_code_selected']
             route_trip = request.data['trip_no_selected']
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("ROUTEINFO_MASTERDATA_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             routerMasterService = RouterMasterService()
             routerMaster_list =  routerMasterService.search_routerMaster(customer_code,project_code,supplier_code,plant_code,route_code,route_trip)
 
             name_csv_str = "RouterMasterCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                 "Project Code",
                 "Route Code",
@@ -1775,7 +1711,7 @@ def search_route_master(request):
                     serializer_list,
                     "success", 
                     "",
-                    name_csv_str + '.csv',
+                    CSV_part_str + "/" + name_csv_str + '.csv',
                     None,
                     None
                 )
@@ -1906,9 +1842,10 @@ def upload_route_master(request):
         
             if file_serializer.is_valid():
 
-              
+                file_part_str = FileManagement.validate_folder(configPart.configs.get("ROUTEMASTER_UPDATE_MASTERDATA_PART").data)
+                
                 upload_route_master_file = request.FILES['file']
-                fs = FileSystemStorage(location="media/") #defaults to   MEDIA_ROOT  
+                fs = FileSystemStorage(location="media/"+ file_part_str+"/") #defaults to   MEDIA_ROOT  
                 file_name_str = fs.save(upload_route_master_file.name, upload_route_master_file)
 
                 validateWarning_list = []
@@ -1916,7 +1853,7 @@ def upload_route_master(request):
 
                 # routerMaster_list = CSVFileManagement.read_CSV_file("media/" + file_name_str,',','|')
 
-                with open("media/" +file_name_str, newline='') as csvfile:
+                with open("media/" + file_part_str+"/"+file_name_str, newline='') as csvfile:
                     routerMaster_list = csv.reader(csvfile, delimiter=',', quotechar='|')
             
                     routerMasterHelper = RouterMasterHelper()
@@ -2100,11 +2037,14 @@ def search_route_info(request):
             route_code = request.data['route_code_selected']
             route_trip = request.data['trip_no_selected']
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("ROUTEINFO_MASTERDATA_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             routerInfoService = RouterInfoService()
             routerInfo_list = routerInfoService.search_RouterInfo(customer_code,project_code,route_code,route_trip)
 
             name_csv_str = "RouterInfoCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                 "Project Code",
                 "Route Code",
@@ -2126,7 +2066,7 @@ def search_route_info(request):
                     serializer_list,
                     "success", 
                     "",
-                    name_csv_str + '.csv',
+                    CSV_part_str + "/" + name_csv_str + '.csv',
                     None,
                     None
                 )
@@ -2280,11 +2220,14 @@ def search_calendarMaster(request):
             plant_code = request.data['plant_code_selected']
             working_day = request.data['working_day_selected']
 
+            CSV_part_str = FileManagement.validate_folder(configPart.configs.get("CALENDAR_MASTERDATA_PART").data)
+            CSV_part_generete_str = 'media/' + CSV_part_str + "/"
+
             calendarMasterService = CalendarMasterService()
             calendarMaster_list =  calendarMasterService.search_calendarMaster(customer_code,project_code,plant_code,working_day)
 
             name_csv_str = "CalendarMasterCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
-            CSV_file_management_obj = CSVFileManagement(name_csv_str,"media/",'',',')
+            CSV_file_management_obj = CSVFileManagement(name_csv_str,CSV_part_generete_str,'',',')
             CSV_file_management_obj.covert_to_header([
                 "Plant",
                 "Day",
@@ -2304,7 +2247,7 @@ def search_calendarMaster(request):
                 serializer_list,
                 "success", 
                 "",
-                name_csv_str + '.csv',
+                CSV_part_str + "/" + name_csv_str + '.csv',
                 None,
                 None )
             

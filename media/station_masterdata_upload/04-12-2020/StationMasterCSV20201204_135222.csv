@@ -1,0 +1,11 @@
+﻿Customer,Project,Station Code,Descrition,type,Zone,Province,Address,Remark,Update By,Update Date
+ADIENT,AD-MR-IB,AAPICO,AAPICO Description,SUPPLIER,AAPICO zone,AAPICO province,AAPICO address,test by developer,Batman,30/11/2020
+ADIENT,AD-MR-IB,XCL,XCL Description,SUPPLIER,XCL zone,XCL province,XCL Address,test by developer,Batman,30/11/2020
+ADIENT,AD-MR-IB,SPV,SPV Description,SUPPLIER,SPV zone,Province SPV,SPV Address,test by develper,Batman,30/11/2020
+ADIENT,AD-MR-IB,Trim LCB,Trim LCB Description,PLANT,Trim LCB zone,Trim LCB province,Trim LCB address,test by developer,Batman,30/11/2020
+ADIENT,AD-MR-IB,NSG,NSG Description,SUPPLIER,NSG zone,NSG province,NSG address,test by developer,Batman,30/11/2020
+ADIENT,AD-MR-IB,Foam,Foam Description,PLANT,Foam zone,Foam province,Foam address,Test by developer,Batman,30/11/2020
+ADIENT,AD-MR-IB,JIT-Rayong,JIT-Rayong Description,PLANT,JIT-Rayong Zone,JIT-Rayong Province,JIT-Rayong Address,Test by Developer,Batman,30/11/2020
+ADIENT,AD-MR-IB,AT,AT Description,PLANT,AT Zone,AT Province,AT Address,Test By Develper,Batman,30/11/2020
+ADIENT,AD-MR-IB,Metal,Metal Descpition,PLANT,Metal Zone,Metal Province,Metal Address,Test By Developer,Batman,30/11/2020
+ADIENT,AD-MR-IB,AUN,AUN Descrition,SUPPLIER,Aun zone,Aun Province,Aun Adress,Test By Devloper,Batman,30/11/2020

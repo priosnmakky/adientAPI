@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.static import serve
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from app.schedule_task.Scheduler import start_jobs
 
 admin.autodiscover()
 urlpatterns = [
@@ -13,12 +14,7 @@ urlpatterns = [
     path('auth/', include('djoser.urls.jwt')),
     path("api/accounts/",include("accounts.urls")),
     path("api/events/",include("events.urls")),
-
     
-    url(r'^', include('project.urls')),
-    url(r'^', include('customers.urls')),
-    url(r'^', include('uploads.urls')),
-    url(r'^', include('partMaster.urls')),
     url(r'^', include('order.urls')),
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT,}),
 
@@ -33,3 +29,4 @@ urlpatterns += staticfiles_urlpatterns()
 if settings.DEBUG:
   urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+start_jobs()

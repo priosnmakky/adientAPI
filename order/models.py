@@ -1,13 +1,27 @@
 from rest_framework import serializers
-from uploads.models import File
+# from uploads.models import File
 from model_DTO.validateError import validateError
 from django.db import models
 from datetime import datetime, timedelta
 from django.utils import timezone
 from decimal import Decimal
+from django.conf import settings
+from app.helper.config.ConfigPart import ConfigPart
+from app.helper.file_management.FileManagement import FileManagement
 
+
+
+def upload_path_handler(instance, filename):
+    
+    configPart = ConfigPart()
+
+    uploaded_part = FileManagement.validate_folder(configPart.configs.get("UPLOAD_ORDER_PART").data)
+    
+    return '{uploaded_part}{filename}'.format(uploaded_part=uploaded_part+"/", filename=filename)
 
 class File(models.Model):
+
+    
 
     file_no = models.CharField(max_length=150,blank=True, null=True,default='')
     file_name = models.CharField(max_length=150,blank=True, null=True)
@@ -18,7 +32,9 @@ class File(models.Model):
     project_code = models.CharField(max_length=50,default='',blank=False, null=False)
     updated_by = models.CharField(max_length=150,blank=True, null=True)
     updated_date = models.DateTimeField(default=datetime.now(), blank=True)
-    file = models.FileField(blank=False, null=False)
+    file = models.FileField(blank=False, null=False,upload_to=upload_path_handler)
+
+    
 
     def save(self, *args, **kwargs):
 

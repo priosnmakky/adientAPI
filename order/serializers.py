@@ -3,9 +3,10 @@ from order.models import Order,File
 from djoser.serializers import UserCreateSerializer as BaseUserRegistrationSerializer
 from datetime import datetime, timedelta
 from rest_framework.settings import api_settings
-# from uploads.models import File
 from model_DTO.validateError import validateError
 from app.helper.order_helper.OrderUploadHelper import OrderUploadHelper
+from django.conf import settings
+from app.helper.file_management.FileManagement import FileManagement
 
 
 class OrderSerializer(serializers.Serializer):
@@ -88,7 +89,11 @@ class FileSerializer(serializers.Serializer):
     project_code = serializers.CharField(max_length=150,allow_blank=True,allow_null=True,required=False)
     updated_by = serializers.CharField(allow_blank=True,allow_null=True,required=False)
     updated_date = serializers.DateTimeField(allow_null=True,required=False)
-    file = serializers.FileField(required=False)
+    file = serializers.FileField(required=False) 
+
+    csv_url = serializers.CharField(allow_blank=True,allow_null=True,required=False)
+
+ 
 
 
     def create(self, validated_data):

@@ -1,4 +1,8 @@
 import code128
+from app.helper.config.ConfigPart import ConfigPart
+from app.helper.file_management.FileManagement import FileManagement
+
+configPart = ConfigPart()
 
 class Barcode:
 
@@ -9,9 +13,12 @@ class Barcode:
 
         self.name = name
  
-    def generate_code128(self,data):
+    def generate_code128(self,part,data):    
         
-        code128.image(data).save("pdf/static/" + self.name +".png")  # with PIL present
+
+        code128.image(data).save(part + self.name +".png")  # with PIL present
+
+        
 
     # def generate_barcode(self,data):
     #     print(data)

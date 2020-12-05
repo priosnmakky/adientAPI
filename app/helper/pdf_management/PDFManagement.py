@@ -18,7 +18,7 @@ class PDFManagement:
     @staticmethod
     def generate_pdf(html_srt,name_pdf_str,link_callback) :
 
-        write_to_file = open('media/'+name_pdf_str, "w+b")
+        write_to_file = open(name_pdf_str, "w+b")
         result = pisa.CreatePDF(html_srt.encode('utf-8'),dest=write_to_file,link_callback=link_callback,encoding='utf-8-sig', html_encoding="utf-8-sig")
                 
         write_to_file.close()

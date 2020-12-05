@@ -1,0 +1,10 @@
+﻿Project Code,Route Code,Trip No,Supplier Code,Plant Code,Pickup Before,Release Time,Pickup Time,Depart Time,Delivery Time,Complete Time,Update by,Update Date
+AD-MR-IB,XCL-JITRayong,01,XCL,JIT-Rayong,3,10.30,11.30,12.30,14.30,15.30,Batman,30/11/2020
+AD-MR-IB,XCL-Metal,01,XCL,Metal,2,08.30,10.30,11.30,14.30,15.30,Batman,30/11/2020
+AD-MR-IB,SPV-JITRayong,01,SPV,JIT-Rayong,2,07.30,09.30,10.30,12.30,14.30,Batman,30/11/2020
+AD-MR-IB,NSG-Foam,01,NSG,Foam,3,11.30,12.30,14.30,15.30,17.30,Batman,30/11/2020
+AD-MR-IB,NAG-TrimLCB,01,NSG,Trim LCB,3,08.30,10.30,11.30,12.30,14.30,Batman,30/11/2020
+AD-MR-IB,AUN-Foam,01,AUN,Foam,3,10.30,11.30,13.30,14.30,15.30,Batman,30/11/2020
+AD-MR-IB,AUN-JITRayong,01,AUN,JIT-Rayong,2,08.30,09.30,10.30,12.30,13.30,Batman,30/11/2020
+AD-MR-IB,AUN-AT,01,AUN,AT,3,07.30,08.30,10.30,12.30,13.30,Batman,30/11/2020
+AD-MR-IB,AUN-Metal,01,AUN,Metal,12,08.30,10.30,12.30,13.30,15.30,Batman,30/11/2020

@@ -2,6 +2,10 @@ from order.serializers import FileSerializer
 from datetime import datetime
 from decimal import Decimal
 import math
+from app.helper.config.ConfigPart import ConfigPart
+from app.helper.file_management.FileManagement import FileManagement
+
+configPart = ConfigPart()
 
 class OrderUploadLogHelper:
 
@@ -21,6 +25,7 @@ class OrderUploadLogHelper:
             fileSerializer.status = file_obj[4]
             fileSerializer.updated_by = file_obj[5]
             fileSerializer.updated_date = file_obj[6]
+            fileSerializer.csv_url = FileManagement.find_file(configPart.configs.get("UPLOAD_ORDER_PART").data,file_obj[2]+".csv")
 
             file_return_list.append(fileSerializer)
         

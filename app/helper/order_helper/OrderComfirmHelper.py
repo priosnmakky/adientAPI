@@ -7,7 +7,12 @@ from app.helper.CSV_file_management.CSVFileManagement import CSVFileManagement
 import csv
 from datetime import datetime
 import math
+from django.conf import settings
+from app.helper.config.ConfigPart import ConfigPart
+from app.helper.file_management.FileManagement import FileManagement
 
+
+configPart = ConfigPart()
 class OrderComfirmHelper:
 
     file_list = []
@@ -24,7 +29,11 @@ class OrderComfirmHelper:
         self.routerMaster_list = RouterMaster.objects.filter(is_active=True)
         self.order_list = Order.objects.filter()
         self.project_code = self.file_list[0].project_code
-        self.CSV_name_str = "media/" + str(self.file_list[0].file_no) + "DatabaseCSV.csv" 
+
+        self.CSV_name_str = settings.MEDIA_ROOT +'/'+ FileManagement.find_file(
+            configPart.configs.get("UPLOAD_ORDER_PART").data, 
+            str(self.file_list[0].file_no) + "DatabaseCSV.csv" )
+    
         self.updated_by = username_str
     
     def read_order_from_CSV(self) :
