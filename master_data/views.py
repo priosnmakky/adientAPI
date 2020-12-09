@@ -451,8 +451,6 @@ def plant_list(request):
             station_list = Station.objects.filter(station_type = 'PLANT',is_active=True)
             station_serializer = Station_Serializer(station_list, many=True)
 
-            print(station_list)
-
             base_DTO_obj =  base_DTO()
             base_DTO_obj.serviceStatus = "success"
             base_DTO_obj.massage = "get router"
@@ -1664,7 +1662,8 @@ def search_driver(request):
                 )
             
             return Response(serializer.data, status=status.HTTP_200_OK)
-      
+
+@api_view([ 'POST'])      
 def search_route_master(request):
 
     if request.method == 'POST':
@@ -1737,7 +1736,6 @@ def formal_decimal(number_str):
 
     number_array = number_str.split(".")
 
-    print(number_array)
     if len(number_array[0]) == 1 :
 
         number_array[0] =  "0" + number_array[0] 

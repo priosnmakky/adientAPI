@@ -147,7 +147,7 @@ class FileUploadView(APIView):
 def get_files(request):
 
     try: 
-        print('get_files')
+
         if request.method == 'GET':
       
             file_list = File.objects.filter(updated_by= request.user.username, status = 1)
@@ -451,7 +451,6 @@ def file_list(request):
         try : 
 
             file_list = File.objects.filter(status=2)
-            print(file_list)
             file_serializer = FileSerializer(file_list, many=True)
 
             base_DTO_obj =  base_DTO()
@@ -509,7 +508,6 @@ def order_list(request):
             if project_serializer_obj.is_valid():
 
                 project_serializer_obj.save()
-                # project_serializer_obj.save(updated_by=request.user.username,)
 
                 base_DTO_obj =  base_DTO()
                 base_DTO_obj.serviceStatus = "success"
@@ -606,254 +604,7 @@ def search_order_transaction(request):
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-            # query = "select * from order_order "
-
-            # joint_str = "" 
-            # where_str = " where 1 = 1    "
-
-            # if customer_selected is not None:
-
-            #     print(customer_selected)
-
-            #     joint_str = joint_str + " INNER JOIN master_data_project "
-            #     joint_str = joint_str + " ON UPPER(master_data_project.project_code) = UPPER(order_order.project_code) "
-            #     joint_str = joint_str + " INNER JOIN master_data_customer "
-            #     joint_str = joint_str + " ON UPPER(master_data_customer.customer_code) = UPPER(master_data_project.customer_code) "
-            #     where_str = where_str + " and  UPPER(master_data_customer.customer_code) = '%s' " % customer_selected.upper()
-            
-            # if project_selected is not None:
-
-            #     where_str = where_str + " and  UPPER(order_order.project_code) = '%s' " % project_selected.upper()
-
-            # if start_date_selected is not None and end_date_selected is not None:
-
-                
-            #     start_date_str = datetime.strptime(start_date_selected, "%d/%m/%Y").strftime("%Y/%m/%d")
-            #     end_date_str = datetime.strptime(end_date_selected, "%d/%m/%Y").strftime("%Y/%m/%d")
-
-            #     where_str = where_str + " and due_date between '%s' and '%s' " % (start_date_str,end_date_str)
-            
-            # if file_selected is not None :
-
-            #     where_str = where_str + " and  order_order.file_id = '%s' " % file_selected
-            
-            # if order_selected is not None :
-
-            #     where_str = where_str + " and  order_order.order_no = '%s' " % order_selected
-            
-            # if supplier_selected is not None :
-
-            #     where_str = where_str + " and  UPPER(order_order.supplier_code) = '%s' " % supplier_selected.upper()
-            
-            # if plant_selected is not None :
-
-            #     where_str = where_str + " and  UPPER(order_order.plant_code) = '%s' " % plant_selected.upper()
-            
-            # query = query + joint_str + where_str + "order by order_order.order_no"
-
-
-            # order_csv_list = []
-
-            # order_csv_list.insert(0, [
-            #             "Action",
-            #             "File ID",
-            #             "Order ID",
-            #             "Supplier",
-            #             "Plant",
-            #             "Part No",
-            #             "Part Name",
-            #             "Due Date",
-            #             "Order Qty",
-            #             "Package No",
-            #             "Package Qty",
-            #             "Route&Trip",
-            #             "Uploaded By",
-            #             "Uploaded Date",
-            #         ]
-            #     )
-            
-
-            # order_list = Order.objects.raw(query)
-            # order_transaction_list_obj = []
-            # for order_obj in order_list :
-            
-            #     history_obj = json.loads(order_obj.history_updated) 
-
-            #     order_transaction_obj = Order_transaction()
-            #     order_transaction_obj.action = 'ADD'
-            #     order_transaction_obj.file_id = order_obj.file_id
-            #     order_transaction_obj.order_no = order_obj.order_no
-            #     order_transaction_obj.supplier = order_obj.supplier_code
-            #     order_transaction_obj.plant = order_obj.plant_code
-            #     order_transaction_obj.part_no = order_obj.part_number
-            #     part_list = Part.objects.filter(part_number= order_obj.part_number)
-            #     if len(part_list) > 0 :
-            #         order_transaction_obj.part_name = part_list[0].part_name
-                
-            #     else:
-            #         order_transaction_obj.part_name = None
-
-            #     order_transaction_obj.due_date = order_obj.due_date
-            #     order_transaction_obj.order_qty = int(history_obj['add'])
-
-            #     if order_obj.package_no == None or order_obj.package_no == "":
-
-            #         order_transaction_obj.package_no = None
-            #         order_transaction_obj.package_qty = None
-            #         order_transaction_obj.route_trip = None
-                
-            #     else : 
-
-            #         order_transaction_obj.package_no = order_obj.package_no
-            #         order_transaction_obj.package_qty = order_obj.package_qty
-            #         order_transaction_obj.route_trip = order_obj.route_trip
-
-            #     order_transaction_obj.updated_by = order_obj.updated_by
-            #     order_transaction_obj.updated_date = order_obj.updated_date
-
-            #     order_transaction_list_obj.append(order_transaction_obj)
-
-            #     order_row_list = (
-            #         'ADD',
-            #         order_obj.file_id,
-            #         order_obj.order_no,
-            #         order_obj.supplier_code,
-            #         order_obj.plant_code,
-            #         order_obj.part_number,
-            #         Part.objects.get(part_number= order_obj.part_number).part_name,
-            #         order_obj.due_date.strftime("%d/%m/%Y"),
-            #         int(history_obj['add']),
-            #         order_transaction_obj.package_no,
-            #         order_transaction_obj.package_qty,
-            #         order_transaction_obj.route_trip,
-            #         order_obj.updated_by,
-            #         order_obj.updated_date.strftime("%d/%m/%Y")
-            #         )
-
-
-            #     order_csv_list.append(order_row_list) 
-
-           
-
-            #     for history_add_obj in history_obj['update'] :
-
-            #         order_transaction_obj = Order_transaction()
-            #         order_transaction_obj.action = 'UPDATE'
-            #         order_transaction_obj.file_id = order_obj.file_id
-            #         order_transaction_obj.order_no = order_obj.order_no
-            #         order_transaction_obj.supplier = order_obj.supplier_code
-            #         order_transaction_obj.plant = order_obj.plant_code
-            #         order_transaction_obj.part_no = order_obj.part_number
-            #         order_transaction_obj.part_name = Part.objects.get(part_number= order_obj.part_number).part_name
-            #         order_transaction_obj.due_date = order_obj.due_date
-            #         order_transaction_obj.order_qty = int(history_add_obj)
-
-            #         if order_obj.package_no == None or order_obj.package_no == "":
-
-            #             order_transaction_obj.package_no = None
-            #             order_transaction_obj.package_qty = None
-            #             order_transaction_obj.route_trip = None
-                    
-            #         else : 
-
-            #             order_transaction_obj.package_no = order_obj.package_no
-            #             order_transaction_obj.package_qty = order_obj.package_qty
-            #             order_transaction_obj.route_trip = order_obj.route_trip
-
-            #         order_transaction_obj.updated_by = order_obj.updated_by
-            #         order_transaction_obj.updated_date = order_obj.updated_date
-
-                    
-            #         order_transaction_list_obj.append(order_transaction_obj)
-
-            #         order_row_list = (
-            #             'UPDATE',
-            #             order_obj.file_id,
-            #             order_obj.order_no,
-            #             order_obj.supplier_code,
-            #             order_obj.plant_code,
-            #             order_obj.part_number,
-            #             Part.objects.get(part_number= order_obj.part_number).part_name,
-            #             order_obj.due_date.strftime("%d/%m/%Y"),
-            #             int(history_obj['add']),
-            #             order_transaction_obj.package_no,
-            #             order_transaction_obj.package_qty,
-            #             order_transaction_obj.route_trip,
-            #             order_obj.updated_by,
-            #             order_obj.updated_date.strftime("%d/%m/%Y")
-            #         )
-
-
-            #         order_csv_list.append(order_row_list) 
-
-            #     for history_delete_obj in history_obj['delete'] :
-
-            #         order_transaction_obj = Order_transaction()
-            #         order_transaction_obj.action = 'DELETE'
-            #         order_transaction_obj.file_id = order_obj.file_id
-            #         order_transaction_obj.order_no = order_obj.order_no
-            #         order_transaction_obj.supplier = order_obj.supplier_code
-            #         order_transaction_obj.plant = order_obj.plant_code
-            #         order_transaction_obj.part_no = order_obj.part_number
-            #         order_transaction_obj.part_name = Part.objects.get(part_number= order_obj.part_number).part_name
-            #         order_transaction_obj.due_date = order_obj.due_date
-            #         order_transaction_obj.order_qty = int(history_delete_obj)
-                    
-            #         if order_obj.package_no == None or order_obj.package_no == "":
-
-            #             order_transaction_obj.package_no = None
-            #             order_transaction_obj.package_qty = None
-            #             order_transaction_obj.route_trip = None
-                
-            #         else : 
-
-            #             order_transaction_obj.package_no = order_obj.package_no
-            #             order_transaction_obj.package_qty = order_obj.package_qty
-            #             order_transaction_obj.route_trip = order_obj.route_trip
-    
-            #         order_transaction_obj.updated_by = order_obj.updated_by
-            #         order_transaction_obj.updated_date = order_obj.updated_date
-
-            #         order_transaction_list_obj.append(order_transaction_obj)
-
-            #         order_row_list = (
-            #             'DELETE',
-            #             order_obj.file_id,
-            #             order_obj.order_no,
-            #             order_obj.supplier_code,
-            #             order_obj.plant_code,
-            #             order_obj.part_number,
-            #             Part.objects.get(part_number= order_obj.part_number).part_name,
-            #             order_obj.due_date.strftime("%d/%m/%Y") ,
-            #             int(history_obj['add']),
-            #             order_transaction_obj.package_no,
-            #             order_transaction_obj.package_qty,
-            #             order_transaction_obj.route_trip,
-            #             order_obj.updated_by,
-            #             order_obj.updated_date.strftime("%d/%m/%Y")
-            #         )
-
-
-            #         order_csv_list.append(order_row_list) 
-
-                    
-
-            # name_csv_str = "OrderTransactionCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S")
-
-            # with open("media/" +  name_csv_str +'.csv', 'w', newline='') as file:
-            #     writer = csv.writer(file)
-            #     writer.writerows(order_csv_list)
-                     
-            # order_transaction_Serializer_obj = Order_transaction_Serializer(order_transaction_list, many=True)
-
-            # base_DTO_obj =  base_DTO()
-            # base_DTO_obj.serviceStatus = "success"
-            # base_DTO_obj.massage = "project is saved"
-            # base_DTO_obj.csv_name ='.csv'
-            # base_DTO_obj.data_list = order_transaction_Serializer_obj.data
-
-            # order_transaction_list__Serializer_DTO_obj = Order_transaction_list__Serializer_DTO(base_DTO_obj)
-            # return JsonResponse(order_transaction_list__Serializer_DTO_obj.data,  safe=False)
+         
    
 
         except Exception as e:
@@ -864,76 +615,9 @@ def search_order_transaction(request):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-            # print(e)
-            # base_DTO_obj =  base_DTO()
-            # base_DTO_obj.serviceStatus = "Error"
-            # base_DTO_obj.massage = e
-            # base_DTO_obj.data = None
-
-            # file_Serializer_DTO_reponse = File_Serializer_DTO(base_DTO_obj)
-
-            # return JsonResponse(file_Serializer_DTO_reponse.data,safe=False)
-
-
-
-
-   
-            
 
 
 
 
 
-        # file_deleted_obj = File.objects.filter(created_by= request.user.username, status = False)[0]
-        # file_no_str = file_deleted_obj.file_no
-        # file_file_str = file_deleted_obj.file
-
-        # order_deleted_obj = Order.objects.filter(file_id = file_no_str)
-
-        # file_deleted_obj.delete()
-        # order_deleted_obj.delete()
         
-        # os.remove("media/" + str(file_no_str) + ".csv")
-        # os.remove("media/" + str(file_no_str) + "_database.csv")
-        # os.remove("media/" + str(file_file_str))
-
-        # file_list = File.objects.filter(created_by= request.user.username, status = False).values()
-        # file_serializer = Plant_list_Serializer_DTO(file_list, many=True)
-
-        # return JsonResponse(file_serializer.data, safe=False)
-
-
-
-
-# @api_view(['GET', 'POST', 'DELETE'])
-# def order_list(request):
-#     # if request.method == 'GET':
-#     #     tutorials = Tutorial.objects.all()
-        
-#     #     title = request.GET.get('title', None)
-#     #     if title is not None:
-#     #         tutorials = tutorials.filter(title__icontains=title)
-        
-#     #     tutorials_serializer = TutorialSerializer(tutorials, many=True)
-#     #     return JsonResponse(tutorials_serializer.data, safe=False)
-#     #     # 'safe=False' for objects serialization
-#     if request.method == 'GET':
-#         order_list = Order.objects.all()
-        
-#         # title = request.GET.get('title', None)
-#         # if title is not None:
-#         #     tutorials = tutorials.filter(title__icontains=title)
-        
-#         order_serializer = OrderSerializer(order_list, many=True)
-#         return JsonResponse(order_serializer.data, safe=False)
-
- 
-#     elif request.method == 'POST':
-#         order_data = JSONParser().parse(request)
-#         order_serializer = OrderSerializer(data=order_data)
-    
-#         if order_serializer.is_valid():
-#             # order_serializer.save()
-#             return JsonResponse(order_serializer.data, status=status.HTTP_201_CREATED) 
-#         return JsonResponse(order_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
- 

@@ -35,7 +35,6 @@ serializerMapping = SerializerMapping()
 
 def link_callback(uri, rel):
 
-    print(uri)
     return settings.MEDIA_ROOT+"\\"+ uri
 
 

@@ -146,8 +146,6 @@ class TruckPlan_Serializer(serializers.Serializer):
 
         validated_data['truckplan_no'] = truckPlan_no
         validated_data['status'] = 2
-
-        print(validated_data)
  
         pickUp_obj.update(truckplan_no=validated_data.get('truckplan_no'),updated_date=datetime.utcnow(),updated_by=validated_data.get('updated_by'))
         return TruckPlan.objects.create(**validated_data)
