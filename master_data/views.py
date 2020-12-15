@@ -1860,10 +1860,8 @@ def upload_route_master(request):
 
                     if len(routerMasterHelper.validateError_list) <= 0: 
 
-                        # print(routerMaster_list)
                         routerMasterService =  RouterMasterService()
                         test = routerMasterService.update_routerMaster(routerMaster_list)
-                        print(test)
 
                     validate_error_list_serializer = validate_error_serializer(routerMasterHelper.validateError_list, many=True)   
 

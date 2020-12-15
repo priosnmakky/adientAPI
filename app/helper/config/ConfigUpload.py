@@ -1,6 +1,6 @@
 from jproperties import Properties
 
-class ConfigsDatabase:
+class ConfigsUpload:
 
     configs = Properties()
 
