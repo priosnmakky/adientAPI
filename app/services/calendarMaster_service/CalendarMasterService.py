@@ -7,7 +7,6 @@ class CalendarMasterService:
 
     def search_calendarMaster (self,customer_code,project_code,plant_code,working_day):
         
-        print('dgdfgdfgdfg')
         cursor = connection.cursor()
         cursor.execute(" Begin;  SELECT * FROM search_calendarMaster(%s,%s,%s,%s);",[customer_code,project_code,plant_code,working_day]  )
 

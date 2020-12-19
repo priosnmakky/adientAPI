@@ -2,8 +2,7 @@ from master_data.models import Station
 from model_DTO.validateError import validateError,validateErrorList
 from app.helper.config.ConfigMessage import ConfigMessage
 from openpyxl.utils import get_column_letter
-# from order.models import File
-# from datetime import datetime\
+
 configMessage = ConfigMessage()
 
 class OrderValidatedHelper:
@@ -148,7 +147,7 @@ class OrderValidatedHelper:
     def validate_plant_list(self) :
         
         plant_list = [ x for x in self.order_list if x[0].upper()  in list(self.get_plant_codet_in_workbook()) and x[2] == 5 ]
-        # print(list(self.get_plant_codet_in_workbook()))
+
         for plant_error in plant_list:
 
             validate_error_obj = validateError() 
@@ -217,18 +216,7 @@ class OrderValidatedHelper:
 
     
 
-    # @staticmethod
-    # def generate_file_no(customer_id) :
 
-    #     today_date_str = datetime.utcnow().strftime("%y%m%d")
-    #     customer_code_str = Customer.objects.get(customer_code = customer_id ).customer_code
-    #     customer_code_2dg_first_start_str = customer_code_str[0:2]
-    #     file_count = File.objects.filter(file_no__contains= today_date_str ).count()
-    #     print(file_count)
-    #     file_no = customer_code_2dg_first_start_str + today_date_str + "{0:0=2d}".format(file_count + 1)
-
-    #     return file_no
-    
   
     
         

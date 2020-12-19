@@ -99,28 +99,6 @@ class CalendarMaster(models.Model):
         return super(CalendarMaster, self).save(*args, **kwargs)
 
 
-
-
-# class Project(models.Model):
-
-#     item_no = models.IntegerField(blank=False, null=False)
-#     project_code = models.CharField(max_length=150,blank=True, null=True)
-#     transporter = models.CharField(max_length=150,blank=True, null=True)
-#     effective_date = models.DateTimeField(blank=True, null=True)
-#     expire_date = models.DateTimeField(blank=True, null=True)
-#     customer_code = models.CharField(max_length=150,blank=True, null=True)
-#     # customer_description = models.CharField(max_length=150,blank=True, null=True)
-#     created_by = models.CharField(max_length=15,blank=True, null=True)
-#     created_date = models.DateTimeField(default=timezone.now(),blank=True, null=True)
-#     updated_by = models.CharField(max_length=150,blank=True, null=True)
-#     updated_date = models.DateTimeField(blank=True, null=True)
-
-#     def save(self, *args, **kwargs):
-
-#         if not self.id:
-#             self.created_date = datetime.now()
-#         return super(Project, self).save(*args, **kwargs)
-
 class Project(models.Model):
 
     project_code = models.CharField(primary_key=True,max_length=150,blank=False, null=False,default="")
@@ -167,8 +145,6 @@ class Station(models.Model):
 
     def save(self, *args, **kwargs):
 
-        # if not self.station_code:
-        #     self.created_date = datetime.now()
         return super(Station, self).save(*args, **kwargs)
 
 

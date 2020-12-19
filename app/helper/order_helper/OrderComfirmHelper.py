@@ -1,8 +1,6 @@
 from order.models import Order,File
 from master_data.models import Part,Package,RouterMaster
-# import json
 from app.helper.order_helper.OrderUploadHelper import OrderUploadHelper
-# from order.model.order_history import order_history
 from app.helper.CSV_file_management.CSVFileManagement import CSVFileManagement
 import csv
 from datetime import datetime

@@ -146,8 +146,6 @@ def search_and_print_PUS(request):
             
             return Response(serializer.data, status=status.HTTP_200_OK)
  
-       
-
 @api_view(['GET', 'POST'])
 def generate_PUS(request):
 
@@ -197,10 +195,6 @@ def generate_PUS(request):
                     None )
             
             return Response(serializer.data, status=status.HTTP_200_OK)    
-
-
-
-
 
 @api_view(['GET', 'POST'])
 def create_route(request):
@@ -483,32 +477,6 @@ def delete_truckplan(request):
             
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        # try:
-   
-        #     truckPlan_data = JSONParser().parse(request)
-
-        #     truckPlan_list = TruckPlan.objects.filter(truckplan_no=truckPlan_data['truckplan_no'])
-        #     truckPlan_list.update(status=1)
-
-        #     pickUp_list = PickUp.objects.filter(truckplan_no=truckPlan_data['truckplan_no'])
-
-        #     pickUp_list.update(truckplan_no="")
-
-        #     pickUp_Serializer =  PickUp_Serializer(pickUp_list)
-     
-        #     pickUp_list_serializer_DTO = serializerMapping.mapping_list_successful(
-        #                 pickUp_Serializer.data,
-        #                 PickUp_list_Serializer_DTO,
-        #                 "",
-        #                 None)
-            
-        #     return JsonResponse(pickUp_list_serializer_DTO.data, status=status.HTTP_200_OK)
-       
-        # except Exception as e:
-
-        #     pickUp_serializer_error_DTO = serializerMapping.mapping_obj_error(PickUp_list_Serializer_DTO,e)
-
-        #     return JsonResponse(pickUp_serializer_error_DTO.data, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST'])
 def search_generate_truck_plan(request):
@@ -556,8 +524,6 @@ def search_generate_truck_plan(request):
             
             return Response(serializer.data, status=status.HTTP_200_OK)
             
-      
-
 @api_view(['GET', 'POST'])
 def generate_truck_plan(request):
 
@@ -607,7 +573,6 @@ def generate_truck_plan(request):
                     None )
             
             return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 @api_view(['GET', 'POST'])
 def search_and_print_truck_plan(request):

@@ -1,6 +1,3 @@
-# from master_data.models import Customer
-# from order.models import File
-# from datetime import datetime
 import openpyxl 
 from openpyxl.utils import get_column_letter
 

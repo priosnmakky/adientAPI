@@ -303,9 +303,7 @@ class RouterMasterHelper:
                 self.validateError_list.append(validateError_obj)
 
                 return None
-
-                               
-                                
+                  
     def validate_routeMaster(self,routerMaster_list) :
 
         self.validateError_list = []

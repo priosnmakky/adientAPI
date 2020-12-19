@@ -5,7 +5,6 @@ from order.serializers import OrderSerializer
 cursor = connection.cursor()
 class DriverService:
 
-
     def search_driver(self,driver_code,driver_name):
  
         cursor = connection.cursor()

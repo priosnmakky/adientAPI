@@ -6,7 +6,6 @@ from app.helper.format.NumberFormat import NumberFormat
 
 class TruckplanPrintHelper:
 
-    
     @staticmethod
     def covert_data_list_to_serializer_list(truckplan_list) :
 

@@ -45,12 +45,6 @@ class PDFManagement:
         
         return CSV_file_name_str
 
-    
-
-        # with open("media/" +  self.name +'.csv', 'w', newline='',encoding='utf-8') as file:
-        #     writer = csv.writer(file)
-        #     writer.writerows(part_csv_list)
-
 
     
         

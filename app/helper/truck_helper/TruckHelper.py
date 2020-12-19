@@ -4,7 +4,6 @@ from decimal import Decimal
 import math
 
 class TruckHelper:
-
     
     @staticmethod
     def covert_data_list_to_serializer_list(truck_list) :

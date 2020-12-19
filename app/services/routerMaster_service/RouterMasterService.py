@@ -20,7 +20,7 @@ class RouterMasterService:
  
         cursor = connection.cursor()
 
-        
+       
         sql = "   SELECT * FROM updated_route_master(%s::route_master[]) "
         sql = sql +"as dept(project_code character varying,route_code character varying,route_trip character varying,supplier_code character varying,"
         sql = sql +" plant_code character varying,pickup_before integer,release_time  character varying , pickup_time  character varying , depart_time character varying,"

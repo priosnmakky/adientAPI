@@ -21,8 +21,6 @@ def upload_path_handler(instance, filename):
 
 class File(models.Model):
 
-    
-
     file_no = models.CharField(max_length=150,blank=True, null=True,default='')
     file_name = models.CharField(max_length=150,blank=True, null=True)
     file_size = models.CharField(max_length=150,blank=True, null=True)
@@ -34,8 +32,6 @@ class File(models.Model):
     updated_date = models.DateTimeField(default=datetime.now(), blank=True)
     file = models.FileField(blank=False, null=False,upload_to=upload_path_handler)
 
-    
-
     def save(self, *args, **kwargs):
 
         if not self.file_no:
@@ -44,6 +40,7 @@ class File(models.Model):
 
 
 class Order(models.Model):
+    
     part_number = models.CharField(max_length=150,blank=False, default='')
     item_no = models.CharField(max_length=50,blank=False, default='')
     file_no = models.CharField(max_length=150,blank=False, default='')
@@ -67,54 +64,6 @@ class Order(models.Model):
     updated_by = models.CharField(max_length=150,blank=True, null=True)
     updated_date = models.DateTimeField(blank=True, null=True)
     
-
-
-    # def save(self, *args, **kwargs):
-    #     # This means that the model isn't saved to the database yet
-    #     # if self._state.adding:
-    #     #     # Get the maximum display_id value from the database
-    #     order_no = self.objects.id
-    #     if order_no is not None:
-    #             self.order_no = order_no + 1
-
-    #         # # aggregate can return None! Check it first.
-    #         # # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
-    #         # if last_id is not None:
-    #         #     self.display_id = last_id + 1
-
-    #     super(Order, self).save(*args, **kwargs)
-
-# class part_master(models.Model):
-#     item = models.IntegerField(blank=False, null=False)
-#     part_number = models.CharField(max_length=150,blank=False, default='')
-#     part_name = models.CharField(max_length=150,blank=False, default='')
-#     service_type = models.CharField(max_length=50,blank=False, default='')
-#     snp = models.IntegerField(blank=True,null=True)
-#     part_weight = models.DecimalField(max_digits=20, decimal_places=2, default=Decimal(0.00))
-#     remark = models.CharField(max_length=250,blank=False, default='')
-#     updated_by = models.CharField(max_length=50,blank=False, default='')
-#     uploaded_datetime = models.DateTimeField(default=datetime.now(), blank=True)
-#     project_code = models.CharField(max_length=150,blank=False, default='')
-#     supplier_code  = models.CharField(max_length=50,blank=False, default='')
-#     package_no = models.CharField(max_length=50,blank=False, default='')
-
-
-# class router_master(models.Model):
-
-#     item = models.IntegerField(blank=False, null=False)
-#     route_code = models.CharField(max_length=150,blank=False, default='')
-#     trip_no = models.CharField(max_length=5,blank=False, default='')
-#     supplier_code  = models.CharField(max_length=50,blank=False, default='')
-#     plant_code = models.CharField(max_length=50,blank=False, default='')
-#     release_datetime = models.DateTimeField(default=datetime.now(), blank=True)
-#     pickup_datetime = models.DateTimeField( blank=True)
-#     depart_datetime = models.DateTimeField( blank=True)
-#     delivery_datetime = models.DateTimeField( blank=True)
-#     complete_datetime = models.DateTimeField( blank=True)
-#     transporter = models.CharField(max_length=50,blank=False, default='')
-
-
-
 
 
 

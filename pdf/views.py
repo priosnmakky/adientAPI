@@ -35,7 +35,7 @@ serializerMapping = SerializerMapping()
 
 def link_callback(uri, rel):
 
-    return settings.MEDIA_ROOT+"\\"+ uri
+    return settings.MEDIA_ROOT+"/"+ uri
 
 
 @api_view(['POST'])
@@ -52,14 +52,14 @@ def render_pickup_pdf(request):
 
                 name_barcode_img_str = "barcode_" +datetime.now().strftime("%Y%m%d_%H%M%S") 
                 barcode = Barcode(name_barcode_img_str)
-                barcode.generate_code128(settings.MEDIA_ROOT+"\\"+PDF_part_str,pickup_data['pickup_no'])
+                barcode.generate_code128(settings.MEDIA_ROOT+"/"+PDF_part_str,pickup_data['pickup_no'])
 
                 data_list = truckPlanManagementService.pickup_report(pickup_data['pickup_no'])
 
                 context = {"pickup_obj" :data_list[0][0],"order_list":data_list[1],"barcode_pic_name" :PDF_part_str+name_barcode_img_str}
                 name_pdf_str = "PickupPDFCSV_" +datetime.now().strftime("%Y%m%d_%H%M%S") + ".pdf"
                 html = render_to_string('pdf/pickup_template.html',context)
-                PDFManagement.generate_pdf(html,settings.MEDIA_ROOT+"\\"+PDF_part_str+ name_pdf_str,link_callback)
+                PDFManagement.generate_pdf(html,settings.MEDIA_ROOT+"/"+PDF_part_str+ name_pdf_str,link_callback)
   
                 PDF_serializer_DTO = serializerMapping.mapping_pdf(PDF_Serializer_DTO,'success','test',PDF_part_str+ name_pdf_str)
                 
@@ -84,14 +84,14 @@ def render_truckplan_pdf(request):
                 PDF_part_str =   PDF_part_str + "/"
                 name_barcode_img_str = "barcode_" +datetime.now().strftime("%Y%m%d_%H%M%S") 
                 barcode = Barcode(name_barcode_img_str)
-                barcode.generate_code128(settings.MEDIA_ROOT+"\\"+PDF_part_str,truckplan_data['truckplan_no'])
+                barcode.generate_code128(settings.MEDIA_ROOT+"/"+PDF_part_str,truckplan_data['truckplan_no'])
 
                 data_list = truckPlanManagementService.truck_report(truckplan_data['truckplan_no'])
           
                 context = {"pickup_obj" :data_list[0][0],"order_list":data_list[1],"barcode_pic_name" :PDF_part_str+name_barcode_img_str}
                 name_pdf_str = "TruckPlanPDF_" +datetime.now().strftime("%Y%m%d_%H%M%S") + ".pdf"
                 html = render_to_string('pdf/truckPlan_template.html',context)
-                PDFManagement.generate_pdf(html,settings.MEDIA_ROOT+"\\"+PDF_part_str+ name_pdf_str,link_callback)
+                PDFManagement.generate_pdf(html,settings.MEDIA_ROOT+"/"+PDF_part_str+ name_pdf_str,link_callback)
   
                 PDF_serializer_DTO = serializerMapping.mapping_pdf(PDF_Serializer_DTO,'success','test',PDF_part_str+ name_pdf_str)
                 

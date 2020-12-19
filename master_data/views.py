@@ -170,8 +170,6 @@ def comfirm_part(request):
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-                
-
         except Exception as e:
 
             serializer = serializerMapping.mapping_serializer_list(
@@ -363,15 +361,10 @@ def router_list(request):
             base_DTO_obj =  base_DTO()
             base_DTO_obj.serviceStatus = "error"
             base_DTO_obj.massage = "error"
-            # base_DTO_obj.data_list = order_serializer.data
 
             router_list_Serializer_DTO_obj = Router_master_list_Serializer_DTO(base_DTO_obj)
 
             return JsonResponse(router_list_Serializer_DTO_obj.data, status=status.HTTP_200_OK)
-
-        
-
-            # return JsonResponse(order_serializer.data, safe=False)
 
     elif request.method == 'POST':
 
@@ -435,7 +428,6 @@ def supplier_list(request):
             base_DTO_obj =  base_DTO()
             base_DTO_obj.serviceStatus = "error"
             base_DTO_obj.massage = e
-            # base_DTO_obj.data_list = order_serializer.data
 
             station_list_Serializer_DTO_obj = Station_list_Serializer_DTO(base_DTO_obj)
 
@@ -464,7 +456,6 @@ def plant_list(request):
             base_DTO_obj =  base_DTO()
             base_DTO_obj.serviceStatus = "error"
             base_DTO_obj.massage = "error"
-            # base_DTO_obj.data_list = order_serializer.data
 
             station_list_Serializer_DTO_obj = Station_list_Serializer_DTO(base_DTO_obj)
 
@@ -649,7 +640,6 @@ def search_project(request):
 
         try:
 
-           
             project_data_obj = JSONParser().parse(request)
             customer_code = project_data_obj['customer_code']
 
@@ -779,7 +769,6 @@ def customer_list(request):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
 @api_view(['GET', 'POST', 'DELETE'])
 def deleted_customer(request):
 
@@ -869,7 +858,6 @@ def edited_customer(request):
                     None )
             
             return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 @api_view(['POST'])
 def search_customer(request):
@@ -1001,11 +989,10 @@ def package_list(request):
 
                 except:
 
-                    print('err')
+                    print()
 
                 package_serializer = Package_Serializer(data={'packages' : request.POST['packages']})
 
-            
                 serializer = serializerMapping.mapping_serializer_obj(
                 Package_Serializer_DTO,
                 package_serializer,
@@ -1031,7 +1018,6 @@ def package_list(request):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
      
-
 @api_view(['GET', 'POST', 'DELETE'])
 def deleted_package(request):
 
@@ -1103,9 +1089,9 @@ def edited_package(request):
                     packageHelper.update(package_data)
 
                 except:
-
-                    print('err')
-
+                    
+                    print()
+                    
                 package_serializer = Package_Serializer(data={'packages' : request.POST['packages']})
 
                 serializer = serializerMapping.mapping_serializer_obj(
@@ -1514,7 +1500,6 @@ def driver_list(request):
                 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 @api_view(['GET', 'POST', 'DELETE'])
 def deleted_driver(request):
 
@@ -1732,20 +1717,6 @@ def search_route_master(request):
             
             return Response(serializer.data, status=status.HTTP_200_OK)
   
-def formal_decimal(number_str):
-
-    number_array = number_str.split(".")
-
-    if len(number_array[0]) == 1 :
-
-        number_array[0] =  "0" + number_array[0] 
-
-    if len(number_array[1]) == 1 :
-
-        number_array[1] =  number_array[1] +"0" 
-
-    return number_array[0] +"."+ number_array[1]
-
 
 @api_view(['GET', 'POST', 'DELETE'])
 def routeMaster_list(request):
@@ -1835,7 +1806,6 @@ def upload_route_master(request):
 
         try:
             
-            
             file_serializer = File_Serializer(data=request.data)
         
             if file_serializer.is_valid():
@@ -1849,8 +1819,6 @@ def upload_route_master(request):
                 validateWarning_list = []
                 validate_error_list_serializer= []
 
-                # routerMaster_list = CSVFileManagement.read_CSV_file("media/" + file_name_str,',','|')
-
                 with open("media/" + file_part_str+"/"+file_name_str, newline='') as csvfile:
                     routerMaster_list = csv.reader(csvfile, delimiter=',', quotechar='|')
             
@@ -1861,7 +1829,7 @@ def upload_route_master(request):
                     if len(routerMasterHelper.validateError_list) <= 0: 
 
                         routerMasterService =  RouterMasterService()
-                        test = routerMasterService.update_routerMaster(routerMaster_list)
+                        routerMasterService.update_routerMaster(routerMaster_list)
 
                     validate_error_list_serializer = validate_error_serializer(routerMasterHelper.validateError_list, many=True)   
 
@@ -1911,7 +1879,6 @@ def deleted_routeMaster(request):
         try:
 
             routeMaster_data = JSONParser().parse(request)
-            print(routeMaster_data)
             routeMaster_list = RouterMaster.objects.filter(route_no__in=routeMaster_data)
             routeMaster_list.update(is_active = False)
 
@@ -2202,9 +2169,6 @@ def calendarMaster_list(request):
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-       
- 
-
 @api_view(['POST'])
 def search_calendarMaster(request):
 
@@ -2262,9 +2226,6 @@ def search_calendarMaster(request):
             
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-
-
 @api_view(['GET', 'POST', 'DELETE'])
 def deleted_calendarMaster(request):
 
@@ -2297,53 +2258,5 @@ def deleted_calendarMaster(request):
 
             return JsonResponse(calendarMaster_Serializer_DTO_reponse.data, safe=False)
 
-
-@api_view(['GET', 'POST', 'DELETE'])
-def add_part_master(request):
-
-    if request.method == 'GET':
-
-        with open("media/" + "add_partMaster.csv", newline='') as csvfile:
-            spamreader = csv.reader(csvfile, delimiter=',', quotechar=',')
-            for row in spamreader:
-
-                add_part =  Part()
-                add_part.project_code = row[0]
-                add_part.status = 2
-                add_part.supplier_code = row[1]
-                add_part.part_number = row[2]
-                add_part.part_name = row[3]
-                add_part.package_no = row[4]
-                add_part.package_volume = 0.00
-                add_part.package_weight = 0.00
-                add_part.is_active = True
-                add_part.save()
-        return JsonResponse("test", safe=False)
-
-
-@api_view(['GET', 'POST', 'DELETE'])
-def add_packages_master(request):
-
-    if request.method == 'GET':
-
-        with open("media/" + "add_packageMaster.csv", newline='') as csvfile:
-            spamreader = csv.reader(csvfile, delimiter=',', quotechar=',')
-            for row in spamreader:
-
-
-
-                add_package =  Package()
-                add_package.station_code = row[0]
-                add_package.package_code = row[1]
-                add_package.package_no = row[2]
-                add_package.width = Decimal(row[3])
-                add_package.length = Decimal(row[4])
-                add_package.height = Decimal(row[5])
-                add_package.weight = Decimal(row[6])
-                add_package.image_url = ""
-                add_package.is_active = True
-                add_package.save()
-                
-        return JsonResponse("test", safe=False)
 
 

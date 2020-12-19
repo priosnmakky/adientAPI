@@ -53,11 +53,6 @@ from app.helper.order_helper.OrderTransactionHelper import OrderTransactionHelpe
 from app.helper.config.ConfigPart import ConfigPart
 from django.conf import settings
 
-from openpyxl.utils import get_column_letter
-
-import types
-
-from django.db import connection
 
 configMessage = ConfigMessage()
 configPart = ConfigPart()
@@ -97,117 +92,49 @@ class FileUploadView(APIView):
                         file_size = request.FILES['file'].size,
                         updated_by = request.user.username,
                     )
-
-                
                 sheet_obj = WorkbookHelper.read_workbook(file_serializer.data['file'][1:])
-                print(sheet_obj)
 
+                row_max_int = sheet_obj.max_row
+                column_max_int = sheet_obj.max_column
 
-                order_list = []
-                for row_int in range(1,sheet_obj.max_row + 1):
-                    
-                    for column_int in range(1,sheet_obj.max_column + 1):
-
-                        order_list.append(
-                            (
-                                 str(sheet_obj.cell(row=row_int, column=column_int).value),
-                                 row_int,
-                                get_column_letter(column_int)
-
-                             )
-                            )
-                    
-
-
-                
-
-                        # # sheet_obj.cell(row=row_int, column=3).value get_column_letter(item_error[2])
-                        # print(sheet_obj.cell(row=row_int, column=column_int).value)
-                        # print(str(row_int)  +  get_column_letter(column_int))
-
-                # # data = OrderUploadHelper.data_mapping_from_sheet(sheet_obj)
-                # cursor = connection.cursor()
-                # data = []
-                # # data.append({test:'makky'})
-
-                # # obj = type('Expando', (object,), {})()
-                # # obj.foo = 71
-                # # obj.bar = 'World'
-
-
-                # # orderSerializer = OrderSerializer()
-                # # orderSerializer.part_number = 'twtt'
-                # # data.append(orderSerializer)
-
-                # data.append('dfdfdfdf')
-
-
-
-                # sql = "   SELECT * FROM test(%s::text[]) "
-                # sql = sql +"as dept(project_code character varying);"
-                # # sql = sql +" plant_code character varying,pickup_before integer,release_time  character varying , pickup_time  character varying , depart_time character varying,"
-                # # sql = sql +" );"
-
-                # cursor.execute( sql,[data] )
-
-                # routerMaster_list = cursor.fetchall()
-
-                # cursor.close();
-
-                # print('asdasdad')
-                # print(routerMaster_list)
-
-
-                # data = []
-
-                # for row_int in range(3,sheet_obj.max_row + 1):
-
-                #     data = sheet_obj.cell(row=row_int, column=3).value 
-                #     data.append(('makky'))
-                    
-
-
-                # row_max_int = sheet_obj.max_row
-                # column_max_int = sheet_obj.max_column
-
-                # return_list = OrderUploadHelper.data_mapping_from_sheet(sheet_obj)
+                return_list = OrderUploadHelper.data_mapping_from_sheet(sheet_obj)
     
-                # orderValidatedHelper = OrderValidatedHelper(return_list[0],return_list[3],return_list[4])
-                # error_list = orderValidatedHelper.get_error_list()
+                orderValidatedHelper = OrderValidatedHelper(return_list[0],return_list[3],return_list[4])
+                error_list = orderValidatedHelper.get_error_list()
             
 
-                # if len(error_list) > 0 :
+                if len(error_list) > 0 :
                     
-                #     serializer = serializerMapping.mapping_serializer_list(validateErrorSerializerList,None,"Error",configMessage.configs.get("UPLOAD_FILE_MASSAGE_ERROR").data,None,None,sorted(error_list, key=lambda error: (error.row,error.column) ) )
-                #     File.objects.filter(file_no=file_obj.file_no).delete()
-                #     return Response(serializer.data, status=status.HTTP_200_OK)
+                    serializer = serializerMapping.mapping_serializer_list(validateErrorSerializerList,None,"Error",configMessage.configs.get("UPLOAD_FILE_MASSAGE_ERROR").data,None,None,sorted(error_list, key=lambda error: (error.row,error.column) ) )
+                    File.objects.filter(file_no=file_obj.file_no).delete()
+                    return Response(serializer.data, status=status.HTTP_200_OK)
 
-                # else :
+                else :
 
-                #     orderManageHelper = OrderManageHelper(file_obj.file_no,return_list[0],return_list[5])
-                #     orderManageHelper.order_management()
-                #     name_csv_str = file_obj.file_no + "DatabaseCSV"
-                #     CSV_file_management_obj = CSVFileManagement(
-                #         name_csv_str,
-                #         uploaded_part,
-                #         '',";")
-                #     CSV_file_management_obj.covert_to_CSV_data_list(orderManageHelper.get_order_csv_list_database())
-                #     return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
+                    orderManageHelper = OrderManageHelper(file_obj.file_no,return_list[0],return_list[5])
+                    orderManageHelper.order_management()
+                    name_csv_str = file_obj.file_no + "DatabaseCSV"
+                    CSV_file_management_obj = CSVFileManagement(
+                        name_csv_str,
+                        uploaded_part,
+                        '',";")
+                    CSV_file_management_obj.covert_to_CSV_data_list(orderManageHelper.get_order_csv_list_database())
+                    return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
 
-                #     name_csv_str = file_obj.file_no
-                #     CSV_file_management_obj = CSVFileManagement(
-                #         name_csv_str,
-                #         uploaded_part,
-                #         '',',')
-                #     CSV_file_management_obj.covert_to_header(["Item No","Order ID","Part Number","Part Description","Supplier Name","Plant","Order Amount","Date"])
-                #     order_csv_list =  orderManageHelper.get_order_csv_list()
-                #     CSV_file_management_obj.covert_to_CSV_data_list(orderManageHelper.get_order_csv_list())
-                #     return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
+                    name_csv_str = file_obj.file_no
+                    CSV_file_management_obj = CSVFileManagement(
+                        name_csv_str,
+                        uploaded_part,
+                        '',',')
+                    CSV_file_management_obj.covert_to_header(["Item No","Order ID","Part Number","Part Description","Supplier Name","Plant","Order Amount","Date"])
+                    order_csv_list =  orderManageHelper.get_order_csv_list()
+                    CSV_file_management_obj.covert_to_CSV_data_list(orderManageHelper.get_order_csv_list())
+                    return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
 
-                #     File.objects.filter(file_no=file_obj.file_no).update(order_count=len(order_csv_list))
+                    File.objects.filter(file_no=file_obj.file_no).update(order_count=len(order_csv_list))
 
-                #     serializer = serializerMapping.mapping_serializer_list(validateErrorSerializerList,None,"success",configMessage.configs.get("UPLOAD_FILE_MASSAGE_SUCCESSFUL").data,None,None,None )
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                    serializer = serializerMapping.mapping_serializer_list(validateErrorSerializerList,None,"success",configMessage.configs.get("UPLOAD_FILE_MASSAGE_SUCCESSFUL").data,None,None,None )
+                    return Response(serializer.data, status=status.HTTP_200_OK)
                
         except Exception as e:
 
@@ -291,6 +218,7 @@ def not_confirm(request):
         except Exception as e:
 
             print(e)
+
             serializer = serializerMapping.mapping_serializer_obj(File_Serializer_DTO,None,"Error",e,None,None,None )
        
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -348,7 +276,6 @@ def search_miss_match(request):
                 CSV_part_str +"/"+ name_csv_str + ".csv",
                 None,
                 None )
-
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -446,7 +373,6 @@ def search_pending_order(request):
                 None,
                 None )
 
-
             return Response(serializer.data, status=status.HTTP_200_OK)
           
         except Exception as e:
@@ -454,8 +380,6 @@ def search_pending_order(request):
             serializer = serializerMapping.mapping_serializer_list(Order_list_Serializer_DTO,None,"Error",e,None,None,None )
 
             return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -465,7 +389,6 @@ def search_upload_order_log_file(request):
 
         try:
             
-
             customer_code = request.data['customer_selected']
             project_code = request.data['project_selected']
             start_date = request.data['start_date_selected']
@@ -564,7 +487,6 @@ def order_list(request):
 
             order_list_Serializer_DTO_obj = Order_list_Serializer_DTO(base_DTO_obj)
 
-
             return JsonResponse(order_list_Serializer_DTO_obj.data, safe=False)
 
         except Exception as e:
@@ -661,7 +583,7 @@ def search_order_transaction(request):
                 "Route&Trip",
                 "Uploaded By",
                 "Uploaded Date"])
-            # file_CSV_list = OrderUploadLogHelper.covert_data_list_to_CSV_list(file_list)
+
             CSV_file_management_obj.covert_to_CSV_data_list(orderTransactionHelper.order_CSV_list)
             return_name_CSV_str = CSV_file_management_obj.genearete_CSV_file()
 
@@ -676,9 +598,6 @@ def search_order_transaction(request):
                 None )
 
             return Response(serializer.data, status=status.HTTP_200_OK)
-
-         
-   
 
         except Exception as e:
 

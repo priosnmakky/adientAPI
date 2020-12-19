@@ -4,6 +4,8 @@ from datetime import datetime,timedelta
 from glob import glob
 datetime_rex = re.compile("[0-9]{1}[0-9]{1}[-][0-9]{1}[0-9]{1}[-][0-9]{1}[0-9]{1}[0-9]{1}[0-9]{1}")
 from django.conf import settings
+from app.helper.config.ConfigsDatabase import ConfigsDatabase
+configsDatabase = ConfigsDatabase()
 
 def files_management():
 
@@ -22,7 +24,7 @@ def files_management():
 
             during_datetime =  datetime.now()- checked_datetime
 
-            if during_datetime.days > 1 :
+            if during_datetime.days > int(configsDatabase.configs.get("DELETE_FILE_INTERVAL_DAYA").data) :
                 
                 for filename in os.listdir(root):
                     file_path = os.path.join(root, filename)

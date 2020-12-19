@@ -232,14 +232,8 @@ class RouterInfo_Serializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
 
-        # instance.part_name = validated_data.get('part_name', instance.part_name)
-        # instance.project_code = validated_data.get('project_code', instance.project_code)
-        # instance.route_code = validated_data.get('route_code', instance.route_code)
-        # instance.route_trip = validated_data.get('route_trip', instance.route_trip)
-        # instance.truck_license = validated_data.get('truck_license', instance.truck_license)
         instance.province = validated_data.get('province', instance.province)
         instance.driver_code = validated_data.get('driver_code', instance.driver_code)
-        # instance.route_no = validated_data.get('route_no', instance.route_no)
         instance.updated_by = validated_data.get('updated_by', instance.updated_by)
         instance.updated_date = datetime.utcnow()
         instance.is_active = True
@@ -467,8 +461,7 @@ class RouterMaster_Serializer(serializers.Serializer):
         return complete_time
     
     def validate(self, data):
-        
-        print(data['route_no'])
+
         routerMaster_list = RouterMaster.objects.filter(
             route_code = data['route_code'],
             route_trip = data['route_trip'],
@@ -1295,12 +1288,5 @@ class Driver_list_Serializer_DTO(serializers.Serializer):
     data_list = Driver_Serializer(many=True)
     csv_name = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
 
-
-
-
-# serviceStatus = ""
-#     massage = ""
-#     data = object()
-    
 
 

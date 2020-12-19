@@ -32,7 +32,6 @@ urlpatterns = [
     url(r'^api/master/edited_truck$', views.edited_truck),
     url(r'^api/master/edited_driver$', views.edited_driver),
     url(r'^api/master/edited_routeInfo$',views.edited_routeInfo),
-    # url(r'^api/master/edited_calendarMaster$',views.edited_calendarMaster),
     url(r'^api/master/customer$', views.customer_list),
     url(r'^api/master/package$', views.package_list),
     url(r'^api/master/supplier$', views.supplier_list),
@@ -41,8 +40,6 @@ urlpatterns = [
     url(r'^api/master/driver$', views.driver_list),
     url(r'^api/master/routeInfo$', views.routeInfo_list),
     url(r'^api/master/calendarMaster$', views.calendarMaster_list),
-    url(r'^api/master/routeMaster$', views.routeMaster_list),
-    url(r'^api/master/add_part_master$', views.add_part_master),
-    url(r'^api/master/add_packages_master$', views.add_packages_master)
+    url(r'^api/master/routeMaster$', views.routeMaster_list)
 
 ]

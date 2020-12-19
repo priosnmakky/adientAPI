@@ -186,7 +186,6 @@ class PackageHelper:
 
     def update(self,package_obj):
 
-        print(package_obj['package_no'])
         if  not self.validate_snp(package_obj['snp']) :
 
             return None
@@ -211,7 +210,6 @@ class PackageHelper:
 
             package_list = Package.objects.filter(package_no__iexact = package_obj['package_no'])
 
-            print(package_obj['image_url'])
             if len(package_list) > 0 :
                 package_list.update(
                         package_code= package_obj['package_code'],

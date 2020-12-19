@@ -93,9 +93,6 @@ class FileSerializer(serializers.Serializer):
 
     csv_url = serializers.CharField(allow_blank=True,allow_null=True,required=False)
 
- 
-
-
     def create(self, validated_data):
 
         validated_data['file_no'] = OrderUploadHelper.generate_file_no(validated_data['customer_code'])
@@ -133,8 +130,6 @@ class validateErrorSerializerList(serializers.Serializer):
     validate_error_list = validateErrorSerializer(many=True)
 
 
-
-
 class Search_miss_match_Serializer(serializers.Serializer):
     plant_code = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
 
@@ -143,8 +138,6 @@ class Plant_list_Serializer_DTO(serializers.Serializer):
     serviceStatus = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
     massage = serializers.CharField(max_length=50,allow_blank=True,allow_null=True,required=False)
     data_list = Search_miss_match_Serializer(many=True)
-
-
 
 
 class Order_list_Serializer_DTO(serializers.Serializer):
